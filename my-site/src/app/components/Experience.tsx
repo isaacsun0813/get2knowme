@@ -18,7 +18,6 @@ function Model(props: any) {
     }
   })
   
-  // Add a flag to help identify the Earth model
   scene.userData = { isEarth: true }
   scene.name = 'Earth'
   
@@ -28,8 +27,8 @@ function Model(props: any) {
 function SkyDome() {
   return (
     <mesh>
-      <sphereGeometry args={[50, 32, 32]} />
-      <meshBasicMaterial color="#add8e6" side={THREE.BackSide} />
+      <sphereGeometry args={[100, 32, 32]} />
+      <meshBasicMaterial color="#87CEEB" side={THREE.BackSide} />
     </mesh>
   )
 }
@@ -58,28 +57,30 @@ function Instructions() {
 }
 
 export default function Experience() {
-  // Create a new Group for tracking the global position
   const planeRef = useRef<THREE.Group>(new THREE.Group())
   
   return (
     <>
-      <Canvas camera={{ position: [0, 0, -4], fov: 50 }}>
+      <Canvas 
+        camera={{ position: [0, 5, 10], fov: 50 }}
+        style={{ background: '#87CEEB' }} // Remove dark corners
+      >
         <ambientLight intensity={1} />
         <directionalLight position={[2, 2, 2]} intensity={1.5} />
         <SkyDome />
         
-        {/* Earth model - larger scale for prominence */}
-        <Model scale={1.2} position={[0, 0, 0]} rotation={[0, 0, 0]} />
+        {/* Earth */}
+        <Model scale={25} position={[0, 0, 0]} rotation={[0, 0, 0]} />
         
-        {/* Plane - fixed in view, smaller scale */}
+        {/* Plane */}
         <Plane planeRef={planeRef} />
         
-        {/* Camera controller - rotates Earth based on plane movement */}
+        {/* Camera controller */}
         <CameraFollower targetRef={planeRef} />
       </Canvas>
       
       {/* Optional instructions overlay */}
-      <Instructions />
+      {/* <Instructions //> */}
     </>
   )
 }

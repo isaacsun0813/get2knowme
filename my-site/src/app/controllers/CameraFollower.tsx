@@ -1,53 +1,43 @@
 'use client'
 
 import { useFrame, useThree } from '@react-three/fiber'
-import { useRef } from 'react'
 import * as THREE from 'three'
 
 export default function CameraFollower({ targetRef }: { targetRef: React.RefObject<THREE.Object3D | null> }) {
-  const { camera, scene } = useThree()
-  const earthRef = useRef<THREE.Object3D | null>(null)
-  const lastPosition = useRef(new THREE.Vector3(0, 0, 0))
+  const { camera } = useThree()
   
-  // Find Earth model
-  useFrame((state) => {
-    if (!earthRef.current) {
-      state.scene.traverse(obj => {
-        if (obj.name === 'Earth' || (obj.userData && obj.userData.isEarth)) {
-          earthRef.current = obj
-        }
-      })
-    }
-    
+  useFrame(() => {
     const target = targetRef.current
-    if (!target || !earthRef.current) return
+    if (!target) return
+
+    const planePosition = target.position
+    const forward = target.userData.forward as THREE.Vector3
     
-    // Get the plane's position change since last frame
-    const deltaX = target.position.x - lastPosition.current.x
-    const deltaZ = target.position.z - lastPosition.current.z
+    if (!forward) return
+
+    // FULL EARTH VIEW: Position camera to see entire planet
+    const earthCenter = new THREE.Vector3(0, 0, 0)
+    const earthRadius = 25
     
-    // Only rotate if there's movement
-    // if (Math.abs(deltaX) > 0.0001 || Math.abs(deltaZ) > 0.0001) {
-    //   // Rotate Earth in the opposite direction of the plane's movement
-    //   // This creates the illusion that the plane is moving over the Earth
-      
-    //   // X movement (east/west) affects rotation around Y axis
-    //   earthRef.current.rotation.y += deltaX * 0.5
-      
-    //   // Z movement (north/south) affects rotation around X axis
-    //   earthRef.current.rotation.x -= deltaZ * 0.5
-    // }
-    if (Math.abs(deltaX)>0.0001){
-        console.log("The earth ref is ", earthRef.current)
-        earthRef.current.rotation.y += deltaX * 0.5
-    } 
-    else if (Math.abs(deltaZ)>0.0001){
-        earthRef.current.rotation.x -= deltaZ * 0.5
-    }
+    // Camera distance to see full Earth plus some margin
+    const viewDistance = earthRadius * 3.5  // 87.5 units back
+    const heightOffset = 10
     
-    // Store current position for next frame
-    lastPosition.current.copy(target.position)
+    // Position camera behind the plane's orbital position
+    const planeDirection = planePosition.clone().normalize()
+    const cameraPosition = earthCenter.clone()
+    cameraPosition.add(planeDirection.clone().multiplyScalar(viewDistance))
+    cameraPosition.add(planeDirection.clone().multiplyScalar(heightOffset))
+    
+    // Smoothly move camera
+    camera.position.lerp(cameraPosition, 0.05)
+    
+    // Always look at the plane (Earth will be beautifully framed)
+    camera.lookAt(planePosition)
+    
+    // Keep camera oriented correctly
+    camera.up.set(0, 1, 0)
   })
-  
+
   return null
 }

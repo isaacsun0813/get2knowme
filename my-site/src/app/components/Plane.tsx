@@ -1,122 +1,145 @@
 'use client'
 
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Group | null> }) {
-  // Load model + animation
-  const { scene, animations } = useGLTF('/models/daplane.glb')
+  const { scene } = useGLTF('/models/daplane.glb')
   const group = useRef<THREE.Group>(null)
-  const { actions } = useAnimations(animations, group)
 
-  // Flight parameters
-  const velocity = useRef(0)          // Current speed
-  const maxVelocity = 0.03            // Max speed
-  const minVelocity = 0               // Min speed
-  const acceleration = 0.001          // Acceleration rate
-  const deceleration = 0.0005         // Natural deceleration
-  const turnRate = 0.03               // How quickly the plane turns
-  const bankAngle = useRef(0)         // Banking angle for turns
-  const heading = useRef(0)           // Direction the plane is facing (0 = east, Math.PI/2 = north)
+  // Flight state
+  const earthRadius = 25
+  const flightAltitude = 4
+  const position = useRef(new THREE.Vector3(0, earthRadius + flightAltitude, 0))
+  const heading = useRef(0)
+  const velocity = useRef(0)
+  const bankAngle = useRef(0)
+  
   const keysPressed = useRef<Record<string, boolean>>({})
-  
-  // Global position (for Earth rotation)
-  const position = useRef(new THREE.Vector3(0, 0, 0))
-  
-  // Play animation when model is loaded
-  useEffect(() => {
-    if (actions && actions['Take 001']) {
-      actions['Take 001'].play()
-    }
-  }, [actions])
 
-  // Initialize plane position
   useEffect(() => {
-    if (group.current) {
-      // Position the plane in the scene (fixed position relative to camera)
-      group.current.position.set(0, -0.5, -2)
-      // Scale the plane down
-      group.current.scale.set(0.1, 0.1, 0.1)
-    }
-  }, [])
-
-  // Set up keyboard controls
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      keysPressed.current[e.code] = true
-    }
-    const up = (e: KeyboardEvent) => {
-      keysPressed.current[e.code] = false
-    }
-
+    const down = (e: KeyboardEvent) => { keysPressed.current[e.code] = true }
+    const up = (e: KeyboardEvent) => { keysPressed.current[e.code] = false }
+    
     window.addEventListener('keydown', down)
     window.addEventListener('keyup', up)
-
+    
     return () => {
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
     }
   }, [])
 
-  // Update the flight dynamics
   useFrame(() => {
     if (!group.current) return
-    
-    // Handle turning with A/D
-    if (keysPressed.current['KeyA'] || keysPressed.current['ArrowLeft']) {
-      // Turn left (rotate the plane)
-      heading.current += turnRate
-      
-      // Bank into turn (left)
-      bankAngle.current = Math.min(bankAngle.current + 0.02, 0.3)
-    } else if (keysPressed.current['KeyD'] || keysPressed.current['ArrowRight']) {
-      // Turn right (rotate the plane)
-      heading.current -= turnRate
-      
-      // Bank into turn (right)
-      bankAngle.current = Math.max(bankAngle.current - 0.02, -0.3)
+
+    // Handle controls
+    if (keysPressed.current['KeyW']) {
+      velocity.current = Math.min(velocity.current + 0.008, 0.15)
     } else {
-      // Return to level flight
-      bankAngle.current *= 0.9
+      velocity.current = Math.max(velocity.current - 0.004, 0)
+    }
+
+    // Simple turning
+    if (keysPressed.current['KeyA']) {
+      heading.current += 0.03
+      bankAngle.current = THREE.MathUtils.lerp(bankAngle.current, 0.3, 0.1)
+    } else if (keysPressed.current['KeyD']) {
+      heading.current -= 0.03
+      bankAngle.current = THREE.MathUtils.lerp(bankAngle.current, -0.3, 0.1)
+    } else {
+      bankAngle.current = THREE.MathUtils.lerp(bankAngle.current, 0, 0.15)
+    }
+
+    // Step 1: Calculate the local coordinate system at this point on Earth
+    const earthUp = position.current.clone().normalize()
+    
+    // Step 2: Create a stable "north" reference
+    const worldUp = new THREE.Vector3(0, 1, 0)
+    const north = worldUp.clone().cross(earthUp).cross(earthUp).normalize()
+    
+    // Handle the case where we're at the poles
+    if (north.length() < 0.1) {
+      north.set(1, 0, 0).projectOnPlane(earthUp).normalize()
     }
     
-    // Apply bank angle to the plane model
-    group.current.rotation.z = bankAngle.current
+    // Step 3: Calculate east (right) direction
+    const east = new THREE.Vector3().crossVectors(north, earthUp).normalize()
     
-    // Apply heading to the plane model (rotate around Y axis)
-    group.current.rotation.y = heading.current
+    // Step 4: Calculate forward direction based on heading
+    const forward = new THREE.Vector3()
+    forward.copy(north).multiplyScalar(Math.cos(heading.current))
+    forward.addScaledVector(east, Math.sin(heading.current))
+    forward.normalize()
+
+    // Step 5: Move the plane
+    if (velocity.current > 0) {
+      position.current.add(forward.clone().multiplyScalar(velocity.current))
+      position.current.normalize().multiplyScalar(earthRadius + flightAltitude)
+    }
+
+    // Step 6: Build quaternion orientation systematically
+    group.current.position.copy(position.current)
     
-    // Handle speed with W/S
-    if (keysPressed.current['KeyW'] || keysPressed.current['ArrowUp']) {
-      velocity.current = Math.min(velocity.current + acceleration, maxVelocity)
-    } else if (keysPressed.current['KeyS'] || keysPressed.current['ArrowDown']) {
-      velocity.current = Math.max(velocity.current - acceleration * 1.5, minVelocity)
+    // Recalculate coordinate system at new position
+    const newEarthUp = position.current.clone().normalize()
+    const newNorth = worldUp.clone().cross(newEarthUp).cross(newEarthUp).normalize()
+    if (newNorth.length() < 0.1) {
+      newNorth.set(1, 0, 0).projectOnPlane(newEarthUp).normalize()
+    }
+    const newEast = new THREE.Vector3().crossVectors(newNorth, newEarthUp).normalize()
+    const newForward = new THREE.Vector3()
+    newForward.copy(newNorth).multiplyScalar(Math.cos(heading.current))
+    newForward.addScaledVector(newEast, Math.sin(heading.current))
+    newForward.normalize()
+
+    // Step 7: Build rotation using step-by-step quaternions
+    const finalQuaternion = new THREE.Quaternion()
+    
+    // First: Align with Earth surface (up vector points away from Earth)
+    const upAlignQuat = new THREE.Quaternion()
+    const worldUp2 = new THREE.Vector3(0, 1, 0)
+    upAlignQuat.setFromUnitVectors(worldUp2, newEarthUp)
+    
+    // Second: Apply heading rotation around the up axis
+    const headingQuat = new THREE.Quaternion()
+    headingQuat.setFromAxisAngle(newEarthUp, heading.current)
+    
+    // Third: Fix model orientation (so nozzle points forward)
+    const modelCorrectionQuat = new THREE.Quaternion()
+    modelCorrectionQuat.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI/2)
+    
+    // Fourth: Apply banking around forward axis
+    const bankingQuat = new THREE.Quaternion()
+    if (Math.abs(bankAngle.current) > 0.01) {
+      bankingQuat.setFromAxisAngle(newForward, bankAngle.current)
     } else {
-      // Natural deceleration
-      velocity.current = Math.max(velocity.current - deceleration, minVelocity)
+      bankingQuat.identity()
     }
     
-    // Move in the direction the plane is facing
-    // Calculate movement vector based on plane's heading
-    const moveX = Math.sin(heading.current) * velocity.current
-    const moveZ = Math.cos(heading.current) * velocity.current
+    // Apply transformations: upAlign -> heading -> modelCorrection -> banking
+    finalQuaternion.identity()
+    finalQuaternion.multiply(upAlignQuat)
+    finalQuaternion.multiply(headingQuat)
+    finalQuaternion.multiply(modelCorrectionQuat)
+    finalQuaternion.multiply(bankingQuat)
     
-    // Update global position (this will be used to rotate the Earth)
-    position.current.x += moveX
-    position.current.z += moveZ
-    
-    // Check if the planeRef exists and update it
+    // Apply final orientation
+    group.current.setRotationFromQuaternion(finalQuaternion)
+
+    // Update camera data
     if (planeRef.current) {
-      // Pass along position and heading for Earth rotation
       planeRef.current.position.copy(position.current)
-      planeRef.current.rotation.y = heading.current
+      planeRef.current.quaternion.copy(finalQuaternion)
+      planeRef.current.userData.forward = forward
+      planeRef.current.userData.up = earthUp
+      planeRef.current.userData.heading = heading.current
     }
   })
 
-  // Return the plane model with appropriate scale
-  return <primitive ref={group} object={scene} scale={0.1} />
+  return <primitive ref={group} object={scene} scale={1.2} />
 }
 
 useGLTF.preload('/models/daplane.glb')
