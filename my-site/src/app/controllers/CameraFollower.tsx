@@ -15,7 +15,7 @@ export default function CameraFollower({ targetRef }: { targetRef: React.RefObje
     
     if (!forward) return
 
-    // FULL EARTH VIEW: Position camera to see entire planet
+    // ORBITAL VIEW: Position camera to see Earth and plane nicely
     const earthCenter = new THREE.Vector3(0, 0, 0)
     const earthRadius = 25
     
