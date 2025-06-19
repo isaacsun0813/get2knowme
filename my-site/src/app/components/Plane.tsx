@@ -100,7 +100,7 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
     }
 
     // Clamp pitch to 60 degrees (π/3 radians)
-    pitch.current = clampPitch(pitch.current, Math.PI / 3)
+    pitch.current = clampPitch(pitch.current, Math.PI)
 
     // Create plane orientation based on heading and pitch
     const finalQuaternion = createPlaneOrientation(
@@ -109,8 +109,8 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
       pitch.current
     )
 
-    // Get forward direction from quaternion (local -Z axis)
-    const forward = new THREE.Vector3(0, 0, -1)
+    // Get forward direction from quaternion (for this Blender model, +X is nose direction)
+    const forward = new THREE.Vector3(1, 0, 0)
     forward.applyQuaternion(finalQuaternion)
 
     // Move plane forward along its facing direction (only if moving)
