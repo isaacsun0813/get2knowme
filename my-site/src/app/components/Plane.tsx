@@ -1,13 +1,16 @@
 'use client'
 
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Group | null> }) {
-  const { scene } = useGLTF('/models/daplane.glb')
+  const { scene, animations } = useGLTF('/models/newPlane.glb')
   const group = useRef<THREE.Group>(null)
+  
+  // Animation setup
+  const { actions } = useAnimations(animations, group)
 
   // Globe parameters
   const earthRadius = 25
@@ -48,8 +51,23 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
       group.current.setRotationFromQuaternion(orientation.current)
       
       console.log('Plane initialized at position:', position.current.x.toFixed(2), position.current.y.toFixed(2), position.current.z.toFixed(2))
+      
+      // Log available animations but don't start them yet
+      if (actions && Object.keys(actions).length > 0) {
+        console.log('Available animations:', Object.keys(actions))
+        // Prepare animations but don't play them yet
+        Object.values(actions).forEach(action => {
+          if (action) {
+            action.reset()
+            action.setLoop(THREE.LoopRepeat, Infinity)
+            action.paused = true // Start paused
+          }
+        })
+      } else {
+        console.log('No animations found in the model')
+      }
     }
-  }, [])
+  }, [actions])
 
   // Keyboard handlers
   useEffect(() => {
@@ -85,9 +103,30 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
     
     if (speed.current < 0.3) speed.current = 0
 
+    // ANIMATION CONTROL - Play when flying, pause when stopped
+    if (actions && Object.keys(actions).length > 0) {
+      Object.values(actions).forEach(action => {
+        if (action) {
+          if (speed.current > 0.1) {
+            // Flying - play animation
+            if (action.paused) {
+              action.paused = false
+              action.play()
+            }
+          } else {
+            // Stopped - pause animation
+            if (!action.paused) {
+              action.paused = true
+            }
+          }
+        }
+      })
+    }
+
     // 2. HANDLE ROTATIONS - Apply incremental rotations to current orientation
     const rotationSpeed = 1.5
     const maxPitchAngle = Math.PI / 6 // 30 degrees max pitch
+    const maxBankAngle = Math.PI / 4 // 45 degrees max bank
     
     // Get current surface normal for reference
     const surfaceNormal = position.current.clone().normalize()
@@ -97,16 +136,22 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
     const currentUp = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
     const currentForward = new THREE.Vector3(0, 0, -1).applyQuaternion(orientation.current)
 
-    // Apply yaw (heading) rotations around surface normal
+    // Track turning input for banking
+    let turnInput = 0
+    let pitchInput = 0
+
+    // Apply yaw (heading) rotations around surface normal WITH BANKING
     if (keysPressed.current['KeyA'] || keysPressed.current['ArrowLeft']) {
       const yawRotation = new THREE.Quaternion()
       yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
       orientation.current.premultiply(yawRotation)
+      turnInput = 1 // Left turn
     }
     if (keysPressed.current['KeyD'] || keysPressed.current['ArrowRight']) {
       const yawRotation = new THREE.Quaternion()
       yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
       orientation.current.premultiply(yawRotation)
+      turnInput = -1 // Right turn
     }
 
     // Apply pitch rotations around current right vector
@@ -114,11 +159,44 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
       const pitchRotation = new THREE.Quaternion()
       pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
       orientation.current.multiply(pitchRotation)
+      pitchInput = -1 // Nose down
     }
     if (keysPressed.current['ArrowDown']) {
       const pitchRotation = new THREE.Quaternion()
       pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
       orientation.current.multiply(pitchRotation)
+      pitchInput = 1 // Nose up
+    }
+
+    // REALISTIC BANKING DURING TURNS
+    if (speed.current > 5) { // Only bank when actually moving
+      const bankingForce = turnInput * maxBankAngle * 0.3 // 30% of max bank
+      const currentForwardVector = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
+      
+      // Apply banking rotation around the forward axis (roll)
+      if (Math.abs(bankingForce) > 0.01) {
+        const bankRotation = new THREE.Quaternion()
+        bankRotation.setFromAxisAngle(currentForwardVector, bankingForce * delta * 3)
+        orientation.current.multiply(bankRotation)
+        
+        console.log(`Banking: ${turnInput > 0 ? 'Left' : 'Right'} bank angle: ${(bankingForce * 180/Math.PI).toFixed(1)}°`)
+      }
+    }
+
+    // DYNAMIC PITCH BASED ON SPEED CHANGES
+    const speedChangeThreshold = 2
+    if (isThrottling && speed.current > speedChangeThreshold) {
+      // Climbing - slight nose up attitude
+      const climbPitch = 0.1 // Gentle climb angle
+      const climbRotation = new THREE.Quaternion()
+      climbRotation.setFromAxisAngle(currentRight, climbPitch * delta * 0.5)
+      orientation.current.multiply(climbRotation)
+    } else if (!isThrottling && speed.current > speedChangeThreshold) {
+      // Descending - slight nose down attitude  
+      const divePitch = -0.05 // Gentle dive angle
+      const diveRotation = new THREE.Quaternion()
+      diveRotation.setFromAxisAngle(currentRight, divePitch * delta * 0.5)
+      orientation.current.multiply(diveRotation)
     }
 
     // 3. CONSTRAIN ORIENTATION to prevent excessive pitch and maintain surface alignment
@@ -183,7 +261,7 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
     }
   })
 
-  return <primitive ref={group} object={scene} scale={0.8} />
+  return <primitive ref={group} object={scene} scale={1.1} />
 }
 
-useGLTF.preload('/models/daplane.glb')
+useGLTF.preload('/models/newPlane.glb')
