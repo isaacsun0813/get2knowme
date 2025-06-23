@@ -34,45 +34,50 @@ export function computeSurfaceQuaternion(position: THREE.Vector3): THREE.Quatern
 }
 
 /**
- * Creates plane orientation using lookAt approach - builds direction vector directly
+ * Creates plane orientation using improved approach to prevent gimbal lock
  */
 export function createPlaneOrientation(
   position: THREE.Vector3,
   heading: number,
   pitch: number
 ): THREE.Quaternion {
-  // Get surface normal (up direction)
+  // Get the surface normal (up direction)
   const up = position.clone().normalize()
   
-  // Create a local coordinate system on the surface
-  const north = new THREE.Vector3(0, 1, 0).cross(up).normalize()
-  if (north.lengthSq() < 0.001) {
-    // Handle poles - use X as reference
-    north.set(1, 0, 0).cross(up).normalize()
+  // Create a stable reference direction to avoid pole issues
+  // Use global X unless we're too close to it
+  let reference = new THREE.Vector3(1, 0, 0)
+  if (Math.abs(up.dot(reference)) > 0.9) {
+    // If too close to X axis, use Z axis instead
+    reference = new THREE.Vector3(0, 0, 1)
   }
-  const east = up.clone().cross(north).normalize()
   
-  // Calculate desired forward direction based on heading and pitch
-  // Start with north direction, then rotate by heading
-  const forwardDirection = north.clone()
+  // Create east (right) direction
+  const east = new THREE.Vector3().crossVectors(up, reference).normalize()
   
-  // Apply heading rotation around the up vector
-  const headingMatrix = new THREE.Matrix4().makeRotationAxis(up, heading)
-  forwardDirection.applyMatrix4(headingMatrix)
+  // Create north (forward when heading=0) direction  
+  const north = new THREE.Vector3().crossVectors(east, up).normalize()
   
-  // Apply pitch by rotating around the local east vector
-  const localEast = east.clone()
-  const pitchMatrix = new THREE.Matrix4().makeRotationAxis(localEast, pitch)
-  forwardDirection.applyMatrix4(pitchMatrix)
+  // Apply heading rotation around the up axis
+  const headingRotation = new THREE.Matrix4().makeRotationAxis(up, heading)
+  const forwardDirection = north.clone().applyMatrix4(headingRotation)
+  const rightDirection = east.clone().applyMatrix4(headingRotation)
   
-  // Create orientation matrix using lookAt approach
-  const matrix = new THREE.Matrix4()
-  const target = position.clone().add(forwardDirection)
-  matrix.lookAt(position, target, up)
+  // Apply pitch rotation around the right axis
+  const pitchRotation = new THREE.Matrix4().makeRotationAxis(rightDirection, pitch)
+  const finalForward = forwardDirection.applyMatrix4(pitchRotation)
+  const finalUp = up.clone().applyMatrix4(pitchRotation)
   
-  // Extract quaternion from matrix
+  // Recalculate right to ensure orthogonality
+  const finalRight = new THREE.Vector3().crossVectors(finalForward, finalUp).normalize()
+  
+  // Create rotation matrix from the final basis vectors
+  const rotationMatrix = new THREE.Matrix4()
+  rotationMatrix.makeBasis(finalRight, finalUp, finalForward.negate())
+  
+  // Convert to quaternion
   const quaternion = new THREE.Quaternion()
-  quaternion.setFromRotationMatrix(matrix)
+  quaternion.setFromRotationMatrix(rotationMatrix)
   
   return quaternion
 }
