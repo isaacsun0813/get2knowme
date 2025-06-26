@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import Image from 'next/image'
 
 interface AdventureProps {
   isOpen: boolean
@@ -14,7 +15,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set())
 
-  const adventurePhotos = [
+  const adventurePhotos = useMemo(() => [
     { src: '/photos/adventure/adventure1.jpg', caption: 'Ticino' },
     { src: '/photos/adventure/adventure2.jpg', caption: 'Skiing in Alestch' },
     { src: '/photos/adventure/adventure3.jpg', caption: 'El Yunque' },
@@ -32,13 +33,13 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     { src: '/photos/adventure/adventure15.jpg', caption: 'Wicker Park' },
     { src: '/photos/adventure/adventure16.jpg', caption: 'Interlaken' },
     { src: '/photos/adventure/adventure17.jpg', caption: 'Stoos' },
-  ]
+  ], [])
 
   // Preload all images in the background
   useEffect(() => {
     const preloadImages = () => {
       adventurePhotos.forEach((photo) => {
-        const img = new Image()
+        const img = new window.Image()
         img.onload = () => {
           setPreloadedImages(prev => new Set(prev).add(photo.src))
         }
@@ -238,13 +239,14 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                      )}
                      
                      {/* Actual photo - HD quality with proper fitting */}
-                     <img 
+                     <Image 
                        src={adventurePhotos[currentPhotoIndex].src}
                        alt={adventurePhotos[currentPhotoIndex].caption}
-                       className="w-full h-full object-contain bg-white"
+                       fill
+                       className="object-contain bg-white"
+                       sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 70vw"
                        onLoad={handleImageLoad}
                        onError={handleImageError}
-                       loading="eager"
                      />
                    </div>
 
@@ -322,13 +324,13 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                         </div>
                       </div>
                       
-                      <img 
+                      <Image 
                         src="/photos/adventure/aot.gif"
                         alt="Attack on Titan GIF"
-                        className="w-full h-full object-cover relative z-10"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
+                        fill
+                        className="object-cover relative z-10"
+                        sizes="(max-width: 768px) 90vw, 512px"
+                        unoptimized
                       />
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import Image from 'next/image'
 
 interface AmbitionProps {
   isOpen: boolean
@@ -12,16 +13,16 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
   const [isAnimating, setIsAnimating] = useState(false)
 
   // Project images to preload
-  const projectImages = [
+  const projectImages = useMemo(() => [
     '/photos/projects/Verdra.png',
     '/photos/projects/PrizeSole.png'
-  ]
+  ], [])
 
   // Preload all project images in the background
   useEffect(() => {
     const preloadImages = () => {
       projectImages.forEach((imageSrc) => {
-        const img = new Image()
+        const img = new window.Image()
         // Image loads in background - no need to track state
         img.onerror = () => {
           console.warn(`Failed to preload project image: ${imageSrc}`)
@@ -154,7 +155,14 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    {/* Image */}
                    <div className="w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-lg">
                      <a href="https://drive.google.com/file/d/1sUSc109rf_TQ7-Dn2wbfKeLBoJqlnddl/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                       <img src="/photos/projects/Verdra.png" alt="Verdra Demo" className="w-full h-auto object-contain" />
+                       <Image 
+                         src="/photos/projects/Verdra.png" 
+                         alt="Verdra Demo" 
+                         width={800}
+                         height={600}
+                         className="w-full h-auto object-contain" 
+                         sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 800px"
+                       />
                      </a>
                    </div>
                    
@@ -197,10 +205,13 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    
                    {/* Image */}
                    <div className="w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-lg">
-                     <img 
+                     <Image 
                        src="/photos/projects/PrizeSole.png"
                        alt="PrizeSole B2B eCommerce Platform"
+                       width={800}
+                       height={600}
                        className="w-full h-auto object-contain"
+                       sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 800px"
                      />
                    </div>
                  </div>

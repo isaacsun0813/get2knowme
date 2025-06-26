@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 interface AboutMeProps {
   isOpen: boolean
@@ -16,7 +17,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
 
   // Preload profile image in the background
   useEffect(() => {
-    const img = new Image()
+    const img = new window.Image()
     // Image loads in background - no need to track state
     img.onerror = () => {
       console.warn(`Failed to preload profile image: ${profileImage}`)
@@ -142,13 +143,14 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
                   {/* Profile Photo */}
                   <div className="w-64 h-64 rounded-full shadow-2xl border-8 border-white/80 relative overflow-hidden backdrop-blur-sm">
-                    <img 
+                    <Image 
                       src="/photos/profilePic.jpeg" 
                       alt="Isaac Sun" 
-                      className="w-full h-full object-cover object-center"
-                      style={{ 
-                        objectPosition: '50% 25%' 
-                      }}
+                      fill
+                      className="object-cover"
+                      style={{ objectPosition: '50% 25%' }}
+                      sizes="256px"
+                      priority
                     />
                   </div>
 
@@ -200,27 +202,6 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                 </div>
               </div>
 
-              {/* Mission Card */}
-              <div className="relative bg-gradient-to-br from-emerald-50/70 via-green-50/70 to-emerald-50/70 p-16 mb-16 overflow-hidden break-words"
-                    style={{
-                      borderRadius: '2rem',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(34, 197, 94, 0.2)'
-                    }}>
-                
-                <div className="relative text-center break-words space-y-8 break-words">
-                  <h2 className="break-words text-stone-800 mb-8">My Mission</h2>
-                  
-                  <div className="break-words text-stone-600 leading-relaxed break-words max-w-4xl mx-auto break-words">
-                    <p>
-                      I&apos;m passionate about building technology that creates a more sustainable future. Whether it&apos;s 
-                      developing climate models, optimizing energy consumption in computing systems, or working on 
-                      environmental policy solutions, I believe technology can be a powerful force for positive change 
-                      in addressing our climate challenges.
-                    </p>
-                  </div>
-                </div>
-              </div>
 
               {/* Content Section - keeping the old content for backwards compatibility */}
               <div className="w-full max-w-5xl mx-auto" style={{ display: 'none' }}>
@@ -326,6 +307,17 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                 >
                   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
+                  </svg>
+                </a>
+
+                <a 
+                  href="mailto:isaacsun0813@gmail.com" 
+                  className="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 via-red-500 to-red-600 
+                           flex items-center justify-center text-white shadow-lg hover:shadow-xl 
+                           transform hover:scale-110 transition-all duration-300 hover:from-red-300 hover:to-red-500"
+                >
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.887.732-1.636 1.636-1.636h.273L12 9.548l10.091-5.727h.273c.904 0 1.636.732 1.636 1.636Z"/>
                   </svg>
                 </a>
               </div>
