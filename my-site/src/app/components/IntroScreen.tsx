@@ -68,7 +68,7 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
       <div className={`absolute inset-0 flex flex-col items-center justify-center text-center break-words transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-[0.3]' : ''}`}>
         <div className="bg-white/15 backdrop-blur-xl p-8 sm:p-12 md:p-16 lg:p-24 rounded-3xl sm:rounded-[4rem] lg:rounded-[5rem] border border-white/20 shadow-2xl w-[90%] sm:w-[85%] md:w-[80%] max-w-4xl lg:max-w-7xl mx-4">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-6 md:mb-8 lg:mb-12 md:mb-16">
-            <h1 className="break-words text-6xl sm:text-8xl md:text-[10rem] lg:text-[16rem] xl:text-[20rem]">
+            <h1 className="break-words text-5xl sm:text-7xl md:text-9xl lg:text-[12rem] xl:text-[14rem]">
               Hello
             </h1>
             <span className="break-words text-3xl sm:text-5xl md:text-[6rem] lg:text-[8rem] xl:text-[10rem] animate-wave-slow">👋</span>
