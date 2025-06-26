@@ -67,8 +67,6 @@ export default function MobileLandingPage({ onProceedAnyway }: MobileLandingPage
             I&apos;m still working on mobile compatibility. For the best experience, please open this site on a computer.
           </p>
           
-          {/* Desktop icon */}
-          <div className="break-words text-2xl md:text-3xl lg:text-4xl mb-6">💻</div>
           
           {/* Optional proceed button */}
           {onProceedAnyway && (
@@ -81,17 +79,13 @@ export default function MobileLandingPage({ onProceedAnyway }: MobileLandingPage
           )}
           
           {/* Debug info */}
-          <div className="mt-4 text-xs text-gray-400 space-y-1 bg-gray-50 p-3 rounded">
+          {/* <div className="mt-4 text-xs text-gray-400 space-y-1 bg-gray-50 p-3 rounded">
             <div>Screen: {typeof window !== 'undefined' ? window.innerWidth : 0}px</div>
             <div>Mobile: {isMobile ? 'Yes' : 'No'}</div>
             <div>Client: {isClient ? 'Yes' : 'No'}</div>
-          </div>
+          </div> */}
         </div>
         
-        {/* Footer */}
-        <p className="break-words text-gray-500 text-sm mt-8 text-center break-words px-4">
-          Thanks for understanding! 🚀
-        </p>
       </div>
     </div>
   )
