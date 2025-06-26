@@ -11,7 +11,7 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
   const [isClient, setIsClient] = useState(false)
   const [isActive, setIsActive] = useState(false)
   const [joystickPosition, setJoystickPosition] = useState({ x: 0, y: 0 })
-  const joystickRef = useRef<HTMLDivElement>(null)
+  const joystickRef = useRef<HTMLDivElement>(null) // eslint-disable-line @typescript-eslint/no-unused-vars
   const containerRef = useRef<HTMLDivElement>(null)
   const activeKeysRef = useRef<Set<string>>(new Set())
 

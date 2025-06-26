@@ -162,7 +162,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   
                   <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words max-w-4xl mx-auto break-words">
                     <p>
-                      My name is <span className="font-medium text-green-600">Isaac Sun</span> and I'm a recent graduate of 
+                      My name is <span className="font-medium text-green-600">Isaac Sun</span> and I&apos;m a recent graduate of 
                       <span className="font-medium text-purple-600"> Northwestern University</span> with a 
                       <span className="font-medium text-stone-700"> BS/MS in Computer Science</span> and a 
                       <span className="font-medium text-blue-500"> minor in Music</span>. 
@@ -179,7 +179,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     <p>
                       My interests lie within <span className="font-medium text-green-600">scalable sustainable computing</span>, 
                       <span className="font-medium text-blue-500"> AI × climate modeling</span>, and 
-                      <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I'm also 
+                      <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I&apos;m also 
                       interested in <span className="font-medium text-stone-600">distributed systems</span> and 
                       <span className="font-medium text-amber-600"> sociology</span>.
                     </p>
@@ -200,7 +200,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   
                   <div className="break-words text-stone-600 leading-relaxed break-words max-w-4xl mx-auto break-words">
                     <p>
-                      I'm passionate about building technology that creates a more sustainable future. Whether it's 
+                      I&apos;m passionate about building technology that creates a more sustainable future. Whether it&apos;s 
                       developing climate models, optimizing energy consumption in computing systems, or working on 
                       environmental policy solutions, I believe technology can be a powerful force for positive change 
                       in addressing our climate challenges.
@@ -217,7 +217,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                 
                 <div className="break-words text-stone-600 leading-relaxed break-words space-y-12">
                   <p>
-                    My name is <span className="font-medium text-green-600">Isaac Sun</span> and I'm a recent graduate of 
+                    My name is <span className="font-medium text-green-600">Isaac Sun</span> and I&apos;m a recent graduate of 
                     <span className="font-medium text-purple-600"> Northwestern University</span> with a 
                     <span className="font-medium text-stone-700"> BS/MS in Computer Science</span> and a 
                     <span className="font-medium text-blue-500"> minor in Music</span>. 
@@ -234,7 +234,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   <p>
                     My interests lie within <span className="font-medium text-green-600">scalable sustainable computing</span>, 
                     <span className="font-medium text-blue-500"> AI × climate modeling</span>, and 
-                    <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I'm also 
+                    <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I&apos;m also 
                     interested in <span className="font-medium text-stone-600">distributed systems</span> and 
                     <span className="font-medium text-amber-600"> sociology</span>.
                   </p>
@@ -255,7 +255,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
               
               <div className="flex items-center justify-center gap-6 mb-10">
                 <span className="break-words text-2xl md:text-3xl lg:text-4xl">🌱</span>
-                <h3 className="break-words text-stone-800">Let's Connect!</h3>
+                <h3 className="break-words text-stone-800">Let&apos;s Connect!</h3>
                 <span className="break-words text-2xl md:text-3xl lg:text-4xl">🌍</span>
               </div>
               <p className="break-words text-stone-600 leading-relaxed break-words mb-8">

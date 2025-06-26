@@ -43,7 +43,6 @@ export default function Plane({
       const up = position.current.clone().normalize()
       
       // Create a stable initial orientation
-      const initialMatrix = new THREE.Matrix4()
       const worldUp = new THREE.Vector3(0, 1, 0)
       
       // Create a rotation that aligns world Y with surface normal
@@ -148,12 +147,9 @@ export default function Plane({
     
     // Calculate current orientation vectors
     const currentRight = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
-    const currentUp = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
-    const currentForward = new THREE.Vector3(0, 0, -1).applyQuaternion(orientation.current)
 
     // Track turning input for banking
     let turnInput = 0
-    let pitchInput = 0
 
     // Only apply rotations if controls are not disabled
     if (!controlsDisabled) {
@@ -176,13 +172,11 @@ export default function Plane({
         const pitchRotation = new THREE.Quaternion()
         pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
         orientation.current.multiply(pitchRotation)
-        pitchInput = -1 // Nose down
       }
       if (keysPressed.current['ArrowDown']) {
         const pitchRotation = new THREE.Quaternion()
         pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
         orientation.current.multiply(pitchRotation)
-        pitchInput = 1 // Nose up
       }
     }
 
@@ -220,7 +214,6 @@ export default function Plane({
     // 3. CONSTRAIN ORIENTATION to prevent excessive pitch and maintain surface alignment
     // Recalculate vectors after rotation
     const newUp = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
-    const newForward = new THREE.Vector3(0, 0, -1).applyQuaternion(orientation.current)
     
     // Limit pitch by ensuring up vector doesn't deviate too much from surface normal
     const pitchAngle = Math.acos(THREE.MathUtils.clamp(newUp.dot(surfaceNormal), -1, 1))
@@ -246,7 +239,6 @@ export default function Plane({
     }
 
     // 5. MAINTAIN ALTITUDE - Keep plane at proper distance from Earth center
-    const currentDistance = position.current.length()
     const targetDistance = earthRadius + flightAltitude
     position.current.normalize().multiplyScalar(targetDistance)
 

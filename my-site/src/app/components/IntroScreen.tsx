@@ -7,7 +7,7 @@ interface IntroScreenProps {
 }
 
 export default function IntroScreen({ onEnter }: IntroScreenProps) {
-  const [showEnterPrompt, setShowEnterPrompt] = useState(false)
+  const [, setShowEnterPrompt] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
             <span className="break-words text-3xl sm:text-5xl md:text-[6rem] lg:text-[8rem] xl:text-[10rem] animate-wave-slow">👋</span>
           </div>
           <p className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl mb-12 sm:mb-16 md:mb-20 lg:mb-24 leading-tight">
-            <span className="inline-block">Welcome to Isaac's</span>
+            <span className="inline-block">Welcome to Isaac&apos;s</span>
             <span className="inline-block ml-2">World</span>
           </p>
           

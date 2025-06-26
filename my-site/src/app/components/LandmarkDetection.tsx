@@ -43,6 +43,13 @@ export const landmarkConfig: Omit<LandmarkConfig, 'component'>[] = [
 
 type BaseLandmarkConfig = Omit<LandmarkConfig, 'component'>
 
+// Helper type for closest landmark tracking
+interface ClosestLandmark {
+  object: THREE.Object3D
+  config: BaseLandmarkConfig
+  distance: number
+}
+
 interface LandmarkDetectionProps {
   earthScene: THREE.Group | null
   planeRef: React.RefObject<THREE.Group | null>
@@ -123,11 +130,7 @@ export default function LandmarkDetection({
     }
 
     // Find the closest landmark within range
-    let closestLandmark: { 
-      object: THREE.Object3D, 
-      config: LandmarkConfig, 
-      distance: number 
-    } | null = null
+    let closestLandmark: ClosestLandmark | null = null
 
     landmarks.current.forEach(({ object, config }) => {
       // Debug: Check if object position is valid
@@ -170,7 +173,8 @@ export default function LandmarkDetection({
 
     // If we have a closest landmark and it's different from the current active one
     if (closestLandmark) {
-      const { config, distance } = closestLandmark
+      const lm = closestLandmark as ClosestLandmark
+      const { config, distance } = lm
       
       // Check if enough time has passed since last trigger (reduce to 3 seconds for testing)
       const lastTriggered = lastTriggeredTime.current[config.name] || 0
@@ -182,7 +186,7 @@ export default function LandmarkDetection({
         console.log(`📍 Display name: "${config.displayName}"`)
         console.log(`📍 Distance was: ${distance.toFixed(1)} (trigger: ${config.triggerDistance})`)
         console.log(`📍 Plane position:`, planePosition)
-        console.log(`📍 Object position:`, closestLandmark.object.position)
+        console.log(`📍 Object position:`, lm.object.position)
         
         currentActiveLandmark.current = config.name
         lastTriggeredTime.current[config.name] = currentTime

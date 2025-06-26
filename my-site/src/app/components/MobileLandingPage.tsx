@@ -64,7 +64,7 @@ export default function MobileLandingPage({ onProceedAnyway }: MobileLandingPage
           </h1>
           
           <p className="break-words text-gray-600 text-lg leading-relaxed break-words mb-6">
-            I'm still working on mobile compatibility. For the best experience, please open this site on a computer.
+            I&apos;m still working on mobile compatibility. For the best experience, please open this site on a computer.
           </p>
           
           {/* Desktop icon */}

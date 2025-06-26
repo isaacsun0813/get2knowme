@@ -157,7 +157,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                   
                   <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words">
                     <p className="break-words text-left">
-                      I'm interested in <span className="font-medium text-purple-600">climate tech</span> specifically:
+                      I&apos;m interested in <span className="font-medium text-purple-600">climate tech</span> specifically:
                     </p>
                     
                     <div className="max-w-4xl mx-auto break-words">

@@ -101,7 +101,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                </h1>
                <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-6 md:mb-8 lg:mb-12"></div>
                <p className="break-words text-2xl md:text-3xl lg:text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
-                 I'm a builder. I love to make things happen.<br />Here's what I'm up to:
+                 I&apos;m a builder. I love to make things happen.<br />Here&apos;s what I&apos;m up to:
                </p>
              </div>
 
@@ -235,7 +235,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                       border: '1px solid rgba(100, 116, 139, 0.2)'
                     }}>
                  <p className="break-words text-3xl sm:text-4xl font-bold text-stone-800 mb-8">
-                   Check out what else I'm working on:
+                   Check out what else I&apos;m working on:
                  </p>
                  <a 
                    href="https://github.com/isaacsun0813" 

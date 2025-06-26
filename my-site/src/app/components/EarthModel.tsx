@@ -6,13 +6,13 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 
 interface EarthModelProps {
   onSceneReady?: (scene: THREE.Group) => void
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function EarthModel(props: EarthModelProps) {
   const group = useRef<THREE.Group>(null)
   const { scene, animations } = useGLTF('/models/sickEarthFile2.glb')
-  const { actions, mixer } = useAnimations(animations, group)
+  const { actions } = useAnimations(animations, group)
   
   // Make clouds a greyish white for better visibility
   scene.traverse((child) => {
@@ -57,7 +57,7 @@ export default function EarthModel(props: EarthModelProps) {
       console.log('📞 Calling onSceneReady with scene')
       props.onSceneReady(scene)
     }
-  }, [scene, props.onSceneReady])
+  }, [scene, props])
   
   return (
     <group ref={group} {...props}>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface BackgroundMusicProps {
   isInWorld: boolean // true when user enters the 3D world
@@ -49,7 +48,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         setIsPlaying(false)
       })
     }
-  }, [isInWorld, isMobile]) // Removed isPlaying and volume from deps to prevent loops
+  }, [isInWorld, isMobile, isPlaying, volume])
 
   const fadeIn = (audio: HTMLAudioElement, targetVolume: number) => {
     const fadeStep = targetVolume / 30 // 30 steps over ~1 second

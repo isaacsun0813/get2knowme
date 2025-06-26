@@ -176,7 +176,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                   
                   <div className="break-words text-emerald-800 leading-relaxed break-words">
                     <p className="break-words text-xl md:text-2xl lg:text-3xl font-medium">
-                      I'm a nature guy. Check out some of my favorite places!
+                      I&apos;m a nature guy. Check out some of my favorite places!
                     </p>
                   </div>
                 </div>

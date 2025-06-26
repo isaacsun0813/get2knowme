@@ -19,9 +19,11 @@ interface LocationPromptProps {
 
 export default function LocationPrompt({ 
   landmark, 
-  onClose,
+  onClose: _,
   onSpacePressed
 }: LocationPromptProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _unused = _;
   const [isVisible, setIsVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
