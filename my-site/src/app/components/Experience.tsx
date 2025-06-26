@@ -16,6 +16,7 @@ import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
 import VisitedLandmarks from './VisitedLandmarks'
+import BackgroundMusic from './BackgroundMusic'
 
 // 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
 const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
@@ -325,6 +326,9 @@ export default function Experience() {
         `}</style>
       </div>
 
+      {/* Background Music - only plays when in world */}
+      <BackgroundMusic isInWorld={!showIntro} />
+      
       {/* Show intro screen on top when needed */}
       {showIntro && <IntroScreen onEnter={handleEnterWorld} />}
       
