@@ -30,7 +30,7 @@ export const landmarkConfig: Omit<LandmarkConfig, 'component'>[] = [
   {
     name: "Shanghai_Pin",
     displayName: "Shanghai",
-    subtitle: "Vibes", 
+    subtitle: "Inspiration", 
     triggerDistance: 28  
   },
   {

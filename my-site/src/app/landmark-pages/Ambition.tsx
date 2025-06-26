@@ -71,7 +71,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
         }`}
       >
         {/* Main content container with consistent styling */}
-        <div className="relative bg-gradient-to-br from-purple-50/95 via-indigo-50/95 to-white/95 backdrop-blur-md overflow-hidden"
+        <div className="relative bg-gradient-to-br from-purple-50/95 via-indigo-50/95 to-white/95 backdrop-blur-md overflow-hidden break-words"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
@@ -81,7 +81,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-6 right-6 z-20 w-12 h-12 rounded-full 
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
                        bg-stone-100/80 hover:bg-white/90 transition-all duration-300 
                        flex items-center justify-center text-stone-600 hover:text-stone-800
                        shadow-lg hover:shadow-xl border border-stone-200/50 hover:scale-110"
@@ -92,15 +92,15 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
           </button>
 
           {/* Content area */}
-          <div className="p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
             
                          {/* Header */}
-             <div className="text-center mb-32">
-               <h1 className="text-[8rem] lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 mb-12 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                 Projects
+             <div className="break-words text-center break-words mb-32">
+               <h1 className="break-words text-5xl sm:text-7xl md:text-[8rem] lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 mb-6 md:mb-8 lg:mb-12 tracking-tight">
+                 <span className="break-words text-5xl sm:text-7xl md:text-[8rem] lg:text-[12rem] xl:text-[14rem]">Projects</span>
                </h1>
-               <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-12"></div>
-               <p className="text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+               <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-6 md:mb-8 lg:mb-12"></div>
+               <p className="break-words text-2xl md:text-3xl lg:text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
                  I'm a builder. I love to make things happen.<br />Here's what I'm up to:
                </p>
              </div>
@@ -109,23 +109,22 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
              <div className="max-w-5xl mx-auto space-y-24">
               
                              {/* Verdra Project */}
-               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden"
+               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
                       border: '1px solid rgba(100, 116, 139, 0.2)'
                     }}>
                  
-                 <div className="relative flex flex-col items-center text-center space-y-8">
+                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
                    {/* Title and Description */}
                    <div className="w-full">
-                     <h2 className="text-9xl font-extrabold text-stone-800 mb-8 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       Verdra
+                     <h2 className="break-words text-9xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                       <span className="break-words text-2xl md:text-3xl lg:text-4xl sm:text-3xl md:text-4xl lg:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Verdra</span>
                      </h2>
-                     <p className="text-4xl text-blue-700 mb-10 font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Cloud Compute Optimization</p>
-                     <p className="text-2xl text-stone-700 mb-12 leading-relaxed max-w-4xl mx-auto" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       Advanced cloud compute optimization tool that reduces infrastructure costs by up to 40% 
-                       through intelligent resource allocation and real-time monitoring algorithms.
+                     <p className="break-words text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-blue-700 mb-10 font-semibold">Cloud Compute Optimization</p>
+                     <p className="break-words text-xl sm:text-2xl md:text-3xl lg:text-4xl text-stone-700 mb-6 md:mb-8 lg:mb-12 leading-relaxed break-words max-w-4xl mx-auto break-words">
+                       Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies
                      </p>
                    </div>
                    
@@ -142,36 +141,34 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                        href="https://verdratech.github.io/Verdra-Site/" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="inline-flex items-center justify-center gap-4 bg-slate-700 hover:bg-slate-800 text-white px-16 py-6 rounded-md font-semibold transition-all duration-200 ease-out text-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 min-w-[300px]"
-                       style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                       className="group relative bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 px-8 py-3 sm:px-12 md:px-6 md:px-12 lg:px-16 sm:py-4 md:py-5 rounded-2xl sm:rounded-3xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer border border-gray-200/50 hover:border-gray-300/70 inline-flex items-center gap-2 sm:gap-3 md:gap-4 text-lg sm:text-xl md:text-2xl lg:text-3xl"
                      >
-                       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                       <span className="relative z-10">Check it out</span>
+                       <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                        </svg>
-                       <span>Check it out</span>
                      </a>
                    </div>
                  </div>
                </div>
 
                              {/* PrizeSole Project */}
-               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden"
+               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
                       border: '1px solid rgba(100, 116, 139, 0.2)'
                     }}>
                  
-                 <div className="relative flex flex-col items-center text-center space-y-8">
+                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
                    {/* Title and Description */}
                    <div className="w-full">
-                     <h2 className="text-9xl font-extrabold text-stone-800 mb-8 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       PrizeSole
+                     <h2 className="break-words text-9xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                       <span className="break-words text-2xl md:text-3xl lg:text-4xl sm:text-3xl md:text-4xl lg:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">PrizeSole</span>
                      </h2>
-                     <p className="text-4xl text-purple-700 mb-10 font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>B2B eCommerce Platform</p>
-                     <p className="text-2xl text-stone-700 mb-12 leading-relaxed max-w-4xl mx-auto" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       Full-stack B2B eCommerce platform built for scale. Features real-time inventory management, 
-                       automated order processing, and advanced analytics dashboard.
+                     <p className="break-words text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-purple-700 mb-10 font-semibold">B2B eCommerce Platform</p>
+                     <p className="break-words text-xl sm:text-2xl md:text-3xl lg:text-4xl text-stone-700 mb-6 md:mb-8 lg:mb-12 leading-relaxed break-words max-w-4xl mx-auto break-words">
+                       B2B eCommerce sneaker sweepstakes platform
                      </p>
                    </div>
                    
@@ -188,8 +185,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
 
                              {/* Current Work Section */}
                <div className="grid md:grid-cols-2 gap-12">
-                 {/* Sneaker IMS */}
-                 <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-10 overflow-hidden"
+                 <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-10 overflow-hidden break-words"
                       style={{
                         borderRadius: '2rem',
                         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
@@ -199,18 +195,18 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    <div className="relative">
                      <div className="flex items-center gap-4 mb-8">
                        <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50"></div>
-                       <span className="text-lg font-bold text-yellow-600 tracking-wider" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>BUILDING</span>
+                       <span className="break-words text-xl font-bold text-yellow-600 tracking-wider">BUILDING</span>
                      </div>
-                     <h3 className="text-5xl font-extrabold text-stone-800 mb-8 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Sneaker IMS</h3>
-                     <p className="text-stone-700 mb-8 text-2xl leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       Advanced inventory management system for sneaker retailers with ML-powered authentication, 
-                       real-time market analytics, and automated restocking algorithms.
+                     <h3 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">Grey Market Sneaker Marketplace</h3>
+                     <p className="break-words text-stone-700 mb-8 text-xl sm:text-2xl md:text-3xl leading-relaxed break-words">
+                     A sneaker inventory management platform featuring agent-driven workflows, automated SKU detection, 
+                     and real-time access to available wholesale inventory.
                      </p>
                    </div>
                  </div>
 
                  {/* Scope 2 Emissions Research */}
-                 <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-10 overflow-hidden"
+                 <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-10 overflow-hidden break-words"
                       style={{
                         borderRadius: '2rem',
                         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
@@ -220,40 +216,40 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    <div className="relative">
                      <div className="flex items-center gap-4 mb-8">
                        <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50"></div>
-                       <span className="text-lg font-bold text-yellow-600 tracking-wider" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>RESEARCHING</span>
+                       <span className="break-words text-xl font-bold text-yellow-600 tracking-wider">RESEARCHING</span>
                      </div>
-                     <h3 className="text-5xl font-extrabold text-stone-800 mb-8 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Scope 2 Emissions</h3>
-                     <p className="text-stone-700 mb-8 text-2xl leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                       Deep research into carbon footprint reduction through optimized data infrastructure, 
-                       exploring energy-efficient algorithms and sustainable computing practices.
+                     <h3 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">Cloud spend tied to carbon footprint</h3>
+                     <p className="break-words text-stone-700 mb-8 text-xl sm:text-2xl md:text-3xl leading-relaxed break-words">
+                       Also am curious about greener CI/CD pipelines and carbon-aware job scheduling for training 
+                       ML models 
                      </p>
                    </div>
                  </div>
                </div>
 
                              {/* GitHub CTA */}
-               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-8 text-center overflow-hidden"
+               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-8 text-center break-words overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
                       border: '1px solid rgba(100, 116, 139, 0.2)'
                     }}>
-                 <p className="text-3xl font-bold text-stone-800 mb-8" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                   Check out what I'm working on:
+                 <p className="break-words text-3xl sm:text-4xl font-bold text-stone-800 mb-8">
+                   Check out what else I'm working on:
                  </p>
                  <a 
                    href="https://github.com/isaacsun0813" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="inline-flex items-center justify-center gap-4 bg-black hover:bg-stone-800 text-white px-16 py-6 rounded-xl font-bold transition-all duration-300 hover:scale-105 text-2xl shadow-2xl min-w-[400px]"
-                   style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                   className="group relative bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 px-8 py-3 sm:px-12 md:px-6 md:px-12 lg:px-16 sm:py-4 md:py-5 rounded-2xl sm:rounded-3xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer border border-gray-200/50 hover:border-gray-300/70 inline-flex items-center gap-2 sm:gap-3 md:gap-4 text-lg sm:text-xl md:text-2xl lg:text-3xl"
                  >
-                   <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                   <span className="relative z-10">View GitHub</span>
+                   <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:translate-x-1 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24">
+                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.237 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.30 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                    </svg>
-                   <span>View GitHub</span>
                  </a>
                </div>
+
 
             </div>
           </div>

@@ -23,6 +23,23 @@ export default function LocationPrompt({
   onSpacePressed
 }: LocationPromptProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isSmallScreen = window.innerWidth <= 768
+      
+      setIsMobile(isMobileDevice || (isTouchDevice && isSmallScreen))
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     console.log('🎪 LocationPrompt useEffect - landmark:', landmark)
@@ -43,79 +60,80 @@ export default function LocationPrompt({
       }
     }
 
-    if (isVisible) {
+    if (isVisible && !isMobile) {
       window.addEventListener('keydown', handleKeyPress)
     }
 
     return () => {
       window.removeEventListener('keydown', handleKeyPress)
     }
-  }, [isVisible, landmark, onSpacePressed])
+  }, [isVisible, landmark, onSpacePressed, isMobile])
 
-  if (!isVisible || !landmark) return null
-
-  // Dynamic styling based on subtitle - softer colors with retro font
-  const getPromptStyling = (subtitle: string) => {
-    switch (subtitle) {
-      case "About Me":
-        return {
-          bg: "bg-blue-100",
-          text: "text-blue-800",
-          spaceButton: "bg-gradient-to-r from-blue-400 to-blue-600",
-          emoji: "🌊"
-        }
-      case "Ambition":
-        return {
-          bg: "bg-gray-100",
-          text: "text-gray-800",
-          spaceButton: "bg-gradient-to-r from-gray-400 to-gray-600",
-          emoji: "🚀"
-        }
-      case "Home":
-        return {
-          bg: "bg-orange-100",
-          text: "text-orange-800",
-          spaceButton: "bg-gradient-to-r from-orange-400 to-orange-600",
-          emoji: "🏠"
-        }
-      case "Vibes":
-        return {
-          bg: "bg-pink-100",
-          text: "text-pink-800",
-          spaceButton: "bg-gradient-to-r from-pink-400 to-pink-600",
-          emoji: "✨"
-        }
-      case "Adventure":
-        return {
-          bg: "bg-green-100",
-          text: "text-green-800",
-          spaceButton: "bg-gradient-to-r from-green-400 to-green-600",
-          emoji: "🗻"
-        }
-      case "Career":
-        return {
-          bg: "bg-purple-100",
-          text: "text-purple-800",
-          spaceButton: "bg-gradient-to-r from-purple-400 to-purple-600",
-          emoji: "💼"
-        }
-      default:
-        return {
-          bg: "bg-gray-100",
-          text: "text-gray-800",
-          spaceButton: "bg-gradient-to-r from-gray-400 to-gray-600",
-          emoji: "📍"
-        }
+  // Handle tap/click on mobile
+  const handleTap = () => {
+    if (landmark) {
+      onSpacePressed()
     }
   }
 
-  const styling = getPromptStyling(landmark.subtitle)
+  if (!isVisible || !landmark) return null
+
+  // Define styling based on landmark
+  const styling = {
+    'About Me': {
+      bg: 'bg-sky-100',
+      text: 'text-sky-800',
+      emoji: '🏡',
+      spaceButton: 'bg-gradient-to-r from-sky-400 to-blue-500'
+    },
+    'Career': {
+      bg: 'bg-purple-100',
+      text: 'text-purple-800',
+      emoji: '💼',
+      spaceButton: 'bg-gradient-to-r from-purple-400 to-purple-600'
+    },
+    'Ambition': {
+      bg: 'bg-gray-100',
+      text: 'text-gray-800',
+      emoji: '🚀',
+      spaceButton: 'bg-gradient-to-r from-gray-400 to-gray-600'
+    },
+    'Home': {
+      bg: 'bg-orange-100',
+      text: 'text-orange-800',
+      emoji: '🏠',
+      spaceButton: 'bg-gradient-to-r from-orange-400 to-orange-600'
+    },
+    'Inspiration': {
+      bg: 'bg-amber-100',
+      text: 'text-amber-800',
+      emoji: '·⁀ ༄.°✈ ₊⭒˚｡⋆',
+      spaceButton: 'bg-gradient-to-r from-amber-400 to-orange-500'
+    },
+    'Adventure': {
+      bg: 'bg-green-100',
+      text: 'text-green-800',
+      emoji: '🏔️',
+      spaceButton: 'bg-gradient-to-r from-green-400 to-green-600'
+    }
+  }[landmark.subtitle] || {
+    bg: 'bg-gray-100',
+    text: 'text-gray-800',
+    emoji: '📍',
+    spaceButton: 'bg-gradient-to-r from-gray-400 to-gray-600'
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8 z-50 pointer-events-none">
-      <div className={`${styling.bg} ${styling.text} px-8 py-6 rounded-2xl shadow-xl backdrop-blur-sm border-2 border-white/60`}>
-        <div className="text-center">
-          <div className="text-3xl mb-3">{styling.emoji}</div>
+      <div 
+        className={`${styling.bg} ${styling.text} px-8 py-6 rounded-2xl shadow-xl backdrop-blur-sm border-2 border-white/60 ${
+          isMobile ? 'pointer-events-auto cursor-pointer active:scale-95 transition-transform' : ''
+        }`}
+        onClick={isMobile ? handleTap : undefined}
+        onTouchStart={isMobile ? handleTap : undefined}
+      >
+        <div className="break-words text-center break-words">
+          <div className="break-words text-3xl mb-3">{styling.emoji}</div>
           <h2 className={`text-2xl font-bold mb-2 ${styling.text} font-mono uppercase tracking-wider`}>
             {landmark.displayName}
           </h2>
@@ -123,11 +141,21 @@ export default function LocationPrompt({
             {landmark.subtitle}
           </h3>
           <div className="flex items-center justify-center gap-3">
-            <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>Press</span>
-            <kbd className={`${styling.spaceButton} text-white px-4 py-2 rounded-lg font-mono font-bold text-base shadow-lg animate-pulse`}>
-              SPACE
-            </kbd>
-            <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>to Explore</span>
+            {isMobile ? (
+              <>
+                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>
+                  Tap to Explore
+                </span>
+              </>
+            ) : (
+              <>
+                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>Press</span>
+                <kbd className={`${styling.spaceButton} text-white px-4 py-2 rounded-lg font-mono font-bold text-base shadow-lg animate-pulse`}>
+                  SPACE
+                </kbd>
+                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>to Explore</span>
+              </>
+            )}
           </div>
         </div>
       </div>

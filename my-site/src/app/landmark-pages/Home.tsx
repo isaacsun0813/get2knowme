@@ -71,7 +71,7 @@ export default function Home({ isOpen, onClose }: HomeProps) {
         }`}
       >
         {/* Main content container with consistent styling */}
-        <div className="relative bg-gradient-to-br from-blue-50/95 via-sky-50/95 to-white/95 backdrop-blur-md overflow-hidden"
+        <div className="relative bg-gradient-to-br from-blue-50/95 via-sky-50/95 to-white/95 backdrop-blur-md overflow-hidden break-words"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
@@ -81,7 +81,7 @@ export default function Home({ isOpen, onClose }: HomeProps) {
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-6 right-6 z-20 w-12 h-12 rounded-full 
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
                        bg-stone-100/80 hover:bg-white/90 transition-all duration-300 
                        flex items-center justify-center text-stone-600 hover:text-stone-800
                        shadow-lg hover:shadow-xl border border-stone-200/50 hover:scale-110"
@@ -92,41 +92,36 @@ export default function Home({ isOpen, onClose }: HomeProps) {
           </button>
 
           {/* Content area */}
-          <div className="p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="text-center mb-16">
-              <h1 className="text-[8rem] lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 mb-12 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+            <div className="break-words text-center break-words mb-16">
+              <h1 className="break-words text-5xl sm:text-7xl md:text-[8rem] lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 mb-6 md:mb-8 lg:mb-12 tracking-tight">
                 🏡
               </h1>
-              <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-12"></div>
-              <p className="text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+              <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-6 md:mb-8 lg:mb-12"></div>
+              <p className="break-words text-2xl md:text-3xl lg:text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
                 Welcome Home
               </p>
             </div>
 
             {/* Main content */}
-            <div className="max-w-4xl mx-auto">
-              <div className="relative bg-gradient-to-br from-blue-100/70 via-sky-50/70 to-blue-100/70 p-12 text-center overflow-hidden"
+            <div className="max-w-4xl mx-auto break-words">
+              <div className="relative bg-gradient-to-br from-blue-100/70 via-sky-50/70 to-blue-100/70 p-12 text-center break-words overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
                      border: '1px solid rgba(37, 99, 235, 0.2)'
                    }}>
                 
-                <h2 className="text-6xl font-extrabold text-stone-800 mb-8 tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                <h2 className="break-words text-3xl md:text-4xl lg:text-6xl font-extrabold text-stone-800 mb-8 tracking-tight">
                   Coming Soon
                 </h2>
-                <p className="text-2xl text-stone-700 leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                <p className="break-words text-2xl text-stone-700 leading-relaxed break-words">
                   This section is currently under development. Stay tuned for updates!
                 </p>
                 
-                <div className="mt-12">
-                  <p className="text-lg text-stone-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                    Press <span className="bg-stone-200 text-stone-800 px-3 py-1 rounded-lg font-semibold">ESC</span> 
-                    or click outside to close
-                  </p>
-                </div>
+
               </div>
             </div>
 

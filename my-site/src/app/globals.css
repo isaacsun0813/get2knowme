@@ -39,3 +39,35 @@ body {
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* ---------------------------------------------
+   Global Typography Styles
+   --------------------------------------------- */
+/* Force a consistent serif font for all top-level headings and ensure it overrides any inline font declarations */
+h1,
+h2,
+h3 {
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+
+@layer base {
+  /* Page / section titles */
+  h1 {
+    @apply text-7xl md:text-8xl lg:text-9xl font-bold text-gray-800 tracking-tight;
+  }
+
+  /* Sub-headings */
+  h2 {
+    @apply text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-700 tracking-tight;
+  }
+
+  /* Tertiary headings */
+  h3 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-medium text-gray-700 tracking-tight;
+  }
+
+  /* Body copy */
+  p {
+    @apply font-sans text-xl md:text-2xl lg:text-3xl text-gray-700 leading-relaxed;
+  }
+}

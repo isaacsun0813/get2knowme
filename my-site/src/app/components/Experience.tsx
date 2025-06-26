@@ -11,8 +11,14 @@ import IntroScreen from './IntroScreen'
 import LocationPrompt, { LandmarkConfig } from './LocationPrompt'
 import LandmarkDetection, { landmarkConfig } from './LandmarkDetection'
 import FlightControls from './FlightControls'
+import MobileControls from './MobileControls'
 import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
+import MobileLandingPage from './MobileLandingPage'
+import VisitedLandmarks from './VisitedLandmarks'
+
+// 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
+const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
 
 // Update landmark config with actual components
 const updatedLandmarkConfig = landmarkConfig.map(config => ({
@@ -23,7 +29,7 @@ const updatedLandmarkConfig = landmarkConfig.map(config => ({
       case "Career": return Career
       case "Ambition": return Ambition
       case "Home": return Home
-      case "Vibes": return Vibes
+      case "Inspiration": return Vibes
       case "Adventure": return Adventure
       default: return () => null
     }
@@ -34,11 +40,49 @@ const updatedLandmarkConfig = landmarkConfig.map(config => ({
 function useZoomLevel() {
   const getZoom = () => {
     if (typeof window === 'undefined') return 1
+    
+    // Method 1: Visual viewport scale (trackpad zoom on mobile/touchpad)
     if (window.visualViewport) {
+      const viewportZoom = window.visualViewport.scale || 1
+      if (viewportZoom !== 1) {
+        console.log('📱 Trackpad/touch zoom detected:', viewportZoom)
+        return viewportZoom
+      }
+    }
+    
+    // Method 2: Browser zoom detection (Ctrl+/-)
+    // This works by comparing the screen pixel ratio with device pixel ratio
+    const browserZoom = window.devicePixelRatio || 1
+    
+    // Method 3: Alternative browser zoom detection using computed styles
+    // Create a test element to measure actual vs expected sizing
+    const testDiv = document.createElement('div')
+    testDiv.style.width = '100px'
+    testDiv.style.height = '100px'
+    testDiv.style.position = 'absolute'
+    testDiv.style.visibility = 'hidden'
+    document.body.appendChild(testDiv)
+    
+    const computedStyle = window.getComputedStyle(testDiv)
+    const actualWidth = parseFloat(computedStyle.width)
+    document.body.removeChild(testDiv)
+    
+    // Calculate zoom based on expected vs actual pixel measurements
+    const zoomFromCSS = actualWidth / 100
+    
+    console.log('🔍 Zoom detection methods:', {
+      viewportScale: window.visualViewport?.scale || 1,
+      devicePixelRatio: browserZoom,
+      cssZoom: zoomFromCSS
+    })
+    
+    // Return the zoom level that's different from 1, prioritizing viewport scale
+    if (window.visualViewport && Math.abs((window.visualViewport.scale || 1) - 1) > 0.01) {
       return window.visualViewport.scale || 1
     }
-    // Fallback method
-    return Math.round((window.outerWidth / window.innerWidth) * 100) / 100 || 1
+    
+    // Fallback to CSS-based detection for browser zoom
+    return zoomFromCSS
   }
 
   const [zoomLevel, setZoomLevel] = useState(getZoom())
@@ -46,17 +90,50 @@ function useZoomLevel() {
   useEffect(() => {
     const updateZoom = () => {
       const z = getZoom()
+      console.log('🔄 Zoom updated to:', z)
       setZoomLevel(z)
     }
 
-    // Listen for viewport scale changes (modern browsers)
-    window.visualViewport?.addEventListener('resize', updateZoom)
-    // Fallback to window resize
+    // Listen for viewport scale changes (trackpad zoom)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateZoom)
+      window.visualViewport.addEventListener('scroll', updateZoom)
+    }
+    
+    // Listen for window resize (browser zoom)
     window.addEventListener('resize', updateZoom)
+    
+    // Listen for keyboard zoom shortcuts (Ctrl+/-)
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '=' || e.key === '+' || e.key === '-' || e.key === '0') {
+          console.log('🎹 Zoom shortcut detected:', e.key)
+          // Small delay to let browser apply zoom before measuring
+          setTimeout(updateZoom, 100)
+        }
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeydown)
+    
+    // Also listen for wheel events with Ctrl held (zoom via mouse wheel)
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        console.log('🖱️ Ctrl+wheel zoom detected')
+        setTimeout(updateZoom, 100)
+      }
+    }
+    
+    window.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
-      window.visualViewport?.removeEventListener('resize', updateZoom)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateZoom)
+        window.visualViewport.removeEventListener('scroll', updateZoom)
+      }
       window.removeEventListener('resize', updateZoom)
+      window.removeEventListener('keydown', handleKeydown)
+      window.removeEventListener('wheel', handleWheel)
     }
   }, [])
 
@@ -71,6 +148,10 @@ export default function Experience() {
   const [showSpacebarPrompt, setShowSpacebarPrompt] = useState<LandmarkConfig | null>(null)
   const [showPopup, setShowPopup] = useState<LandmarkConfig | null>(null)
   const [showIntro, setShowIntro] = useState(true)
+  const [bypassMobileLanding, setBypassMobileLanding] = useState(false)
+  
+  // Track visited landmarks
+  const [visitedLandmarks, setVisitedLandmarks] = useState<Set<string>>(new Set())
   
   // Detect browser zoom level
   const zoomLevel = useZoomLevel()
@@ -100,6 +181,16 @@ export default function Experience() {
     console.log('🚀 Space pressed, opening popup for:', currentLandmark?.displayName)
     setShowSpacebarPrompt(null)
     setShowPopup(currentLandmark)
+    
+    // Mark landmark as visited
+    if (currentLandmark) {
+      setVisitedLandmarks(prev => {
+        const newSet = new Set(prev)
+        newSet.add(currentLandmark.name)
+        console.log('📍 Landmark visited:', currentLandmark.displayName, 'Total visited:', newSet.size)
+        return newSet
+      })
+    }
   }
 
   const handleClosePrompt = () => {
@@ -183,6 +274,15 @@ export default function Experience() {
       {/* Instructions overlay */}
       <FlightControls />
       
+      {/* Mobile joystick controls */}
+      <MobileControls disabled={!!showPopup} />
+      
+      {/* Visited landmarks tracker - desktop only */}
+      <VisitedLandmarks 
+        visitedLandmarks={visitedLandmarks}
+        totalLandmarks={landmarkConfig.length}
+      />
+      
       {/* Spacebar prompt */}
       <LocationPrompt 
         landmark={showSpacebarPrompt}
@@ -227,6 +327,13 @@ export default function Experience() {
 
       {/* Show intro screen on top when needed */}
       {showIntro && <IntroScreen onEnter={handleEnterWorld} />}
+      
+      {/* Mobile landing page - shows on mobile devices */}
+      {SHOW_MOBILE_LANDING && !bypassMobileLanding && (
+        <MobileLandingPage 
+          onProceedAnyway={() => setBypassMobileLanding(true)}
+        />
+      )}
     </>
   )
 }

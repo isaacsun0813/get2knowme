@@ -26,7 +26,7 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden break-words">
       {/* Static gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-blue-100 to-blue-50" />
       
@@ -65,26 +65,37 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
       </div>
 
       {/* Main content */}
-      <div className={`absolute inset-0 flex flex-col items-center justify-center text-center transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-[0.3]' : ''}`}>
-        <div className="bg-white/15 backdrop-blur-xl p-24 rounded-[5rem] border border-white/20 shadow-2xl w-[80%] max-w-7xl mx-4">
-          <div className="flex items-center justify-center gap-8 mb-16">
-            <h1 className="text-[10rem] md:text-[16rem] lg:text-[20rem] font-bold text-gray-800 font-serif tracking-tight">
+      <div className={`absolute inset-0 flex flex-col items-center justify-center text-center break-words transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-[0.3]' : ''}`}>
+        <div className="bg-white/15 backdrop-blur-xl p-8 sm:p-12 md:p-16 lg:p-24 rounded-3xl sm:rounded-[4rem] lg:rounded-[5rem] border border-white/20 shadow-2xl w-[90%] sm:w-[85%] md:w-[80%] max-w-4xl lg:max-w-7xl mx-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-6 md:mb-8 lg:mb-12 md:mb-16">
+            <h1 className="break-words text-6xl sm:text-8xl md:text-[10rem] lg:text-[16rem] xl:text-[20rem]">
               Hello
             </h1>
-            <span className="text-[8rem] md:text-[12rem] lg:text-[14rem] animate-wave-slow">👋</span>
+            <span className="break-words text-3xl sm:text-5xl md:text-[6rem] lg:text-[8rem] xl:text-[10rem] animate-wave-slow">👋</span>
           </div>
-          <p className="text-6xl md:text-7xl lg:text-8xl text-gray-700 mb-24 font-medium tracking-normal font-sans">
-            Welcome to Isaac's World
+          <p className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl mb-12 sm:mb-16 md:mb-20 lg:mb-24 leading-tight">
+            <span className="inline-block">Welcome to Isaac's</span>
+            <span className="inline-block ml-2">World</span>
           </p>
           
-          <div>
+          <div className="relative">
+            {/* Wind animation elements */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="wind-line wind-1"></div>
+              <div className="wind-line wind-2"></div>
+              <div className="wind-line wind-3"></div>
+              <div className="wind-line wind-4"></div>
+              <div className="wind-line wind-5"></div>
+              <div className="wind-line wind-6"></div>
+            </div>
+            
             <button
               onClick={handleEnter}
-              className="group relative bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 px-16 py-5 rounded-3xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer border border-gray-200/50 hover:border-gray-300/70"
+              className="group relative bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 px-8 py-3 sm:px-12 md:px-6 md:px-12 lg:px-16 sm:py-4 md:py-5 rounded-2xl sm:rounded-3xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer border border-gray-200/50 hover:border-gray-300/70"
             >
-              <span className="relative z-10 flex items-center gap-4 font-sans tracking-normal text-3xl md:text-4xl lg:text-5xl">
+              <span className="relative z-10 flex items-center gap-2 sm:gap-3 md:gap-4 tracking-normal text-lg sm:text-xl md:text-2xl lg:text-3xl">
                 Take Flight
-                <svg className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
@@ -169,6 +180,109 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
         .animate-cloud-medium { animation: cloud-medium 13s infinite linear; }
         .animate-cloud-slow { animation: cloud-slow 18s infinite linear; }
         .animate-wave-slow { animation: wave-slow 4s ease-in-out infinite; }
+
+        /* Wind animation around the button */
+        .wind-line {
+          position: absolute;
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+          border-radius: 2px;
+          opacity: 0;
+        }
+
+        .wind-1 {
+          width: 40px;
+          height: 2px;
+          top: 20%;
+          left: -60px;
+          animation: windFlow1 3s infinite ease-in-out;
+        }
+
+        .wind-2 {
+          width: 60px;
+          height: 1px;
+          top: 35%;
+          left: -80px;
+          animation: windFlow2 3.5s infinite ease-in-out 0.5s;
+        }
+
+        .wind-3 {
+          width: 50px;
+          height: 2px;
+          top: 65%;
+          left: -70px;
+          animation: windFlow3 4s infinite ease-in-out 1s;
+        }
+
+        .wind-4 {
+          width: 35px;
+          height: 1px;
+          top: 80%;
+          left: -50px;
+          animation: windFlow4 3.2s infinite ease-in-out 1.5s;
+        }
+
+        .wind-5 {
+          width: 45px;
+          height: 2px;
+          top: 15%;
+          right: -70px;
+          animation: windFlowReverse1 3.8s infinite ease-in-out 0.8s;
+        }
+
+        .wind-6 {
+          width: 55px;
+          height: 1px;
+          top: 70%;
+          right: -80px;
+          animation: windFlowReverse2 3.3s infinite ease-in-out 2s;
+        }
+
+        @keyframes windFlow1 {
+          0% { transform: translateX(-20px); opacity: 0; }
+          30% { opacity: 0.8; }
+          70% { opacity: 0.8; }
+          100% { transform: translateX(200px); opacity: 0; }
+        }
+
+        @keyframes windFlow2 {
+          0% { transform: translateX(-30px); opacity: 0; }
+          25% { opacity: 0.6; }
+          75% { opacity: 0.6; }
+          100% { transform: translateX(250px); opacity: 0; }
+        }
+
+        @keyframes windFlow3 {
+          0% { transform: translateX(-25px); opacity: 0; }
+          35% { opacity: 0.7; }
+          65% { opacity: 0.7; }
+          100% { transform: translateX(220px); opacity: 0; }
+        }
+
+        @keyframes windFlow4 {
+          0% { transform: translateX(-15px); opacity: 0; }
+          40% { opacity: 0.5; }
+          60% { opacity: 0.5; }
+          100% { transform: translateX(180px); opacity: 0; }
+        }
+
+        @keyframes windFlowReverse1 {
+          0% { transform: translateX(20px); opacity: 0; }
+          30% { opacity: 0.6; }
+          70% { opacity: 0.6; }
+          100% { transform: translateX(-200px); opacity: 0; }
+        }
+
+        @keyframes windFlowReverse2 {
+          0% { transform: translateX(25px); opacity: 0; }
+          35% { opacity: 0.7; }
+          65% { opacity: 0.7; }
+          100% { transform: translateX(-220px); opacity: 0; }
+        }
+
+        /* Enhanced button hover effects with wind interaction */
+        .group:hover .wind-line {
+          animation-duration: 1.5s;
+        }
       `}</style>
     </div>
   )
