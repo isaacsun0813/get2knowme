@@ -85,26 +85,20 @@ export default function LocationPrompt({
     'About Me': {
       bg: 'bg-sky-100',
       text: 'text-sky-800',
-      emoji: '🏡',
+      emoji: '🌞🏡',
       spaceButton: 'bg-gradient-to-r from-sky-400 to-blue-500'
     },
     'Career': {
       bg: 'bg-purple-100',
       text: 'text-purple-800',
-      emoji: '💼',
+      emoji: '💼🌱',
       spaceButton: 'bg-gradient-to-r from-purple-400 to-purple-600'
     },
     'Ambition': {
       bg: 'bg-gray-100',
       text: 'text-gray-800',
-      emoji: '🚀',
+      emoji: '🌉🚀💻',
       spaceButton: 'bg-gradient-to-r from-gray-400 to-gray-600'
-    },
-    'Home': {
-      bg: 'bg-orange-100',
-      text: 'text-orange-800',
-      emoji: '🏠',
-      spaceButton: 'bg-gradient-to-r from-orange-400 to-orange-600'
     },
     'Inspiration': {
       bg: 'bg-amber-100',
@@ -115,7 +109,7 @@ export default function LocationPrompt({
     'Adventure': {
       bg: 'bg-green-100',
       text: 'text-green-800',
-      emoji: '🏔️',
+      emoji: '🏔️🛶🗺️',
       spaceButton: 'bg-gradient-to-r from-green-400 to-green-600'
     }
   }[landmark.subtitle] || {
