@@ -5,7 +5,13 @@ import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Group | null> }) {
+export default function Plane({ 
+  planeRef, 
+  controlsDisabled = false 
+}: { 
+  planeRef: React.RefObject<THREE.Group | null>
+  controlsDisabled?: boolean
+}) {
   const { scene, animations } = useGLTF('/models/newPlane.glb')
   const group = useRef<THREE.Group>(null)
   
@@ -22,7 +28,8 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
   const dragFactor = 2.5
 
   // Flight state - using quaternion-based orientation instead of euler angles
-  const position = useRef(new THREE.Vector3(0, earthRadius + flightAltitude, 0))
+  // Start the plane over the Pacific Ocean for a better initial view
+  const position = useRef(new THREE.Vector3(-15, earthRadius + flightAltitude, 15))
   const speed = useRef(0)
   const orientation = useRef(new THREE.Quaternion()) // Store orientation directly as quaternion
   
@@ -88,17 +95,25 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
 
     // 1. HANDLE SPEED CONTROL
     let isThrottling = false
-    if (keysPressed.current['KeyW']) {
-      isThrottling = true
-      speed.current += acceleration * delta
-    }
-    if (keysPressed.current['KeyS']) {
-      speed.current -= acceleration * delta
-    }
+    
+    // Skip controls if disabled (e.g., when popup is open)
+    if (controlsDisabled) {
+      // Apply stronger drag to gradually slow down the plane
+      speed.current -= dragFactor * speed.current * delta * 2
+    } else {
+      if (keysPressed.current['KeyW']) {
+        isThrottling = true
+        speed.current += acceleration * delta
+      }
+      if (keysPressed.current['KeyS']) {
+        speed.current -= acceleration * delta
+      }
 
-    // Apply drag
-    const currentDrag = isThrottling ? dragFactor * 0.4 : dragFactor * 1.2
-    speed.current -= currentDrag * speed.current * delta
+      // Apply normal drag
+      const currentDrag = isThrottling ? dragFactor * 0.4 : dragFactor * 1.2
+      speed.current -= currentDrag * speed.current * delta
+    }
+    
     speed.current = THREE.MathUtils.clamp(speed.current, 0, maxSpeed)
     
     if (speed.current < 0.3) speed.current = 0
@@ -140,32 +155,35 @@ export default function Plane({ planeRef }: { planeRef: React.RefObject<THREE.Gr
     let turnInput = 0
     let pitchInput = 0
 
-    // Apply yaw (heading) rotations around surface normal WITH BANKING
-    if (keysPressed.current['KeyA'] || keysPressed.current['ArrowLeft']) {
-      const yawRotation = new THREE.Quaternion()
-      yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
-      orientation.current.premultiply(yawRotation)
-      turnInput = 1 // Left turn
-    }
-    if (keysPressed.current['KeyD'] || keysPressed.current['ArrowRight']) {
-      const yawRotation = new THREE.Quaternion()
-      yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
-      orientation.current.premultiply(yawRotation)
-      turnInput = -1 // Right turn
-    }
+    // Only apply rotations if controls are not disabled
+    if (!controlsDisabled) {
+      // Apply yaw (heading) rotations around surface normal WITH BANKING
+      if (keysPressed.current['KeyA'] || keysPressed.current['ArrowLeft']) {
+        const yawRotation = new THREE.Quaternion()
+        yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
+        orientation.current.premultiply(yawRotation)
+        turnInput = 1 // Left turn
+      }
+      if (keysPressed.current['KeyD'] || keysPressed.current['ArrowRight']) {
+        const yawRotation = new THREE.Quaternion()
+        yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
+        orientation.current.premultiply(yawRotation)
+        turnInput = -1 // Right turn
+      }
 
-    // Apply pitch rotations around current right vector
-    if (keysPressed.current['ArrowUp']) {
-      const pitchRotation = new THREE.Quaternion()
-      pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
-      orientation.current.multiply(pitchRotation)
-      pitchInput = -1 // Nose down
-    }
-    if (keysPressed.current['ArrowDown']) {
-      const pitchRotation = new THREE.Quaternion()
-      pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
-      orientation.current.multiply(pitchRotation)
-      pitchInput = 1 // Nose up
+      // Apply pitch rotations around current right vector
+      if (keysPressed.current['ArrowUp']) {
+        const pitchRotation = new THREE.Quaternion()
+        pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
+        orientation.current.multiply(pitchRotation)
+        pitchInput = -1 // Nose down
+      }
+      if (keysPressed.current['ArrowDown']) {
+        const pitchRotation = new THREE.Quaternion()
+        pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
+        orientation.current.multiply(pitchRotation)
+        pitchInput = 1 // Nose up
+      }
     }
 
     // REALISTIC BANKING DURING TURNS

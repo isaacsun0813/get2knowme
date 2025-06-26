@@ -1,0 +1,6 @@
+export { default as AboutMe } from './AboutMe'
+export { default as Career } from './Career'
+export { default as Ambition } from './Ambition'
+export { default as Home } from './Home'
+export { default as Vibes } from './Vibes'
+export { default as Adventure } from './Adventure' 
