@@ -11,6 +11,19 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldRender, setShouldRender] = useState(false)
 
+  // Profile image to preload
+  const profileImage = '/photos/profilePic.jpeg'
+
+  // Preload profile image in the background
+  useEffect(() => {
+    const img = new Image()
+    // Image loads in background - no need to track state
+    img.onerror = () => {
+      console.warn(`Failed to preload profile image: ${profileImage}`)
+    }
+    img.src = profileImage
+  }, [])
+
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

@@ -11,6 +11,29 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
   const [shouldRender, setShouldRender] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
+  // Project images to preload
+  const projectImages = [
+    '/photos/projects/Verdra.png',
+    '/photos/projects/PrizeSole.png'
+  ]
+
+  // Preload all project images in the background
+  useEffect(() => {
+    const preloadImages = () => {
+      projectImages.forEach((imageSrc) => {
+        const img = new Image()
+        // Image loads in background - no need to track state
+        img.onerror = () => {
+          console.warn(`Failed to preload project image: ${imageSrc}`)
+        }
+        img.src = imageSrc
+      })
+    }
+
+    // Start preloading immediately when component mounts
+    preloadImages()
+  }, [projectImages])
+
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true)

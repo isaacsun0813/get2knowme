@@ -12,6 +12,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
   const [shouldRender, setShouldRender] = useState(false)
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set())
 
   const adventurePhotos = [
     { src: '/photos/adventure/adventure1.jpg', caption: 'Ticino' },
@@ -32,6 +33,25 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     { src: '/photos/adventure/adventure16.jpg', caption: 'Interlaken' },
     { src: '/photos/adventure/adventure17.jpg', caption: 'Stoos' },
   ]
+
+  // Preload all images in the background
+  useEffect(() => {
+    const preloadImages = () => {
+      adventurePhotos.forEach((photo) => {
+        const img = new Image()
+        img.onload = () => {
+          setPreloadedImages(prev => new Set(prev).add(photo.src))
+        }
+        img.onerror = () => {
+          console.warn(`Failed to preload image: ${photo.src}`)
+        }
+        img.src = photo.src
+      })
+    }
+
+    // Start preloading immediately when component mounts
+    preloadImages()
+  }, [adventurePhotos])
 
   // Handle escape key to close
   useEffect(() => {
@@ -73,8 +93,14 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
 
   // Reset image loaded state when photo changes
   useEffect(() => {
-    setImageLoaded(false)
-  }, [currentPhotoIndex])
+    const currentPhotoSrc = adventurePhotos[currentPhotoIndex].src
+    // If image is already preloaded, mark it as loaded immediately
+    if (preloadedImages.has(currentPhotoSrc)) {
+      setImageLoaded(true)
+    } else {
+      setImageLoaded(false)
+    }
+  }, [currentPhotoIndex, preloadedImages, adventurePhotos])
 
   const handleClose = () => {
     setIsAnimating(false)
@@ -200,7 +226,12 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100 z-10">
                          <div className="break-words text-center break-words">
                            <span className="break-words text-3xl md:text-4xl lg:text-6xl mb-4 block">📸</span>
-                           <p className="break-words text-gray-600 text-xl md:text-2xl lg:text-3xl">Loading Zurich photos...</p>
+                           <p className="break-words text-gray-600 text-xl md:text-2xl lg:text-3xl">
+                             {preloadedImages.size === 0 ? 'Loading photos...' : 
+                              preloadedImages.size < adventurePhotos.length ? 
+                              `Loading photos... (${preloadedImages.size}/${adventurePhotos.length})` :
+                              'Loading current photo...'}
+                           </p>
                            <p className="break-words text-gray-600 font-mono text-lg">/photos/adventure/</p>
                          </div>
                        </div>
