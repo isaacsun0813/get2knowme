@@ -181,7 +181,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
           <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="break-words text-center break-words mb-6 md:mb-8 lg:mb-12">
+            <div className="break-words text-center break-words mb-8">
               <div className="flex justify-center mb-4">
                 <Mountain size={80} style={{ color: 'var(--color-earth-green)' }} />
               </div>
@@ -190,26 +190,22 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
             </div>
 
             {/* Story Section */}
-            <div className="max-w-6xl mx-auto mb-6 md:mb-8 lg:mb-12">
-              <div className="relative theme-adventure theme-card p-10 overflow-hidden break-words"
+            <div className="max-w-6xl mx-auto mb-8">
+              <div className="relative bg-gradient-to-r from-green-50/60 to-transparent p-6 border-l-4 border-green-400"
                    style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
+                     borderRadius: '0 1rem 1rem 0'
                    }}>
                 
-                <div className="break-words text-center break-words relative z-10">
-                  
-                  <div className="break-words text-black leading-relaxed break-words">
-                    <p className="break-words text-lg md:text-xl lg:text-2xl font-medium">
-                      I&apos;m a nature guy. Check out some of my favorite places!
-                    </p>
-                  </div>
+                <div className="text-left">
+                  <p className="text-2xl font-medium text-stone-700 italic">
+                    I&apos;m a nature guy. Check out some of my favorite places!
+                  </p>
                 </div>
               </div>
             </div>
 
-                        {/* Photo Collage Section - Dominating images */}
-            <div className="max-w-7xl mx-auto mb-6 md:mb-8 lg:mb-12">
+            {/* Photo Collage Section - Dominating images */}
+            <div className="max-w-7xl mx-auto mb-8">
               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-3 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
@@ -224,8 +220,8 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                      {!imageLoaded && (
                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100 z-10">
                          <div className="break-words text-center break-words">
-                           <span className="break-words text-3xl md:text-4xl lg:text-6xl mb-4 block">📸</span>
-                           <p className="break-words text-gray-600 text-xl md:text-2xl lg:text-3xl">
+                           <span className="break-words text-5xl mb-4 block">📸</span>
+                           <p className="break-words text-gray-600 text-2xl">
                              {preloadedImages.size === 0 ? 'Loading photos...' : 
                               preloadedImages.size < adventurePhotos.length ? 
                               `Loading photos... (${preloadedImages.size}/${adventurePhotos.length})` :
@@ -274,26 +270,32 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
 
                 </div>
 
-                {/* Photo Caption - Below image, center aligned */}
-                <div className="text-center mt-4 mb-6">
-                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-medium text-stone-700">
-                    {adventurePhotos[currentPhotoIndex].caption}
-                  </h3>
-                </div>
-
-                {/* Photo Dots Navigation */}
-                <div className="flex justify-center mt-6 gap-2 flex-wrap">
-                  {adventurePhotos.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => goToPhoto(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === currentPhotoIndex 
-                          ? 'bg-green-600 scale-125' 
-                          : 'bg-gray-300 hover:bg-gray-400'
-                      }`}
-                    />
-                  ))}
+                {/* Photo Gallery Section */}
+                <div className="mt-8">
+                  <div className="relative theme-adventure theme-card px-8 py-4 mx-auto max-w-2xl"
+                       style={{
+                         borderRadius: '1.5rem',
+                         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 25px rgba(0, 0, 0, 0.08)'
+                       }}>
+                    <h3 className="text-3xl font-medium text-stone-700 text-center">
+                      {adventurePhotos[currentPhotoIndex].caption}
+                    </h3>
+                  </div>
+                  
+                  {/* Photo navigation dots */}
+                  <div className="flex justify-center gap-3 mt-6 mb-8">
+                    {adventurePhotos.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToPhoto(index)}
+                        className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                          index === currentPhotoIndex
+                            ? 'bg-green-500 scale-125'
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

@@ -109,17 +109,19 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
-                <h2 className="break-words text-3xl md:text-4xl lg:text-6xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                <h2 className="break-words text-3xl font-extrabold text-stone-800 mb-8 tracking-tight">
                   I wanted to fly.
                 </h2>
                 
-                <div className="break-words text-lg md:text-xl lg:text-2xl text-black leading-relaxed break-words space-y-6">
+                <div className="break-words text-xl text-black leading-relaxed break-words space-y-6">
                   <p>
                   That was my childhood dream. I would always think about it. I made every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off way too many tall structures chasing that dream. I still remember when my cousin let me fly his drone before school in 2nd grade, right before I crashed it into the ground.                  </p>
                   <div className="my-8 flex justify-center">
                     <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
                   </div>
+                  <p>
                   As I grew older, I became more interested in the systems that power the world, especially the ones that impact Mother Earth. When I was thinking about how to build my personal site, it felt fitting to center it around the theme of flight (planes) and my passion for climate (Earth). I chose five locations that shaped me: Saratoga (where I grew up), SF (startup central), Chicago (where I went to college), Zurich (where I studied abroad), and Shanghai (my ancestral home).
+                  </p>
                   <div className="my-8 flex justify-center">
                     <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
                   </div>

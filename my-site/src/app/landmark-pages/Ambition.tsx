@@ -123,95 +123,99 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
               </div>
               <h1 className="landmark-title" style={{ color: 'var(--color-warm-amber)' }}>Projects</h1>
                <div className="landmark-divider"></div>
-               <p className="break-words text-lg md:text-xl lg:text-2xl font-semibold text-black tracking-wide leading-relaxed break-words">
+               <p className="break-words text-xl font-semibold text-black tracking-wide leading-relaxed break-words">
                  I&apos;m a builder. I love to make things happen.<br />Here&apos;s what I&apos;m up to:
                </p>
              </div>
 
-                         {/* Projects Grid */}
-             <div className="max-w-5xl mx-auto space-y-24">
+                         {/* Projects Section */}
+             <div className="max-w-5xl mx-auto space-y-12">
               
                              {/* Verdra Project */}
-               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden break-words"
+               <div className="relative theme-ambition theme-card p-8 overflow-hidden break-words"
                     style={{
-                      borderRadius: '2rem',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(100, 116, 139, 0.2)'
+                      borderRadius: '1.5rem',
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                     }}>
                  
-                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
-                   {/* Title and Description */}
-                   <div className="w-full">
-                     <h2 className="break-words text-9xl font-extrabold text-stone-800 mb-8 tracking-tight">
-                       <span className="break-words text-2xl md:text-3xl lg:text-4xl sm:text-3xl md:text-4xl lg:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Verdra</span>
-                     </h2>
-                     <p className="break-words text-lg sm:text-xl md:text-2xl lg:text-3xl text-black mb-10 font-semibold">Cloud Compute Optimization</p>
-                     <p className="break-words text-lg sm:text-xl md:text-2xl lg:text-3xl text-black mb-6 md:mb-8 lg:mb-12 leading-relaxed break-words max-w-4xl mx-auto break-words">
-                       Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies
-                     </p>
+                 <div className="flex flex-col lg:flex-row items-center gap-8">
+                   {/* Project Info */}
+                   <div className="flex-1 text-center lg:text-left">
+                     <div className="w-full">
+                       <h2 className="break-words text-6xl font-extrabold text-stone-800 mb-6 tracking-tight">
+                         <span className="break-words text-4xl">Verdra</span>
+                       </h2>
+                       <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mb-6 mx-auto lg:mx-0"></div>
+                       <p className="break-words text-lg text-black mb-6 font-semibold">Cloud Compute Optimization</p>
+                       <p className="break-words text-base text-black mb-6 leading-relaxed break-words max-w-3xl mx-auto lg:mx-0 break-words">
+                         Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies
+                       </p>
+                       
+                       <a 
+                         href="https://verdra.co" 
+                         target="_blank" 
+                         rel="noopener noreferrer"
+                         className="group btn-primary inline-flex items-center gap-2 px-8 py-3 text-base"
+                       >
+                         <span className="relative z-10">Check it out</span>
+                         <svg className="w-5 h-5 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                         </svg>
+                       </a>
+                     </div>
                    </div>
                    
-                   {/* Image */}
-                   <div className="w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-lg">
-                     <a href="https://drive.google.com/file/d/1sUSc109rf_TQ7-Dn2wbfKeLBoJqlnddl/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                   {/* Project Image */}
+                   <div className="flex-1 max-w-md">
+                     <div className="w-full aspect-video rounded-lg overflow-hidden shadow-lg">
                        <Image 
                          src="/photos/projects/Verdra.png" 
-                         alt="Verdra Demo" 
-                         width={800}
-                         height={600}
-                         className="w-full h-auto object-contain" 
-                         sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 800px"
+                         alt="Verdra Project Screenshot" 
+                         width={500}
+                         height={300}
+                         className="w-full h-full object-cover"
+                         sizes="(max-width: 768px) 100vw, 50vw"
                        />
-                     </a>
-                   </div>
-                   
-                   {/* Live Site Link */}
-                   <div className="mt-12">
-                     <a 
-                       href="https://verdratech.github.io/Verdra-Site/" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       className="group btn-primary inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-8 py-3 sm:px-12 md:px-16 lg:px-20 sm:py-4 md:py-5 lg:py-6 text-lg sm:text-xl md:text-2xl lg:text-3xl"
-                     >
-                       <span className="relative z-10">Check it out</span>
-                       <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6l6 6-6 6" />
-                       </svg>
-                     </a>
+                     </div>
                    </div>
                  </div>
                </div>
 
                              {/* PrizeSole Project */}
-               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-12 overflow-hidden break-words"
+               <div className="relative theme-ambition theme-card p-8 overflow-hidden break-words"
                     style={{
-                      borderRadius: '2rem',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(100, 116, 139, 0.2)'
+                      borderRadius: '1.5rem',
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                     }}>
                  
-                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
-                   {/* Title and Description */}
-                   <div className="w-full">
-                     <h2 className="break-words text-9xl font-extrabold text-stone-800 mb-8 tracking-tight">
-                       <span className="break-words text-2xl md:text-3xl lg:text-4xl sm:text-3xl md:text-4xl lg:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">PrizeSole</span>
-                     </h2>
-                     <p className="break-words text-lg sm:text-xl md:text-2xl lg:text-3xl mb-10 font-semibold text-black">B2B eCommerce Platform</p>
-                     <p className="break-words text-lg sm:text-xl md:text-2xl lg:text-3xl text-black mb-6 md:mb-8 lg:mb-12 leading-relaxed break-words max-w-4xl mx-auto break-words">
-                       B2B eCommerce sneaker sweepstakes platform
-                     </p>
+                 <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
+                   {/* Project Info */}
+                   <div className="flex-1 text-center lg:text-left">
+                     <div className="w-full">
+                       <h2 className="break-words text-6xl font-extrabold text-stone-800 mb-6 tracking-tight">
+                         <span className="break-words text-4xl">PrizeSole</span>
+                       </h2>
+                       <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mb-6 mx-auto lg:mx-0"></div>
+                       <p className="break-words text-lg mb-6 font-semibold text-black">B2B eCommerce sneaker sweepstakes platform</p>
+                       
+                       <div className="inline-flex items-center gap-2 px-8 py-3 text-base bg-gray-100 text-gray-600 rounded-2xl border border-gray-200">
+                         <span>Discontinued</span>
+                       </div>
+                     </div>
                    </div>
                    
-                   {/* Image */}
-                   <div className="w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-lg">
-                     <Image 
-                       src="/photos/projects/PrizeSole.png"
-                       alt="PrizeSole B2B eCommerce Platform"
-                       width={800}
-                       height={600}
-                       className="w-full h-auto object-contain"
-                       sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 800px"
-                     />
+                   {/* Project Image */}
+                   <div className="flex-1 max-w-md">
+                     <div className="w-full aspect-video rounded-lg overflow-hidden shadow-lg">
+                       <Image 
+                         src="/photos/projects/PrizeSole.png" 
+                         alt="PrizeSole Project Screenshot" 
+                         width={500}
+                         height={300}
+                         className="w-full h-full object-cover"
+                         sizes="(max-width: 768px) 100vw, 50vw"
+                       />
+                     </div>
                    </div>
                  </div>
                </div>
@@ -274,11 +278,11 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    href="https://github.com/isaacsun0813" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="group btn-primary inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-8 py-3 sm:px-12 md:px-16 lg:px-20 sm:py-4 md:py-5 lg:py-6 text-lg sm:text-xl md:text-2xl lg:text-3xl"
+                   className="group btn-primary inline-flex items-center gap-3 px-12 py-4 text-xl"
                  >
                    <span className="relative z-10">View GitHub</span>
                    <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:scale-110 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24">
-                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.237 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.30 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.237 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                    </svg>
                  </a>
                </div>

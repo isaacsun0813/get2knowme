@@ -95,8 +95,8 @@ export default function Home({ isOpen, onClose }: HomeProps) {
             <div className="break-words text-center break-words mb-16">
               <h1 className="landmark-title" style={{ color: 'var(--color-sky-primary)' }}>Home</h1>
               <div className="landmark-divider"></div>
-              <p className="break-words text-2xl md:text-3xl lg:text-4xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
-                Welcome Home
+              <p className="break-words text-3xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
+                Welcome to my interactive world! Click and drag to fly around and discover landmarks that tell my story.
               </p>
             </div>
 
@@ -108,8 +108,8 @@ export default function Home({ isOpen, onClose }: HomeProps) {
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
-                <h2 className="break-words text-3xl md:text-4xl lg:text-6xl font-extrabold text-stone-800 mb-8 tracking-tight">
-                  Coming Soon
+                <h2 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                  Ready to explore?
                 </h2>
                 <p className="break-words text-2xl text-stone-700 leading-relaxed break-words">
                   This section is currently under development. Stay tuned for updates!

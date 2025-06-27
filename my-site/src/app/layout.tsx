@@ -19,8 +19,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-      title: "Isaac&apos;s World",
-    description: "Welcome to Isaac&apos;s interactive 3D world - explore landmarks and discover my journey",
+  title: "Isaac's World",
+  description: "Welcome to Isaac's interactive 3D world - explore landmarks and discover my journey",
 };
 
 export default function RootLayout({

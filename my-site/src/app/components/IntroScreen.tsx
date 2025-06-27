@@ -67,7 +67,7 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
 
       {/* Main content */}
       <div className={`absolute inset-0 flex flex-col items-center justify-center text-center break-words transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-[0.3]' : ''}`}>
-        <div className="relative bg-gradient-to-br from-white/20 via-white/15 to-white/10 backdrop-blur-xl p-8 sm:p-12 md:p-16 lg:p-24 overflow-hidden break-words w-[90%] sm:w-[85%] md:w-[80%] max-w-4xl lg:max-w-7xl mx-4"
+        <div className="relative bg-gradient-to-br from-white/20 via-white/15 to-white/10 backdrop-blur-xl p-16 overflow-hidden break-words w-[90%] max-w-4xl mx-4"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
@@ -77,15 +77,15 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
           {/* Decorative shapes matching landmark pages */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/30 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/30 to-transparent rounded-full transform -translate-x-12 translate-y-12"></div>
-          <div className="relative z-10 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-6 md:mb-8 lg:mb-12">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8">
-              <h1 className="break-words text-5xl sm:text-7xl md:text-9xl lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 tracking-tight">
+          <div className="relative z-10 flex flex-col items-center justify-center gap-6 mb-8">
+            <div className="flex flex-row items-center justify-center gap-6">
+              <h1 className="break-words text-8xl font-extrabold text-stone-800 tracking-tight">
                 Hello
               </h1>
-              <span className="break-words text-3xl sm:text-5xl md:text-[6rem] lg:text-[8rem] xl:text-[10rem] animate-wave-slow">👋</span>
+              <span className="break-words text-6xl animate-wave-slow">👋</span>
             </div>
           </div>
-          <p className="relative z-10 text-center text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl mb-12 sm:mb-16 md:mb-20 lg:mb-24 leading-tight font-semibold text-stone-700">
+          <p className="relative z-10 text-center text-4xl mb-16 leading-tight font-semibold text-stone-700">
             Welcome to Isaac&apos;s World
           </p>
           
@@ -102,11 +102,11 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
             
             <button
               onClick={handleEnter}
-              className="group btn-primary px-8 py-3 sm:px-12 md:px-16 lg:px-20 sm:py-4 md:py-5 lg:py-6"
+              className="group btn-primary px-16 py-5"
             >
-              <span className="relative z-10 flex items-center gap-2 sm:gap-3 md:gap-4 tracking-normal text-lg sm:text-xl md:text-2xl lg:text-3xl">
+              <span className="relative z-10 flex items-center gap-3 tracking-normal text-2xl">
                 Take Flight
-                <Plane className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+                <Plane className="w-8 h-8 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
               </span>
             </button>
           </div>

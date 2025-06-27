@@ -108,17 +108,15 @@ export default function Career({ isOpen, onClose }: CareerProps) {
             
 
             {/* Header */}
-            <div className="break-words text-center break-words mb-6 md:mb-8 lg:mb-12">
+            <div className="break-words text-center break-words mb-8">
               <div className="flex justify-center mb-4">
                 <Briefcase size={80} style={{ color: 'var(--color-deep-blue)' }} />
               </div>
               <h1 className="landmark-title" style={{ color: 'var(--color-deep-blue)' }}>Career</h1>
               <div className="landmark-divider"></div>
-              <p className="break-words text-black tracking-normal mb-8">
-                Backend Developer • Climate Advocate
-              </p>
             </div>
-              <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
+
+            <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
               <div className="relative theme-career theme-card p-10 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
@@ -137,7 +135,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                   </div>
                 </div>
               </div>
-              </div>
+            </div>
 
 
 
@@ -159,7 +157,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     </p>
                     
                     <div className="max-w-4xl mx-auto break-words">
-                      <ul className="space-y-6 break-words text-left ml-8 text-lg md:text-xl lg:text-2xl">
+                      <ul className="space-y-6 break-words text-left ml-8 text-xl">
                         <li className="flex items-start gap-4">
                           <span className="break-words font-bold text-black">•</span>
                           <span>Scope 2 Emissions tracking and optimization platforms</span>
@@ -227,7 +225,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                   </div>
                   
                                      <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
-                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words text-lg md:text-xl lg:text-2xl">
+                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words text-xl">
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
                          <span>Paragliding license</span>

@@ -127,16 +127,16 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
 
             {/* About Me Sections */}
             <div className="max-w-6xl mx-auto">
-              {/* Main Introduction Card */}
+              {/* Main Combined Introduction and Bio Card */}
               <div className="relative theme-about theme-card p-16 mb-16 overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                     }}>
                 
-                <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
+                <div className="relative text-center break-words space-y-12 break-words">
                   {/* Profile Photo */}
-                  <div className="w-80 h-80 rounded-full shadow-2xl border-8 border-white/80 relative overflow-hidden backdrop-blur-sm">
+                  <div className="w-80 h-80 rounded-full shadow-2xl border-8 border-white/80 relative overflow-hidden backdrop-blur-sm mx-auto">
                     <Image 
                       src="/photos/profilePic.jpeg" 
                       alt="Isaac Sun" 
@@ -149,26 +149,14 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   </div>
 
                   {/* Name and Title */}
-                  <div className="w-full">
-                    <h2 className="break-words text-stone-800 mb-8">
+                  <div className="w-full space-y-4">
+                    <h2 className="break-words text-stone-800 mb-6">
                       Isaac Sun
                     </h2>
-                    <p className="break-words text-black mb-6 md:mb-8 lg:mb-12 font-semibold"> SWE/Climate Advocate</p>
+                    <p className="break-words text-black font-semibold text-2xl"> SWE/Climate Advocate</p>
                   </div>
-                </div>
-              </div>
 
-              {/* Middle Bio Card */}
-              <div className="relative bg-gradient-to-br from-stone-50/70 via-white/80 to-stone-50/70 p-16 mb-16 overflow-hidden break-words"
-                    style={{
-                      borderRadius: '2rem',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(0, 0, 0, 0.1)'
-                    }}>
-                
-                <div className="relative text-center break-words space-y-8 break-words">
-                  <h2 className="break-words text-stone-800 mb-8">Hello there!</h2>
-                  
+                  {/* Bio Content */}
                   <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words max-w-4xl mx-auto break-words">
                     <p>
                       My name is Isaac Sun and I&apos;m a recent graduate of 
@@ -189,39 +177,6 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                       sociology.
                     </p>
                   </div>
-                </div>
-              </div>
-
-
-              {/* Content Section - keeping the old content for backwards compatibility */}
-              <div className="w-full max-w-5xl mx-auto" style={{ display: 'none' }}>
-                <div className="inline-flex items-center gap-4 mb-6 md:mb-8 lg:mb-12">
-                  <h2 className="break-words text-stone-800 mb-8">Hello there!</h2>
-                </div>
-                
-                <div className="break-words text-stone-600 leading-relaxed break-words space-y-12">
-                  <p>
-                    My name is Isaac Sun and I&apos;m a recent graduate of 
-                    <span className="font-medium text-purple-600"> Northwestern University</span> with a 
-                    BS/MS in Computer Science and a 
-                    minor in Music. 
-                  </p>
-                  
-                  <div className="flex items-center justify-center py-10">
-                    <div className="flex items-center gap-6">
-                      <div className="h-px bg-gradient-to-r from-transparent via-stone-300 to-transparent w-20"></div>
-                      <span className="break-words text-5xl">🌿</span>
-                      <div className="h-px bg-gradient-to-l from-transparent via-stone-300 to-transparent w-20"></div>
-                    </div>
-                  </div>
-
-                  <p>
-                    My interests lie within scalable sustainable computing, 
-                    AI × climate modeling, and 
-                    environmental policy. More broadly I&apos;m also 
-                    interested in distributed systems and 
-                    sociology.
-                  </p>
                 </div>
               </div>
             </div>
