@@ -75,7 +75,7 @@ export default function IntroScreen({ onEnter }: IntroScreenProps) {
           </div>
           <p className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl mb-12 sm:mb-16 md:mb-20 lg:mb-24 leading-tight">
             <span className="inline-block">Welcome to Isaac&apos;s</span>
-            <span className="inline-block ml-2">World</span>
+            <span className="inline-block ml-4">World</span>
           </p>
           
           <div className="relative">
