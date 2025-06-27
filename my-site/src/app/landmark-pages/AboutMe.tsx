@@ -124,8 +124,8 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
             
             {/* Header */}
             <div className="break-words text-center break-words mb-32">
-              <h1 className="break-words text-5xl sm:text-7xl md:text-[8rem] lg:text-[12rem] xl:text-[14rem] font-extrabold text-stone-800 mb-6 md:mb-8 lg:mb-12 tracking-tight">
-                <span className="break-words text-5xl sm:text-7xl md:text-[8rem] lg:text-[12rem] xl:text-[14rem]">About Me</span>
+              <h1 className="break-words text-4xl sm:text-6xl md:text-7xl lg:text-[10rem] xl:text-[12rem] font-extrabold text-stone-800 mb-6 md:mb-8 lg:mb-12 tracking-tight">
+                <span className="break-words text-4xl sm:text-6xl md:text-7xl lg:text-[10rem] xl:text-[12rem]">About Me</span>
               </h1>
               <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-6 md:mb-8 lg:mb-12"></div>
             </div>
@@ -159,7 +159,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     <h2 className="break-words text-stone-800 mb-8">
                       Isaac Sun
                     </h2>
-                    <p className="break-words text-sky-700 mb-6 md:mb-8 lg:mb-12 font-semibold">Climate Tech Enthusiast & Computer Scientist</p>
+                    <p className="break-words text-sky-700 mb-6 md:mb-8 lg:mb-12 font-semibold"> SWE/Climate Advocate</p>
                   </div>
                 </div>
               </div>

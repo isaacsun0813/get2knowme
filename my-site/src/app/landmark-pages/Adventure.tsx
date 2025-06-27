@@ -243,7 +243,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                        src={adventurePhotos[currentPhotoIndex].src}
                        alt={adventurePhotos[currentPhotoIndex].caption}
                        fill
-                       className="object-contain bg-white"
+                       className="object-cover"
                        sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 70vw"
                        onLoad={handleImageLoad}
                        onError={handleImageError}
@@ -273,15 +273,14 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                     </svg>
                   </button>
 
-                  {/* Photo Counter */}
-                  <div className="absolute bottom-4 right-4 bg-black/50 text-white px-4 py-2 rounded-full text-xl z-50">
-                    {currentPhotoIndex + 1} / {adventurePhotos.length}
-                  </div>
 
-                                     {/* Photo Caption - Much larger */}
-                   <div className="absolute bottom-6 left-6 bg-black/60 text-white px-6 py-3 rounded-full text-xl md:text-2xl lg:text-3xl font-medium z-50 max-w-lg">
-                     {adventurePhotos[currentPhotoIndex].caption}
-                   </div>
+                </div>
+
+                {/* Photo Caption - Below image, center aligned */}
+                <div className="text-center mt-4 mb-6">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-medium text-stone-700">
+                    {adventurePhotos[currentPhotoIndex].caption}
+                  </h3>
                 </div>
 
                 {/* Photo Dots Navigation */}

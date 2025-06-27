@@ -117,21 +117,17 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
                 
                 <div className="break-words text-xl md:text-2xl lg:text-3xl text-stone-700 leading-relaxed break-words space-y-8">
                   <p>
-                    That was my childhood dream. I would always think about it. I would make every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off of way too many tall structures to chase that dream.
-                    I still remember when my cousin offered me to fly his drone before school in 2nd grade right before I subsequently crashed it into the ground.
-                  </p>
+                  That was my childhood dream. I would always think about it. I made every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off way too many tall structures chasing that dream. I still remember when my cousin let me fly his drone before school in 2nd grade, right before I crashed it into the ground.                  </p>
                   <div className="my-8 flex justify-center">
                     <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
                   </div>
-                  As I grew older, I developed a larger interest in the systems that power the world and specifically the ones that impact Mother Earth. As I was thinking about how to build out my personal site, it seemed to make sense to create a modal for flight (plane) over my interest in climate (earth). I chose 5 locations that were important to me: Saratoga (where I grew up), SF (startup central), Chicago (where I went to college), Zurich (where I studied abroad) and Shanghai (my ancestral home).
-
+                  As I grew older, I became more interested in the systems that power the world, especially the ones that impact Mother Earth. When I was thinking about how to build my personal site, it felt fitting to center it around the theme of flight (planes) and my passion for climate (Earth). I chose five locations that shaped me: Saratoga (where I grew up), SF (startup central), Chicago (where I went to college), Zurich (where I studied abroad), and Shanghai (my ancestral home).
                   <div className="my-8 flex justify-center">
                     <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
                   </div>
                   
                   <p>
-                    I have a lot of dreams and am actively working to bring them to life. Thanks for viewing my site :D and my message to you is this: keep dreaming because those dreams impact more people than you would think.
-                  </p>
+                  I have a lot of dreams and I’m actively working to bring them to life. Thanks for visiting my site :D. My message to you is this: keep dreaming because your dreams probably impact more people than you realize.                  </p>
                 </div>
                 
 
