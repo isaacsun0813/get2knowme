@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { User, Briefcase, Rocket, Heart, Mountain } from 'lucide-react'
 
 // Type for landmark configuration
 export type LandmarkConfig = {
@@ -85,39 +86,41 @@ export default function LocationPrompt({
     'About Me': {
       bg: 'bg-sky-100',
       text: 'text-sky-800',
-      emoji: '🌞🏡',
+      icon: User,
       spaceButton: 'bg-gradient-to-r from-sky-400 to-blue-500'
     },
     'Career': {
-      bg: 'bg-purple-100',
-      text: 'text-purple-800',
-      emoji: '💼🌱',
-      spaceButton: 'bg-gradient-to-r from-purple-400 to-purple-600'
+      bg: 'bg-blue-100',
+      text: 'text-blue-800',
+      icon: Briefcase,
+      spaceButton: 'bg-gradient-to-r from-blue-400 to-blue-600'
     },
     'Ambition': {
       bg: 'bg-gray-100',
       text: 'text-gray-800',
-      emoji: '🌉🚀💻',
+      icon: Rocket,
       spaceButton: 'bg-gradient-to-r from-gray-400 to-gray-600'
     },
     'Inspiration': {
       bg: 'bg-amber-100',
       text: 'text-amber-800',
-      emoji: '·⁀ ༄.°✈ ₊⭒˚｡⋆',
+      icon: Heart,
       spaceButton: 'bg-gradient-to-r from-amber-400 to-orange-500'
     },
     'Adventure': {
       bg: 'bg-green-100',
       text: 'text-green-800',
-      emoji: '🏔️🛶🗺️',
+      icon: Mountain,
       spaceButton: 'bg-gradient-to-r from-green-400 to-green-600'
     }
   }[landmark.subtitle] || {
     bg: 'bg-gray-100',
     text: 'text-gray-800',
-    emoji: '📍',
+    icon: User,
     spaceButton: 'bg-gradient-to-r from-gray-400 to-gray-600'
   }
+
+  const IconComponent = styling.icon
 
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8 z-50 pointer-events-none">
@@ -129,7 +132,9 @@ export default function LocationPrompt({
         onTouchStart={isMobile ? handleTap : undefined}
       >
         <div className="break-words text-center break-words">
-          <div className="break-words text-3xl mb-3">{styling.emoji}</div>
+          <div className="flex justify-center mb-3">
+            <IconComponent size={32} className={styling.text} />
+          </div>
           <h2 className={`text-2xl font-bold mb-2 ${styling.text} font-mono uppercase tracking-wider`}>
             {landmark.displayName}
           </h2>

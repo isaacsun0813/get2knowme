@@ -78,41 +78,38 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
         isAnimating ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Baby blue homey backdrop for About Me */}
+      {/* About Me themed backdrop */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-br from-sky-100/70 via-blue-100/60 to-cyan-200/70 backdrop-blur-sm transition-all duration-500 ${
+        className={`absolute inset-0 theme-about theme-backdrop backdrop-blur-sm transition-all duration-500 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation */}
+      {/* Popup Container with organic animation - WIDER */}
       <div 
-        className={`relative w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-7xl max-h-[95vh] mx-2 sm:mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
         }`}
       >
-        {/* Main content container with baby blue homey styling */}
-        <div className="relative bg-gradient-to-br from-sky-50/95 via-blue-50/95 to-cyan-50/95 backdrop-blur-md overflow-hidden break-words"
+        {/* Main content container with cohesive About Me styling */}
+        <div className="relative theme-about theme-container backdrop-blur-md overflow-hidden break-words"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(14, 165, 233, 0.3)'
+               border: '2px solid rgba(125, 211, 219, 0.3)'
              }}>
           
-          {/* Decorative baby blue shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-sky-200/40 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-200/40 to-transparent rounded-full transform -translate-x-12 translate-y-12"></div>
+          {/* Decorative themed shapes */}
+          <div className="absolute top-0 right-0 w-32 h-32 rounded-full transform translate-x-16 -translate-y-16" style={{ background: 'radial-gradient(circle, rgba(125, 211, 219, 0.2) 0%, transparent 70%)' }}></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full transform -translate-x-12 translate-y-12" style={{ background: 'radial-gradient(circle, rgba(125, 211, 219, 0.15) 0%, transparent 70%)' }}></div>
           
           {/* Close button with organic styling */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
-                       bg-stone-100/80 hover:bg-white/90 transition-all duration-300 
-                       flex items-center justify-center text-stone-600 hover:text-stone-800
-                       shadow-lg hover:shadow-xl border border-stone-200/50 hover:scale-110"
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 btn-close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -124,32 +121,29 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
             
             {/* Header */}
             <div className="break-words text-center break-words mb-32">
-              <h1 className="break-words text-4xl sm:text-6xl md:text-7xl lg:text-[10rem] xl:text-[12rem] font-extrabold text-stone-800 mb-6 md:mb-8 lg:mb-12 tracking-tight">
-                <span className="break-words text-4xl sm:text-6xl md:text-7xl lg:text-[10rem] xl:text-[12rem]">About Me</span>
-              </h1>
-              <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mx-auto mb-6 md:mb-8 lg:mb-12"></div>
+              <h1 className="landmark-title" style={{ color: 'var(--color-soft-cyan)' }}>About Me</h1>
+              <div className="landmark-divider"></div>
             </div>
 
             {/* About Me Sections */}
             <div className="max-w-6xl mx-auto">
               {/* Main Introduction Card */}
-              <div className="relative bg-gradient-to-br from-sky-100/70 via-blue-50/70 to-cyan-100/70 p-16 mb-16 overflow-hidden break-words"
+              <div className="relative theme-about theme-card p-16 mb-16 overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(14, 165, 233, 0.2)'
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                     }}>
                 
                 <div className="relative flex flex-col items-center text-center break-words space-y-8 break-words">
                   {/* Profile Photo */}
-                  <div className="w-64 h-64 rounded-full shadow-2xl border-8 border-white/80 relative overflow-hidden backdrop-blur-sm">
+                  <div className="w-80 h-80 rounded-full shadow-2xl border-8 border-white/80 relative overflow-hidden backdrop-blur-sm">
                     <Image 
                       src="/photos/profilePic.jpeg" 
                       alt="Isaac Sun" 
                       fill
                       className="object-cover"
                       style={{ objectPosition: '50% 25%' }}
-                      sizes="256px"
+                      sizes="320px"
                       priority
                     />
                   </div>
@@ -159,7 +153,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     <h2 className="break-words text-stone-800 mb-8">
                       Isaac Sun
                     </h2>
-                    <p className="break-words text-sky-700 mb-6 md:mb-8 lg:mb-12 font-semibold"> SWE/Climate Advocate</p>
+                    <p className="break-words text-black mb-6 md:mb-8 lg:mb-12 font-semibold"> SWE/Climate Advocate</p>
                   </div>
                 </div>
               </div>
@@ -177,26 +171,22 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   
                   <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words max-w-4xl mx-auto break-words">
                     <p>
-                      My name is <span className="font-medium text-green-600">Isaac Sun</span> and I&apos;m a recent graduate of 
+                      My name is Isaac Sun and I&apos;m a recent graduate of 
                       <span className="font-medium text-purple-600"> Northwestern University</span> with a 
-                      <span className="font-medium text-stone-700"> BS/MS in Computer Science</span> and a 
-                      <span className="font-medium text-blue-500"> minor in Music</span>. 
+                      BS/MS in Computer Science and a 
+                      minor in Music. 
                     </p>
                     
                     <div className="flex items-center justify-center py-8">
-                      <div className="flex items-center gap-6">
-                        <div className="h-px bg-gradient-to-r from-transparent via-stone-300 to-transparent w-20"></div>
-                        <span className="break-words text-2xl md:text-3xl lg:text-4xl">🌿</span>
-                        <div className="h-px bg-gradient-to-l from-transparent via-stone-300 to-transparent w-20"></div>
-                      </div>
+                      <div className="w-32 h-px bg-gradient-to-r from-transparent via-stone-300 to-transparent"></div>
                     </div>
 
                     <p>
-                      My interests lie within <span className="font-medium text-green-600">scalable sustainable computing</span>, 
-                      <span className="font-medium text-blue-500"> AI × climate modeling</span>, and 
-                      <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I&apos;m also 
-                      interested in <span className="font-medium text-stone-600">distributed systems</span> and 
-                      <span className="font-medium text-amber-600"> sociology</span>.
+                      My interests lie within scalable sustainable computing, 
+                      AI × climate modeling, and 
+                      environmental policy. More broadly I&apos;m also 
+                      interested in distributed systems and 
+                      sociology.
                     </p>
                   </div>
                 </div>
@@ -211,10 +201,10 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                 
                 <div className="break-words text-stone-600 leading-relaxed break-words space-y-12">
                   <p>
-                    My name is <span className="font-medium text-green-600">Isaac Sun</span> and I&apos;m a recent graduate of 
+                    My name is Isaac Sun and I&apos;m a recent graduate of 
                     <span className="font-medium text-purple-600"> Northwestern University</span> with a 
-                    <span className="font-medium text-stone-700"> BS/MS in Computer Science</span> and a 
-                    <span className="font-medium text-blue-500"> minor in Music</span>. 
+                    BS/MS in Computer Science and a 
+                    minor in Music. 
                   </p>
                   
                   <div className="flex items-center justify-center py-10">
@@ -226,11 +216,11 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   </div>
 
                   <p>
-                    My interests lie within <span className="font-medium text-green-600">scalable sustainable computing</span>, 
-                    <span className="font-medium text-blue-500"> AI × climate modeling</span>, and 
-                    <span className="font-medium text-emerald-600"> environmental policy</span>. More broadly I&apos;m also 
-                    interested in <span className="font-medium text-stone-600">distributed systems</span> and 
-                    <span className="font-medium text-amber-600"> sociology</span>.
+                    My interests lie within scalable sustainable computing, 
+                    AI × climate modeling, and 
+                    environmental policy. More broadly I&apos;m also 
+                    interested in distributed systems and 
+                    sociology.
                   </p>
                 </div>
               </div>
@@ -244,16 +234,11 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                    border: '1px solid rgba(255, 255, 255, 0.3)'
                  }}>
               
-              <div className="absolute top-2 left-4 text-xl opacity-20">🌺</div>
-              <div className="absolute bottom-2 right-4 text-xl opacity-20">🍀</div>
-              
               <div className="flex items-center justify-center gap-6 mb-10">
-                <span className="break-words text-2xl md:text-3xl lg:text-4xl">🌱</span>
-                <h3 className="break-words text-stone-800">Let&apos;s Connect!</h3>
-                <span className="break-words text-2xl md:text-3xl lg:text-4xl">🌍</span>
+                <h3 className="break-words text-stone-800">Let&apos;s Connect</h3>
               </div>
               <p className="break-words text-stone-600 leading-relaxed break-words mb-8">
-                Always excited to discuss climate tech, sustainable computing, or startups opportunities! 
+                Always excited to discuss climate tech, sustainable computing, or startups
               </p>
               
               {/* Social Media Icons */}

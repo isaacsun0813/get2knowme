@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Briefcase } from 'lucide-react'
 
 interface CareerProps {
   isOpen: boolean
@@ -64,41 +65,38 @@ export default function Career({ isOpen, onClose }: CareerProps) {
         isAnimating ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Northwestern-inspired purple backdrop */}
+      {/* Career themed backdrop */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-br from-purple-100/70 via-violet-100/60 to-purple-200/70 backdrop-blur-sm transition-all duration-500 ${
+        className={`absolute inset-0 theme-career theme-backdrop backdrop-blur-sm transition-all duration-500 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation */}
+      {/* Popup Container with organic animation - WIDER */}
       <div 
-        className={`relative w-full max-w-6xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
         }`}
       >
-        {/* Main content container with Northwestern purple styling */}
-        <div className="relative bg-gradient-to-br from-purple-50/95 via-violet-50/95 to-white/95 backdrop-blur-md overflow-hidden break-words"
+        {/* Main content container with cohesive Career styling */}
+        <div className="relative theme-career theme-container backdrop-blur-md overflow-hidden break-words"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(95, 39, 205, 0.3)' // Northwestern purple
+               border: '2px solid rgba(74, 144, 194, 0.3)'
              }}>
           
-          {/* Decorative Northwestern-inspired shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-200/30 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-violet-200/30 to-transparent rounded-full transform -translate-x-12 translate-y-12"></div>
+          {/* Decorative themed shapes */}
+          <div className="absolute top-0 right-0 w-32 h-32 rounded-full transform translate-x-16 -translate-y-16" style={{ background: 'radial-gradient(circle, rgba(74, 144, 194, 0.2) 0%, transparent 70%)' }}></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full transform -translate-x-12 translate-y-12" style={{ background: 'radial-gradient(circle, rgba(74, 144, 194, 0.15) 0%, transparent 70%)' }}></div>
           
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
-                       bg-stone-100/80 hover:bg-white/90 transition-all duration-300 
-                       flex items-center justify-center text-stone-600 hover:text-stone-800
-                       shadow-lg hover:shadow-xl border border-stone-200/50 hover:scale-110"
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 btn-close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -111,29 +109,30 @@ export default function Career({ isOpen, onClose }: CareerProps) {
 
             {/* Header */}
             <div className="break-words text-center break-words mb-6 md:mb-8 lg:mb-12">
-              <h1 className="break-words text-stone-700 mb-6 tracking-normal">
-                Career
-              </h1>
-              <p className="break-words text-purple-600 tracking-normal mb-8">
+              <div className="flex justify-center mb-4">
+                <Briefcase size={80} style={{ color: 'var(--color-deep-blue)' }} />
+              </div>
+              <h1 className="landmark-title" style={{ color: 'var(--color-deep-blue)' }}>Career</h1>
+              <div className="landmark-divider"></div>
+              <p className="break-words text-black tracking-normal mb-8">
                 Backend Developer • Climate Advocate
               </p>
             </div>
               <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
-              <div className="relative bg-gradient-to-br from-purple-100/70 via-violet-50/70 to-purple-100/70 p-10 overflow-hidden break-words"
+              <div className="relative theme-career theme-card p-10 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(95, 39, 205, 0.2)' // Northwestern purple
+                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
                 <div className="break-words text-center break-words relative z-10">
                   <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words text-purple-700">My career goal</h2>
+                    <h2 className="break-words" style={{ color: 'var(--color-deep-blue)' }}>My career goal</h2>
                   </div>
                   
-                  <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words">
+                  <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
                     <p className="break-words text-center break-words max-w-4xl mx-auto break-words">
-                      <span className="font-medium text-purple-600">Tackle climate and environmental policy</span> challenges through <span className="font-medium text-stone-700">scalable, efficient technology solutions</span>
+                      Tackle climate and environmental policy challenges through scalable, efficient technology solutions
                     </p>
                   </div>
                 </div>
@@ -143,36 +142,35 @@ export default function Career({ isOpen, onClose }: CareerProps) {
 
 
             <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
-              <div className="relative bg-gradient-to-br from-purple-100/70 via-violet-50/70 to-purple-100/70 p-10 overflow-hidden break-words"
+              <div className="relative theme-career theme-card p-10 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(95, 39, 205, 0.2)'
+                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
                 <div className="break-words text-center break-words relative z-10">
                   <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words text-purple-700">Future Opportunities</h2>
+                    <h2 className="break-words" style={{ color: 'var(--color-deep-blue)' }}>Future Opportunities</h2>
                   </div>
                   
-                  <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words">
+                  <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
                     <p className="break-words text-left">
-                      I&apos;m interested in <span className="font-medium text-purple-600">climate tech</span> specifically:
+                      I&apos;m interested in climate tech specifically:
                     </p>
                     
                     <div className="max-w-4xl mx-auto break-words">
-                      <ul className="space-y-8 break-words text-left ml-8 text-xl md:text-2xl lg:text-3xl">
+                      <ul className="space-y-6 break-words text-left ml-8 text-lg md:text-xl lg:text-2xl">
                         <li className="flex items-start gap-4">
-                          <span className="break-words text-purple-600 font-bold">•</span>
-                          <span><span className="font-medium text-purple-600">Scope 2 Emissions</span> tracking and optimization platforms</span>
+                          <span className="break-words font-bold text-black">•</span>
+                          <span>Scope 2 Emissions tracking and optimization platforms</span>
                         </li>
                         <li className="flex items-start gap-4">
-                          <span className="break-words text-purple-600 font-bold">•</span>
-                          <span><span className="font-medium text-purple-600">Carbon Reduction</span> measurement and verification systems</span>
+                          <span className="break-words font-bold text-black">•</span>
+                          <span>Carbon Reduction measurement and verification systems</span>
                         </li>
                         <li className="flex items-start gap-4">
-                          <span className="break-words text-purple-600 font-bold">•</span>
-                          <span><span className="font-medium text-purple-600">Scalable Data Infrastructure</span></span>
+                          <span className="break-words font-bold text-black">•</span>
+                          <span>Scalable Data Infrastructure</span>
                         </li>
                       </ul>
                     </div>
@@ -183,9 +181,25 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                         href="https://drive.google.com/file/d/130KQWH7hviU7HDY7dztdG4wLoJAI8ryw/view?usp=sharing" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-violet-600 
-                                 text-white font-medium text-xl md:text-2xl lg:text-3xl rounded-xl shadow-lg hover:shadow-xl 
-                                 transform hover:scale-105 transition-all duration-300 hover:from-purple-500 hover:to-violet-500"
+                        className="inline-flex items-center gap-3 px-8 py-4"
+                        style={{ 
+                          background: `linear-gradient(135deg, var(--color-deep-blue) 0%, rgba(74, 144, 194, 0.8) 100%)`,
+                          color: 'white',
+                          fontWeight: 'medium',
+                          fontSize: 'clamp(1.25rem, 2.5vw, 2rem)',
+                          borderRadius: '0.75rem',
+                          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+                          transform: 'translateZ(0)',
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)'
+                          e.currentTarget.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                          e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+                        }}
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -209,55 +223,53 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                 
                 <div className="break-words text-center break-words relative z-10">
                   <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words text-slate-700">Other Goals</h2>
+                    <h2 className="break-words text-stone-800">Non-Career Goals</h2>
                   </div>
                   
-                  <div className="break-words text-stone-600 leading-relaxed break-words space-y-8 break-words">
-                    <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-8 break-words text-xl md:text-2xl lg:text-3xl">
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Paragliding license</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Make a beef wellington</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Squat 500, bench 300, deadlift 400</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Dunk a basketball</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Study more sociology</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Learn to play euphonium</span>
-                      </li>
-                                              <li className="flex items-start gap-4">
-                          <span className="break-words text-slate-600 font-bold">•</span>
-                          <span>Get back into playing the tuba</span>
-                        </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Do a backflip</span>
-                      </li>
-                      <li className="flex items-start gap-4">
-                        <span className="break-words text-slate-600 font-bold">•</span>
-                        <span>Vlog more</span>
-                      </li>
-                    </ul>
-                  </div>
+                                     <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
+                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words text-lg md:text-xl lg:text-2xl">
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Paragliding license</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Make a beef wellington</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Squat 500, bench 300, deadlift 400</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Dunk a basketball</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Study more sociology</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Learn to play euphonium</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Get back into playing the tuba</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Do a backflip</span>
+                       </li>
+                       <li className="flex items-start gap-4">
+                         <span className="break-words text-stone-600 font-bold">•</span>
+                         <span>Vlog more</span>
+                       </li>
+                     </ul>
+                   </div>
                 </div>
               </div>
             </div>
 
-
-        
           </div>
         </div>
       </div>

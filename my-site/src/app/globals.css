@@ -3,6 +3,32 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Cohesive Color Palette - Isaac's World Theme */
+  /* Primary Sky Colors (from 3D world) */
+  --color-sky-primary: #87CEEB;
+  --color-sky-light: #B0E0E6;
+  --color-sky-soft: #E0F6FF;
+  
+  /* Secondary Theme Colors */
+  --color-earth-green: #2D8B2D;
+  --color-sunset-orange: #FF9B72;
+  --color-deep-blue: #1E5F8B;
+  --color-warm-amber: #E6B068;
+  --color-soft-cyan: #7DD3DB;
+  
+  /* Neutral Colors */
+  --color-warm-stone: #8B7355;
+  --color-light-stone: #D4C4B0;
+  --color-cloud-white: #FEFEFE;
+  
+  /* Page-Specific Theme Colors */
+  --color-about-primary: var(--color-soft-cyan);
+  --color-adventure-primary: var(--color-earth-green);
+  --color-ambition-primary: var(--color-warm-amber);
+  --color-career-primary: var(--color-deep-blue);
+  --color-home-primary: var(--color-sky-primary);
+  --color-vibes-primary: var(--color-sunset-orange);
 }
 
 @theme inline {
@@ -10,6 +36,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-plus-jakarta-sans: var(--font-plus-jakarta-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,7 +49,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;
 }
 
 @keyframes fadeIn {
@@ -43,31 +70,144 @@ body {
 /* ---------------------------------------------
    Global Typography Styles
    --------------------------------------------- */
-/* Force a consistent serif font for all top-level headings and ensure it overrides any inline font declarations */
+/* Force a consistent Plus Jakarta Sans font for all elements and ensure it overrides any inline font declarations */
 h1,
 h2,
-h3 {
-  font-family: Georgia, "Times New Roman", serif !important;
+h3,
+p,
+button,
+span,
+div {
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif !important;
 }
 
 @layer base {
+  /* Standardized Landmark Page Title */
+  .landmark-title {
+    @apply text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold mb-8 tracking-tight text-center;
+    color: var(--color-warm-stone);
+  }
+
+  /* Standardized Landmark Page Divider */
+  .landmark-divider {
+    @apply w-48 h-0.5 mx-auto mb-12;
+    background: linear-gradient(to right, transparent, var(--color-light-stone), transparent);
+  }
+
+  /* Page-specific theme classes */
+  .theme-about {
+    --theme-primary: var(--color-about-primary);
+    --theme-light: #E6F9FB;
+    --theme-soft: #F5FCFD;
+  }
+  
+  .theme-adventure {
+    --theme-primary: var(--color-adventure-primary);
+    --theme-light: #E8F5E8;
+    --theme-soft: #F4FAF4;
+  }
+  
+  .theme-ambition {
+    --theme-primary: var(--color-ambition-primary);
+    --theme-light: #FDF4E7;
+    --theme-soft: #FEFAF3;
+  }
+  
+  .theme-career {
+    --theme-primary: var(--color-career-primary);
+    --theme-light: #E3F0FA;
+    --theme-soft: #F1F8FD;
+  }
+  
+  .theme-home {
+    --theme-primary: var(--color-home-primary);
+    --theme-light: #F0FAFF;
+    --theme-soft: #F8FDFF;
+  }
+  
+  .theme-vibes {
+    --theme-primary: var(--color-vibes-primary);
+    --theme-light: #FFE8E0;
+    --theme-soft: #FFF4F0;
+  }
+
+  /* Universal backdrop */
+  .theme-backdrop {
+    background: linear-gradient(135deg, var(--theme-light) 0%, var(--theme-soft) 100%);
+  }
+  
+  /* Universal container */
+  .theme-container {
+    background: linear-gradient(135deg, var(--theme-soft) 0%, var(--color-cloud-white) 100%);
+  }
+  
+  /* Universal card */
+  .theme-card {
+    background: linear-gradient(135deg, var(--theme-light) 0%, var(--theme-soft) 100%);
+    border: 1px solid rgba(139, 115, 85, 0.1);
+  }
+
   /* Page / section titles */
   h1 {
-    @apply text-7xl md:text-8xl lg:text-9xl font-bold text-gray-800 tracking-tight;
+    @apply text-7xl md:text-8xl lg:text-9xl font-extrabold tracking-tight;
+    color: var(--color-warm-stone);
   }
 
   /* Sub-headings */
   h2 {
-    @apply text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-700 tracking-tight;
+    @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight;
+    color: var(--color-warm-stone);
   }
 
   /* Tertiary headings */
   h3 {
-    @apply text-4xl md:text-5xl lg:text-6xl font-medium text-gray-700 tracking-tight;
+    @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight;
+    color: var(--color-warm-stone);
   }
 
   /* Body copy */
   p {
-    @apply font-sans text-xl md:text-2xl lg:text-3xl text-gray-700 leading-relaxed;
+    @apply text-lg md:text-xl lg:text-2xl leading-relaxed font-medium;
+    color: #000000;
+  }
+
+  /* Global Button Styles */
+  .btn-primary {
+    @apply relative font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer;
+    background: linear-gradient(135deg, var(--color-cloud-white) 0%, #F8F8F8 100%);
+    color: var(--color-warm-stone);
+    border: 2px solid rgba(139, 115, 85, 0.2);
+    border-radius: 2rem;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--color-cloud-white) 100%);
+    border-color: rgba(139, 115, 85, 0.3);
+    color: var(--color-warm-stone);
+  }
+
+  .btn-secondary {
+    @apply relative font-medium shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer;
+    background: linear-gradient(135deg, var(--theme-light) 0%, var(--theme-soft) 100%);
+    color: var(--color-warm-stone);
+    border: 1px solid rgba(139, 115, 85, 0.15);
+    border-radius: 1.5rem;
+  }
+  
+  .btn-secondary:hover {
+    background: linear-gradient(135deg, var(--theme-soft) 0%, var(--color-cloud-white) 100%);
+    border-color: rgba(139, 115, 85, 0.25);
+  }
+
+  .btn-close {
+    @apply w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 font-medium;
+    background: linear-gradient(135deg, var(--color-cloud-white) 0%, #F5F5F5 100%);
+    color: var(--color-warm-stone);
+    border: 1px solid rgba(139, 115, 85, 0.2);
+  }
+  
+  .btn-close:hover {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--color-cloud-white) 100%);
+    border-color: rgba(139, 115, 85, 0.3);
   }
 }

@@ -66,7 +66,7 @@ export default function FlightControls() {
   return (
     <div className="absolute bottom-4 left-4 z-10">
       <div className="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-gray-200">
-        <h3 className="break-words text-lg font-bold text-gray-800 mb-4 text-center break-words font-mono uppercase tracking-wider">
+        <h3 className="break-words text-xl font-bold text-gray-800 mb-4 text-center break-words font-mono uppercase tracking-wider">
           Flight Controls
         </h3>
         <div className="grid grid-cols-1 gap-3 text-sm">

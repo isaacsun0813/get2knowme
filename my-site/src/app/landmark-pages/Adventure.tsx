@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import Image from 'next/image'
+import { Mountain } from 'lucide-react'
 
 interface AdventureProps {
   isOpen: boolean
@@ -138,41 +139,38 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
         isAnimating ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Green adventure-themed backdrop */}
+      {/* Adventure themed backdrop */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-br from-green-100/70 via-emerald-100/60 to-green-200/70 backdrop-blur-sm transition-all duration-500 ${
+        className={`absolute inset-0 theme-adventure theme-backdrop backdrop-blur-sm transition-all duration-500 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation - Made much wider */}
+      {/* Popup Container with organic animation - WIDER */}
       <div 
-        className={`relative w-full max-w-[95vw] max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
         }`}
       >
-        {/* Main content container with green adventure styling */}
-        <div className="relative bg-gradient-to-br from-green-50/95 via-emerald-50/95 to-white/95 backdrop-blur-md overflow-hidden break-words"
+        {/* Main content container with cohesive Adventure styling */}
+        <div className="relative theme-adventure theme-container backdrop-blur-md overflow-hidden break-words"
              style={{
                borderRadius: '2.5rem',
                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(34, 197, 94, 0.3)' // Green
+               border: '2px solid rgba(95, 184, 95, 0.3)'
              }}>
           
-          {/* Decorative green shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-green-200/30 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-emerald-200/30 to-transparent rounded-full transform -translate-x-12 translate-y-12"></div>
+          {/* Decorative themed shapes */}
+          <div className="absolute top-0 right-0 w-32 h-32 rounded-full transform translate-x-16 -translate-y-16" style={{ background: 'radial-gradient(circle, rgba(95, 184, 95, 0.2) 0%, transparent 70%)' }}></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full transform -translate-x-12 translate-y-12" style={{ background: 'radial-gradient(circle, rgba(95, 184, 95, 0.15) 0%, transparent 70%)' }}></div>
           
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full 
-                       bg-stone-100/80 hover:bg-white/90 transition-all duration-300 
-                       flex items-center justify-center text-stone-600 hover:text-stone-800
-                       shadow-lg hover:shadow-xl border border-stone-200/50 hover:scale-110"
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 btn-close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -184,25 +182,25 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
             
             {/* Header */}
             <div className="break-words text-center break-words mb-6 md:mb-8 lg:mb-12">
-              <h1 className="break-words text-emerald-700 mb-6 tracking-wide">
-                Adventure
-              </h1>
-
+              <div className="flex justify-center mb-4">
+                <Mountain size={80} style={{ color: 'var(--color-earth-green)' }} />
+              </div>
+              <h1 className="landmark-title" style={{ color: 'var(--color-earth-green)' }}>Adventure</h1>
+              <div className="landmark-divider"></div>
             </div>
 
             {/* Story Section */}
             <div className="max-w-6xl mx-auto mb-6 md:mb-8 lg:mb-12">
-              <div className="relative bg-gradient-to-br from-green-100/70 via-emerald-50/70 to-green-100/70 p-10 overflow-hidden break-words"
+              <div className="relative theme-adventure theme-card p-10 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(34, 197, 94, 0.2)'
+                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
                 <div className="break-words text-center break-words relative z-10">
                   
-                  <div className="break-words text-emerald-800 leading-relaxed break-words">
-                    <p className="break-words text-xl md:text-2xl lg:text-3xl font-medium">
+                  <div className="break-words text-black leading-relaxed break-words">
+                    <p className="break-words text-lg md:text-xl lg:text-2xl font-medium">
                       I&apos;m a nature guy. Check out some of my favorite places!
                     </p>
                   </div>

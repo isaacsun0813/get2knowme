@@ -141,9 +141,9 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       {/* Music Controls - styled to match Flight Controls and Visited Landmarks */}
       <div className="fixed bottom-6 right-6 z-40 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/50">
         <div className="p-4">
-          {/* Music Label */}
+          {/* Music Label - INCREASED FONT SIZE */}
           <div className="text-center mb-3">
-            <span className="text-gray-700 font-semibold text-sm tracking-wider uppercase">Music</span>
+            <span className="text-gray-700 font-semibold text-lg tracking-wider uppercase">Music</span>
           </div>
           
           {/* Controls */}

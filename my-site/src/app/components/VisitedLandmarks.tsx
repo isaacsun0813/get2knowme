@@ -60,13 +60,13 @@ export default function VisitedLandmarks({ visitedLandmarks, totalLandmarks }: V
         ${isComplete ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : ''}
       `}>
         <div className="flex flex-col">
-          {/* Text - clean with consistent sizing using global fonts */}
+          {/* Text - clean with consistent sizing using global fonts - INCREASED FONT SIZE */}
           <div className="flex items-baseline gap-3">
-            <span className="text-lg text-gray-800 font-mono uppercase tracking-wider">
+            <span className="text-xl text-gray-800 font-mono uppercase tracking-wider">
               Visited
             </span>
             <span className={`
-              text-lg transition-all duration-300 font-mono
+              text-xl transition-all duration-300 font-mono
               ${isComplete ? 'text-green-600' : 'text-gray-800'}
             `}>
               {visitedCount}/{totalLandmarks}
@@ -81,7 +81,7 @@ export default function VisitedLandmarks({ visitedLandmarks, totalLandmarks }: V
               h-full transition-all duration-500 ease-out rounded-full
               ${isComplete 
                 ? 'bg-gradient-to-r from-green-400 to-emerald-500' 
-                : 'bg-gradient-to-r from-blue-400 to-purple-500'
+                : 'bg-gradient-to-r from-blue-400 to-blue-600'
               }
             `}
             style={{ width: `${(visitedCount / totalLandmarks) * 100}%` }}
