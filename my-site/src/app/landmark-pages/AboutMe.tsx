@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 
 interface AboutMeProps {
@@ -63,12 +63,12 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
     }
   }, [isOpen])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsAnimating(false)
     setTimeout(() => {
       onClose()
     }, 200)
-  }
+  }, [onClose])
 
   if (!shouldRender) return null
 

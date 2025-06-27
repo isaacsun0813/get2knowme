@@ -125,7 +125,7 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
                   </div>
                   
                   <p>
-                  I have a lot of dreams and I'm actively working to bring them to life. Thanks for visiting my site :D                </p>
+                  I have a lot of dreams and I&apos;m actively working to bring them to life. Thanks for visiting my site :D                </p>
                 </div>
                 
 

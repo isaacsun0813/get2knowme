@@ -48,7 +48,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         setIsPlaying(false)
       })
     }
-  }, [isInWorld, isMobile])
+  }, [isInWorld, isMobile, isPlaying, volume])
 
   const fadeIn = (audio: HTMLAudioElement, targetVolume: number) => {
     const fadeStep = targetVolume / 30 // 30 steps over ~1 second
