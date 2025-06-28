@@ -171,6 +171,31 @@ div {
     color: #000000;
   }
 
+  /* Ensure list items match body text styling */
+  li {
+    @apply text-xl leading-relaxed font-medium;
+    color: #000000;
+  }
+
+  /* Ensure spans within lists also match */
+  li span {
+    @apply text-xl leading-relaxed font-medium;
+    color: #000000;
+  }
+
+  /* Override any inline text size classes in lists */
+  ul li {
+    font-size: 1.25rem !important; /* text-xl equivalent */
+    line-height: 1.75 !important;
+    font-weight: 500 !important;
+  }
+
+  ul li span {
+    font-size: 1.25rem !important; /* text-xl equivalent */
+    line-height: 1.75 !important;
+    font-weight: 500 !important;
+  }
+
   /* Global Button Styles */
   .btn-primary {
     @apply relative font-semibold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer;
