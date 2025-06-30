@@ -52,21 +52,21 @@ export default function VisitedLandmarks({ visitedLandmarks, totalLandmarks }: V
   if (isMobile) return null
 
   return (
-    <div className="fixed top-6 right-6 z-40 pointer-events-none">
-      {/* Main progress indicator - much larger */}
+    <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-30 pointer-events-none">
+      {/* Main progress indicator - SMALLER & RESPONSIVE */}
       <div className={`
-        bg-white/95 backdrop-blur-sm rounded-3xl px-8 py-6 shadow-xl border border-gray-200/50
+        bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl px-3 sm:px-4 md:px-6 py-3 sm:py-4 shadow-lg border border-gray-200/50
         transition-all duration-300 ease-out
         ${isComplete ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : ''}
       `}>
         <div className="flex flex-col">
-          {/* Text - clean with consistent sizing using global fonts - INCREASED FONT SIZE */}
-          <div className="flex items-baseline gap-3">
-            <span className="text-xl text-gray-800 font-mono uppercase tracking-wider">
+          {/* Text - SMALLER & RESPONSIVE */}
+          <div className="flex items-baseline gap-2">
+            <span className="text-xs sm:text-sm text-gray-800 font-mono uppercase tracking-wider">
               Visited
             </span>
             <span className={`
-              text-xl transition-all duration-300 font-mono
+              text-xs sm:text-sm transition-all duration-300 font-mono
               ${isComplete ? 'text-green-600' : 'text-gray-800'}
             `}>
               {visitedCount}/{totalLandmarks}
@@ -74,8 +74,8 @@ export default function VisitedLandmarks({ visitedLandmarks, totalLandmarks }: V
           </div>
         </div>
         
-        {/* Progress bar - larger */}
-        <div className="mt-4 w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        {/* Progress bar - SMALLER */}
+        <div className="mt-2 sm:mt-3 w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div 
             className={`
               h-full transition-all duration-500 ease-out rounded-full
@@ -88,11 +88,11 @@ export default function VisitedLandmarks({ visitedLandmarks, totalLandmarks }: V
           />
         </div>
         
-        {/* Completion message - larger */}
+        {/* Completion message - SMALLER */}
         {isComplete && (
-          <div className="mt-3 text-center">
-            <span className="text-sm text-green-600 animate-pulse font-mono uppercase tracking-wide">
-              ✨ All landmarks explored! ✨
+          <div className="mt-2 text-center">
+            <span className="text-xs text-green-600 animate-pulse font-mono uppercase tracking-wide">
+              ✨ All explored! ✨
             </span>
           </div>
         )}

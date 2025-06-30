@@ -123,38 +123,38 @@ export default function LocationPrompt({
   const IconComponent = styling.icon
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8 z-50 pointer-events-none">
+    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-4 sm:pb-6 z-50 pointer-events-none">
       <div 
-        className={`${styling.bg} ${styling.text} px-8 py-6 rounded-2xl shadow-xl backdrop-blur-sm border-2 border-white/60 ${
+        className={`${styling.bg} ${styling.text} px-3 py-2 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl shadow-lg backdrop-blur-sm border border-white/60 ${
           isMobile ? 'pointer-events-auto cursor-pointer active:scale-95 transition-transform' : ''
         }`}
         onClick={isMobile ? handleTap : undefined}
         onTouchStart={isMobile ? handleTap : undefined}
       >
-        <div className="break-words text-center break-words">
-          <div className="flex justify-center mb-3">
-            <IconComponent size={32} className={styling.text} />
+        <div className="text-center">
+          <div className="flex justify-center mb-1 sm:mb-2">
+            <IconComponent size={16} className={`${styling.text} sm:w-5 sm:h-5`} />
           </div>
-          <h2 className={`text-2xl font-bold mb-2 ${styling.text} font-mono uppercase tracking-wider`}>
+          <h2 className={`text-xs sm:text-sm md:text-base font-bold mb-1 ${styling.text} font-mono uppercase tracking-wide`}>
             {landmark.displayName}
           </h2>
-          <h3 className={`text-lg font-bold mb-4 ${styling.text} font-mono uppercase tracking-widest opacity-80`}>
+          <h3 className={`text-xs sm:text-sm font-semibold mb-2 ${styling.text} font-mono uppercase tracking-wider opacity-80`}>
             {landmark.subtitle}
           </h3>
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
             {isMobile ? (
               <>
-                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>
+                <span className={`text-xs sm:text-sm font-semibold ${styling.text} font-mono uppercase tracking-wide`}>
                   Tap to Explore
                 </span>
               </>
             ) : (
               <>
-                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>Press</span>
-                <kbd className={`${styling.spaceButton} text-white px-4 py-2 rounded-lg font-mono font-bold text-base shadow-lg animate-pulse`}>
+                <span className={`text-xs sm:text-sm font-semibold ${styling.text} font-mono uppercase tracking-wide`}>Press</span>
+                <kbd className={`${styling.spaceButton} text-white px-2 py-1 sm:px-3 sm:py-1 rounded font-mono font-bold text-xs sm:text-sm shadow-md animate-pulse`}>
                   SPACE
                 </kbd>
-                <span className={`text-base font-semibold ${styling.text} font-mono uppercase tracking-wide`}>to Explore</span>
+                <span className={`text-xs sm:text-sm font-semibold ${styling.text} font-mono uppercase tracking-wide`}>to Explore</span>
               </>
             )}
           </div>

@@ -62,9 +62,9 @@ export default function Home({ isOpen, onClose }: HomeProps) {
         onClick={handleClose}
       />
       
-      {/* Main container - WIDER */}
+      {/* Main container - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -89,29 +89,29 @@ export default function Home({ isOpen, onClose }: HomeProps) {
           </button>
 
           {/* Content area */}
-          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="break-words text-center break-words mb-16">
-              <h1 className="landmark-title" style={{ color: 'var(--color-sky-primary)' }}>Home</h1>
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 sm:mb-4" style={{ color: 'var(--color-sky-primary)' }}>Home</h1>
               <div className="landmark-divider"></div>
-              <p className="break-words text-3xl font-semibold text-stone-600 tracking-wide leading-relaxed break-words">
+              <p className="break-words font-medium text-stone-600 tracking-wide leading-relaxed break-words text-sm sm:text-base md:text-lg mt-3 sm:mt-4">
                 Welcome to my interactive world! Click and drag to fly around and discover landmarks that tell my story.
               </p>
             </div>
 
             {/* Main content */}
             <div className="max-w-4xl mx-auto break-words">
-              <div className="relative theme-home theme-card p-12 text-center break-words overflow-hidden break-words"
+              <div className="relative theme-home theme-card landmark-card text-center break-words overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
-                <h2 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                <h2 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">
                   Ready to explore?
                 </h2>
-                <p className="break-words text-2xl text-stone-700 leading-relaxed break-words">
+                <p className="break-words text-stone-700 leading-relaxed break-words">
                   This section is currently under development. Stay tuned for updates!
                 </p>
                 

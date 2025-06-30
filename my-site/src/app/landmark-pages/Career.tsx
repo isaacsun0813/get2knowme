@@ -73,9 +73,9 @@ export default function Career({ isOpen, onClose }: CareerProps) {
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation - WIDER */}
+      {/* Popup Container with organic animation - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -104,20 +104,20 @@ export default function Career({ isOpen, onClose }: CareerProps) {
           </button>
 
           {/* Content area */}
-          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
 
             {/* Header */}
-            <div className="break-words text-center break-words mb-8">
-              <div className="flex justify-center mb-4">
-                <Briefcase size={80} style={{ color: 'var(--color-deep-blue)' }} />
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <Briefcase size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-deep-blue)' }} />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-deep-blue)' }}>Career</h1>
               </div>
-              <h1 className="landmark-title" style={{ color: 'var(--color-deep-blue)' }}>Career</h1>
               <div className="landmark-divider"></div>
             </div>
 
-            <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
-              <div className="relative theme-career theme-card p-10 overflow-hidden break-words"
+            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
+              <div className="relative theme-career theme-card landmark-card overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
@@ -139,8 +139,8 @@ export default function Career({ isOpen, onClose }: CareerProps) {
 
 
 
-            <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
-              <div className="relative theme-career theme-card p-10 overflow-hidden break-words"
+            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
+              <div className="relative theme-career theme-card landmark-card overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
@@ -157,7 +157,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     </p>
                     
                     <div className="max-w-4xl mx-auto break-words">
-                      <ul className="space-y-6 break-words text-left ml-8 text-xl">
+                      <ul className="space-y-6 break-words text-left ml-8">
                         <li className="flex items-start gap-4">
                           <span className="break-words font-bold text-black">•</span>
                           <span>Scope 2 Emissions tracking and optimization platforms</span>
@@ -184,7 +184,6 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                           background: `linear-gradient(135deg, var(--color-deep-blue) 0%, rgba(74, 144, 194, 0.8) 100%)`,
                           color: 'white',
                           fontWeight: 'medium',
-                          fontSize: 'clamp(1.25rem, 2.5vw, 2rem)',
                           borderRadius: '0.75rem',
                           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
                           transform: 'translateZ(0)',
@@ -211,8 +210,8 @@ export default function Career({ isOpen, onClose }: CareerProps) {
             </div>
 
             {/* Non-Career Goals Section - Moved to End */}
-            <div className="max-w-4xl mx-auto break-words mb-6 md:mb-8 lg:mb-12">
-              <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-10 overflow-hidden break-words"
+            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
+              <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 landmark-card overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
@@ -225,7 +224,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                   </div>
                   
                                      <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
-                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words text-xl">
+                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words">
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
                          <span>Paragliding license</span>

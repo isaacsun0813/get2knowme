@@ -63,9 +63,9 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
         onClick={handleClose}
       />
       
-      {/* Main container - WIDER */}
+      {/* Main container - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -90,26 +90,26 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
           </button>
 
           {/* Content area */}
-          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="break-words text-center break-words mb-16">
-              <div className="flex justify-center mb-4">
-                <Star size={80} style={{ color: 'var(--color-sunset-orange)' }} />
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <Star size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-sunset-orange)' }} />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-sunset-orange)' }}>Inspiration</h1>
               </div>
-              <h1 className="landmark-title" style={{ color: 'var(--color-sunset-orange)' }}>Inspiration</h1>
               <div className="landmark-divider"></div>
             </div>
 
             {/* Main content */}
             <div className="max-w-4xl mx-auto break-words">
-              <div className="relative theme-vibes theme-card p-12 text-left break-words overflow-hidden break-words"
+              <div className="relative theme-vibes theme-card landmark-card text-left break-words overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
                    }}>
                 
-                <h2 className="break-words text-3xl font-extrabold text-stone-800 mb-8 tracking-tight">
+                <h2 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">
                   I wanted to fly.
                 </h2>
                 

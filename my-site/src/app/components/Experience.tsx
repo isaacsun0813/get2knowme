@@ -326,8 +326,8 @@ export default function Experience() {
         `}</style>
       </div>
 
-      {/* Background Music - only plays when in world */}
-      <BackgroundMusic isInWorld={!showIntro} />
+      {/* Background Music - only plays when in world, hidden when location prompt is shown */}
+      <BackgroundMusic isInWorld={!showIntro} hideControls={!!showSpacebarPrompt} />
       
       {/* Show intro screen on top when needed */}
       {showIntro && <IntroScreen onEnter={handleEnterWorld} />}

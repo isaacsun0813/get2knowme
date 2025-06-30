@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 
 interface BackgroundMusicProps {
   isInWorld: boolean // true when user enters the 3D world
+  hideControls?: boolean // true when location popup is shown
 }
 
-export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
+export default function BackgroundMusic({ isInWorld, hideControls = false }: BackgroundMusicProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(0.3) // Default to 30% volume
@@ -117,8 +118,8 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
     }
   }
 
-  // Don't render anything on mobile, or show controls when not in world
-  if (isMobile || !isInWorld) {
+  // Don't render anything on mobile, or show controls when not in world, or when hideControls is true
+  if (isMobile || !isInWorld || hideControls) {
     return isMobile ? null : (
       <audio
         ref={audioRef}
@@ -138,20 +139,20 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         src="/audio/background-music.mp3"
       />
       
-      {/* Music Controls - styled to match Flight Controls and Visited Landmarks */}
-      <div className="fixed bottom-6 right-6 z-40 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/50">
-        <div className="p-4">
-          {/* Music Label - INCREASED FONT SIZE */}
-          <div className="text-center mb-3">
-            <span className="text-gray-700 font-semibold text-lg tracking-wider uppercase">Music</span>
+      {/* Music Controls - SMALLER & LOWER Z-INDEX */}
+      <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-20 bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50">
+        <div className="p-2 sm:p-3">
+          {/* Music Label - SMALLER */}
+          <div className="text-center mb-2">
+            <span className="text-gray-700 font-semibold text-xs sm:text-sm tracking-wider uppercase">Music</span>
           </div>
           
           {/* Controls */}
-          <div className="flex items-center justify-center gap-3">
-            {/* Play/Pause Button with morphing animation */}
+          <div className="flex items-center justify-center gap-2">
+            {/* Play/Pause Button - SMALLER */}
             <button
               onClick={togglePlayPause}
-              className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300 flex items-center justify-center text-gray-600 hover:text-gray-800 shadow-md group hover:-translate-y-0.5 hover:scale-105 active:scale-95"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300 flex items-center justify-center text-gray-600 hover:text-gray-800 shadow-md group hover:-translate-y-0.5 hover:scale-105 active:scale-95"
               title={isPlaying ? "Pause Music" : "Play Music"}
             >
               {/* Simple toggle between play and pause icons */}
@@ -160,7 +161,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 return isPlaying ? (
                   // Pause Icon (two bars) - shows when music IS playing
                   <svg 
-                    className="w-6 h-6" 
+                    className="w-4 h-4 sm:w-5 sm:h-5" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -171,7 +172,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 ) : (
                   // Play Icon (triangle) - shows when music is NOT playing
                   <svg 
-                    className="w-6 h-6" 
+                    className="w-4 h-4 sm:w-5 sm:h-5" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -183,27 +184,27 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
               })()}
             </button>
 
-            {/* Mute/Unmute Button */}
+            {/* Mute/Unmute Button - SMALLER */}
             <button
               onClick={toggleMute}
-              className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-200 flex items-center justify-center text-gray-600 hover:text-gray-800 shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-200 flex items-center justify-center text-gray-600 hover:text-gray-800 shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95"
               title={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                 </svg>
               )}
             </button>
           </div>
           
-          {/* Volume Slider */}
-          <div className="mt-3 flex justify-center">
+          {/* Volume Slider - SMALLER */}
+          <div className="mt-2 flex justify-center">
             <input
               type="range"
               min="0"
@@ -211,7 +212,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
               step="0.1"
               value={volume}
               onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-              className="w-28 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer music-slider"
+              className="w-20 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer music-slider"
             />
           </div>
         </div>
@@ -220,12 +221,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       <style jsx>{`
         .music-slider::-webkit-slider-thumb {
           appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           background: #6b7280;
           cursor: pointer;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
           transition: all 0.2s ease;
         }
         .music-slider::-webkit-slider-thumb:hover {
@@ -233,13 +234,13 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
           transform: scale(1.1);
         }
         .music-slider::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           background: #6b7280;
           cursor: pointer;
           border: none;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         .music-slider::-moz-range-thumb:hover {
           background: #4b5563;

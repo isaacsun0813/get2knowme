@@ -86,9 +86,9 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation - WIDER */}
+      {/* Popup Container with organic animation - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -117,18 +117,18 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
           </button>
 
           {/* Content area with artistic layout */}
-          <div className="break-words p-6 sm:p-10 md:p-16 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="break-words text-center break-words mb-32">
-              <h1 className="landmark-title" style={{ color: 'var(--color-soft-cyan)' }}>About Me</h1>
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 sm:mb-4" style={{ color: 'var(--color-soft-cyan)' }}>About Me</h1>
               <div className="landmark-divider"></div>
             </div>
 
             {/* About Me Sections */}
             <div className="max-w-6xl mx-auto">
               {/* Main Combined Introduction and Bio Card */}
-              <div className="relative theme-about theme-card p-16 mb-16 overflow-hidden break-words"
+              <div className="relative theme-about theme-card landmark-card landmark-section-spacing overflow-hidden break-words"
                     style={{
                       borderRadius: '2rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
@@ -153,7 +153,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     <h2 className="break-words text-stone-800 mb-6">
                       Isaac Sun
                     </h2>
-                    <p className="break-words text-black font-semibold text-2xl"> SWE/Climate Advocate</p>
+                    <p className="break-words text-black font-semibold"> SWE/Climate Advocate</p>
                   </div>
 
                   {/* Bio Content */}
@@ -182,7 +182,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
             </div>
 
             {/* Connect Section */}
-            <div className="relative bg-gradient-to-r from-green-100/60 via-stone-100/60 to-amber-100/60 p-12 text-center break-words overflow-hidden break-words"
+            <div className="relative bg-gradient-to-r from-green-100/60 via-stone-100/60 to-amber-100/60 landmark-card-compact text-center break-words overflow-hidden break-words"
                  style={{
                    borderRadius: '1.5rem',
                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 10px 25px rgba(0, 0, 0, 0.08)',

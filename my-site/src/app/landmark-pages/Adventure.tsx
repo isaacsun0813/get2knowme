@@ -147,9 +147,9 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
         onClick={handleClose}
       />
       
-      {/* Popup Container with organic animation - WIDER */}
+      {/* Popup Container with organic animation - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -178,34 +178,34 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
           </button>
 
           {/* Content area */}
-          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
             {/* Header */}
-            <div className="break-words text-center break-words mb-8">
-              <div className="flex justify-center mb-4">
-                <Mountain size={80} style={{ color: 'var(--color-earth-green)' }} />
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <Mountain size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-earth-green)' }} />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-earth-green)' }}>Adventure</h1>
               </div>
-              <h1 className="landmark-title" style={{ color: 'var(--color-earth-green)' }}>Adventure</h1>
               <div className="landmark-divider"></div>
             </div>
 
             {/* Story Section */}
-            <div className="max-w-6xl mx-auto mb-8">
-              <div className="relative bg-gradient-to-r from-green-50/60 to-transparent p-6 border-l-4 border-green-400"
+            <div className="max-w-6xl mx-auto landmark-section-spacing">
+              <div className="relative bg-gradient-to-r from-green-50/60 to-transparent landmark-card-compact border-l-4 border-green-400"
                    style={{
                      borderRadius: '0 1rem 1rem 0'
                    }}>
                 
                 <div className="text-left">
-                  <p className="text-2xl font-medium text-stone-700 italic">
+                  <p className="font-medium text-stone-700 italic">
                     I&apos;m a nature guy. Check out some of my favorite places!
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Photo Collage Section - Dominating images */}
-            <div className="max-w-7xl mx-auto mb-8">
+            {/* Photo Collage Section - More compact images */}
+            <div className="max-w-4xl mx-auto mb-8">
               <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-3 overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
@@ -213,21 +213,21 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                      border: '1px solid rgba(100, 116, 139, 0.2)'
                    }}>
                 
-                 {/* Photo Display - Dominating page size */}
+                 {/* Photo Display - More reasonable size */}
                  <div className="relative flex justify-center">
-                   <div className="relative w-full max-w-5xl aspect-square rounded-xl overflow-hidden shadow-lg bg-gray-200">
+                   <div className="relative w-full max-w-2xl aspect-[4/3] rounded-xl overflow-hidden shadow-lg bg-gray-200">
                      {/* Placeholder when no image loads - only show when image hasn't loaded */}
                      {!imageLoaded && (
                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100 z-10">
                          <div className="break-words text-center break-words">
-                           <span className="break-words text-5xl mb-4 block">📸</span>
-                           <p className="break-words text-gray-600 text-2xl">
+                           <span className="break-words text-3xl mb-4 block">📸</span>
+                           <p className="break-words text-gray-600">
                              {preloadedImages.size === 0 ? 'Loading photos...' : 
                               preloadedImages.size < adventurePhotos.length ? 
                               `Loading photos... (${preloadedImages.size}/${adventurePhotos.length})` :
                               'Loading current photo...'}
                            </p>
-                           <p className="break-words text-gray-600 font-mono text-lg">/photos/adventure/</p>
+                           <p className="break-words text-gray-600 font-mono">/photos/adventure/</p>
                          </div>
                        </div>
                      )}
@@ -277,7 +277,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                          borderRadius: '1.5rem',
                          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 25px rgba(0, 0, 0, 0.08)'
                        }}>
-                    <h3 className="text-3xl font-medium text-stone-700 text-center">
+                    <h3 className="font-medium text-stone-700 text-center">
                       {adventurePhotos[currentPhotoIndex].caption}
                     </h3>
                   </div>
@@ -301,8 +301,8 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
             </div>
 
             {/* Attack on Titan Section */}
-            <div className="max-w-5xl mx-auto mb-6 md:mb-8 lg:mb-12">
-              <div className="relative bg-gradient-to-br from-red-100/70 via-orange-50/70 to-red-100/70 p-10 overflow-hidden break-words"
+            <div className="max-w-5xl mx-auto landmark-section-spacing">
+              <div className="relative bg-gradient-to-br from-red-100/70 via-orange-50/70 to-red-100/70 landmark-card overflow-hidden break-words"
                    style={{
                      borderRadius: '2rem',
                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
@@ -313,15 +313,15 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                   
                   {/* Attack on Titan GIF */}
                   <div className="mb-8">
-                    <div className="w-full max-w-lg mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-gray-200 relative">
+                    <div className="w-full max-w-sm mx-auto h-64 rounded-xl overflow-hidden shadow-lg bg-gray-200 relative">
                       {/* Placeholder when no GIF loads */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-100 to-orange-100">
-                        <div className="break-words text-center break-words">
-                          <span className="break-words text-2xl md:text-3xl lg:text-4xl mb-2 block">🎌</span>
-                          <p className="break-words text-gray-600 text-xl md:text-2xl lg:text-3xl">Add aot.gif to</p>
-                          <p className="break-words text-gray-600 font-mono text-lg">/photos/adventure/</p>
+                                              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-100 to-orange-100">
+                          <div className="break-words text-center break-words">
+                            <span className="break-words mb-2 block">🎌</span>
+                            <p className="break-words text-gray-600">Add aot.gif to</p>
+                            <p className="break-words text-gray-600 font-mono">/photos/adventure/</p>
+                          </div>
                         </div>
-                      </div>
                       
                       <Image 
                         src="/photos/adventure/aot.gif"
@@ -335,7 +335,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                   </div>
                   
                                      <div className="break-words text-stone-600 leading-relaxed break-words">
-                     <p className="break-words text-xl md:text-2xl lg:text-3xl font-medium">
+                     <p className="break-words font-medium">
                        I was <span className="font-medium text-red-600">obsessed with AOT</span> as a kid because I wanted to 
                        <span className="font-medium text-blue-600"> fly around like Erin does</span> in this scene. 
                        Looking forward to the day this is possible <span>:)</span>

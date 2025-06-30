@@ -87,9 +87,9 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
         onClick={handleClose}
       />
       
-      {/* Main container - WIDER */}
+      {/* Main container - RESPONSIVE */}
       <div 
-        className={`relative w-full max-w-7xl max-h-[95vh] mx-4 my-4 transition-all duration-500 ease-out ${
+        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
           isAnimating 
             ? 'scale-100 opacity-100 translate-y-0' 
             : 'scale-95 opacity-0 translate-y-4'
@@ -114,25 +114,25 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
           </button>
 
           {/* Content area */}
-          <div className="break-words p-12 overflow-y-auto max-h-[95vh]">
+          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
             
-                         {/* Header */}
-             <div className="break-words text-center break-words mb-32">
-                               <div className="flex justify-center mb-4">
-                <Rocket size={80} style={{ color: 'var(--color-warm-amber)' }} />
+            {/* Header */}
+            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <Rocket size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-warm-amber)' }} />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-warm-amber)' }}>Projects</h1>
               </div>
-              <h1 className="landmark-title" style={{ color: 'var(--color-warm-amber)' }}>Projects</h1>
-               <div className="landmark-divider"></div>
-               <p className="break-words text-xl font-semibold text-black tracking-wide leading-relaxed break-words">
-                 I&apos;m a builder. I love to make things happen.<br />Here&apos;s what I&apos;m up to:
-               </p>
-             </div>
+              <div className="landmark-divider"></div>
+              <p className="break-words font-medium text-black tracking-wide leading-relaxed break-words text-sm sm:text-base md:text-lg mt-3 sm:mt-4">
+                I&apos;m a builder.  Here&apos;s what I&apos;m up to:
+              </p>
+            </div>
 
                          {/* Projects Section */}
              <div className="max-w-5xl mx-auto space-y-12">
               
                              {/* Verdra Project */}
-               <div className="relative theme-ambition theme-card p-8 overflow-hidden break-words"
+               <div className="relative theme-ambition theme-card landmark-card-compact overflow-hidden break-words"
                     style={{
                       borderRadius: '1.5rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
@@ -142,12 +142,12 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    {/* Project Info */}
                    <div className="flex-1 text-center lg:text-left">
                      <div className="w-full">
-                       <h2 className="break-words text-6xl font-extrabold text-stone-800 mb-6 tracking-tight">
-                         <span className="break-words text-4xl">Verdra</span>
+                       <h2 className="break-words font-extrabold text-stone-800 mb-6 tracking-tight">
+                         <span className="break-words">Verdra</span>
                        </h2>
                        <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mb-6 mx-auto lg:mx-0"></div>
-                       <p className="break-words text-lg text-black mb-6 font-semibold">Cloud Compute Optimization</p>
-                       <p className="break-words text-base text-black mb-6 leading-relaxed break-words max-w-3xl mx-auto lg:mx-0 break-words">
+                       <p className="break-words text-black mb-6 font-semibold">Cloud Compute Optimization</p>
+                       <p className="break-words text-black mb-6 leading-relaxed break-words max-w-3xl mx-auto lg:mx-0 break-words">
                          Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies
                        </p>
                        
@@ -155,7 +155,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                          href="https://verdra.co" 
                          target="_blank" 
                          rel="noopener noreferrer"
-                         className="group btn-primary inline-flex items-center gap-2 px-8 py-3 text-base"
+                         className="group btn-primary inline-flex items-center gap-2 px-8 py-3"
                        >
                          <span className="relative z-10">Check it out</span>
                          <svg className="w-5 h-5 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +182,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                </div>
 
                              {/* PrizeSole Project */}
-               <div className="relative theme-ambition theme-card p-8 overflow-hidden break-words"
+               <div className="relative theme-ambition theme-card landmark-card-compact overflow-hidden break-words"
                     style={{
                       borderRadius: '1.5rem',
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
@@ -192,13 +192,13 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    {/* Project Info */}
                    <div className="flex-1 text-center lg:text-left">
                      <div className="w-full">
-                       <h2 className="break-words text-6xl font-extrabold text-stone-800 mb-6 tracking-tight">
-                         <span className="break-words text-4xl">PrizeSole</span>
+                       <h2 className="break-words font-extrabold text-stone-800 mb-6 tracking-tight">
+                         <span className="break-words">PrizeSole</span>
                        </h2>
                        <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent mb-6 mx-auto lg:mx-0"></div>
-                       <p className="break-words text-lg mb-6 font-semibold text-black">B2B eCommerce sneaker sweepstakes platform</p>
+                       <p className="break-words mb-6 font-semibold text-black">B2B eCommerce sneaker sweepstakes platform</p>
                        
-                       <div className="inline-flex items-center gap-2 px-8 py-3 text-base bg-gray-100 text-gray-600 rounded-2xl border border-gray-200">
+                       <div className="inline-flex items-center gap-2 px-8 py-3 bg-gray-100 text-gray-600 rounded-2xl border border-gray-200">
                          <span>Discontinued</span>
                        </div>
                      </div>
@@ -232,10 +232,10 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    <div className="relative">
                      <div className="flex items-center gap-4 mb-8">
                        <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50"></div>
-                       <span className="break-words text-xl font-bold text-yellow-600 tracking-wider">BUILDING</span>
+                       <span className="break-words font-bold text-yellow-600 tracking-wider">BUILDING</span>
                      </div>
-                     <h3 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">Grey Market Sneaker Marketplace</h3>
-                     <p className="break-words text-black mb-8 text-lg sm:text-xl md:text-2xl leading-relaxed break-words">
+                     <h3 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">Grey Market Sneaker Marketplace</h3>
+                     <p className="break-words text-black mb-8 leading-relaxed break-words">
                      A sneaker inventory management platform featuring agent-driven workflows, automated SKU detection, 
                      and real-time access to available wholesale inventory.
                      </p>
@@ -253,10 +253,10 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                    <div className="relative">
                      <div className="flex items-center gap-4 mb-8">
                        <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50"></div>
-                       <span className="break-words text-xl font-bold text-yellow-600 tracking-wider">RESEARCHING</span>
+                       <span className="break-words font-bold text-yellow-600 tracking-wider">RESEARCHING</span>
                      </div>
-                     <h3 className="break-words text-5xl font-extrabold text-stone-800 mb-8 tracking-tight">Cloud spend tied to carbon footprint</h3>
-                     <p className="break-words text-black mb-8 text-lg sm:text-xl md:text-2xl leading-relaxed break-words">
+                     <h3 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">Cloud spend tied to carbon footprint</h3>
+                     <p className="break-words text-black mb-8 leading-relaxed break-words">
                        Also interested in greener CI/CD pipelines and carbon-aware job scheduling for training 
                        ML models 
                      </p>
@@ -271,14 +271,14 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                       boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
                       border: '1px solid rgba(100, 116, 139, 0.2)'
                     }}>
-                 <p className="break-words text-xl sm:text-2xl font-bold text-black mb-8">
+                 <p className="break-words font-bold text-black mb-8">
                    Check out what else I&apos;m working on:
                  </p>
                  <a 
                    href="https://github.com/isaacsun0813" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="group btn-primary inline-flex items-center gap-3 px-12 py-4 text-xl"
+                   className="group btn-primary inline-flex items-center gap-3 px-12 py-4"
                  >
                    <span className="relative z-10">View GitHub</span>
                    <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 group-hover:scale-110 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24">
