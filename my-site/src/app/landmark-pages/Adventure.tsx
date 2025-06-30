@@ -13,8 +13,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldRender, setShouldRender] = useState(false)
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set())
+  const [imageLoaded, setImageLoaded] = useState(true) // Start as true since images are pre-loaded globally
 
   const adventurePhotos = useMemo(() => [
     { src: '/photos/adventure/adventure1.jpg', caption: 'Ticino' },
@@ -35,25 +34,6 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     { src: '/photos/adventure/adventure16.jpg', caption: 'Interlaken' },
     { src: '/photos/adventure/adventure17.jpg', caption: 'Stoos' },
   ], [])
-
-  // Preload all images in the background
-  useEffect(() => {
-    const preloadImages = () => {
-      adventurePhotos.forEach((photo) => {
-        const img = new window.Image()
-        img.onload = () => {
-          setPreloadedImages(prev => new Set(prev).add(photo.src))
-        }
-        img.onerror = () => {
-          console.warn(`Failed to preload image: ${photo.src}`)
-        }
-        img.src = photo.src
-      })
-    }
-
-    // Start preloading immediately when component mounts
-    preloadImages()
-  }, [adventurePhotos])
 
   // Handle escape key to close
   useEffect(() => {
@@ -93,16 +73,10 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     }
   }, [isOpen])
 
-  // Reset image loaded state when photo changes
+  // Images are preloaded globally, so they should be ready immediately
   useEffect(() => {
-    const currentPhotoSrc = adventurePhotos[currentPhotoIndex].src
-    // If image is already preloaded, mark it as loaded immediately
-    if (preloadedImages.has(currentPhotoSrc)) {
-      setImageLoaded(true)
-    } else {
-      setImageLoaded(false)
-    }
-  }, [currentPhotoIndex, preloadedImages, adventurePhotos])
+    setImageLoaded(true)
+  }, [currentPhotoIndex])
 
   const handleClose = () => {
     setIsAnimating(false)
@@ -216,18 +190,12 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                  {/* Photo Display - More reasonable size */}
                  <div className="relative flex justify-center">
                    <div className="relative w-full max-w-2xl aspect-[4/3] rounded-xl overflow-hidden shadow-lg bg-gray-200">
-                     {/* Placeholder when no image loads - only show when image hasn't loaded */}
+                     {/* Minimal placeholder for any brief loading - should rarely show since images are preloaded */}
                      {!imageLoaded && (
                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100 z-10">
                          <div className="break-words text-center break-words">
                            <span className="break-words text-3xl mb-4 block">📸</span>
-                           <p className="break-words text-gray-600">
-                             {preloadedImages.size === 0 ? 'Loading photos...' : 
-                              preloadedImages.size < adventurePhotos.length ? 
-                              `Loading photos... (${preloadedImages.size}/${adventurePhotos.length})` :
-                              'Loading current photo...'}
-                           </p>
-                           <p className="break-words text-gray-600 font-mono">/photos/adventure/</p>
+                           <p className="break-words text-gray-600">Loading photo...</p>
                          </div>
                        </div>
                      )}

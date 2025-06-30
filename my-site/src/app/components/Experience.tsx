@@ -17,6 +17,7 @@ import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
 import VisitedLandmarks from './VisitedLandmarks'
 import BackgroundMusic from './BackgroundMusic'
+import ImagePreloader from './ImagePreloader'
 
 // 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
 const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
@@ -284,6 +285,9 @@ export default function Experience() {
         totalLandmarks={landmarkConfig.length}
       />
       
+      {/* Background Music - part of world entrance animation */}
+      <BackgroundMusic isInWorld={!showIntro} />
+      
       {/* Spacebar prompt */}
       <LocationPrompt 
         landmark={showSpacebarPrompt}
@@ -326,8 +330,8 @@ export default function Experience() {
         `}</style>
       </div>
 
-      {/* Background Music - only plays when in world, hidden when location prompt is shown */}
-      <BackgroundMusic isInWorld={!showIntro} hideControls={!!showSpacebarPrompt} />
+      {/* Image Preloader - starts preloading images as soon as user enters world */}
+      <ImagePreloader isInWorld={!showIntro} />
       
       {/* Show intro screen on top when needed */}
       {showIntro && <IntroScreen onEnter={handleEnterWorld} />}

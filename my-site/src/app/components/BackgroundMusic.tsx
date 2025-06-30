@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 
 interface BackgroundMusicProps {
   isInWorld: boolean // true when user enters the 3D world
-  hideControls?: boolean // true when location popup is shown
 }
 
-export default function BackgroundMusic({ isInWorld, hideControls = false }: BackgroundMusicProps) {
+export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(0.3) // Default to 30% volume
@@ -22,7 +21,20 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
       const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent)
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
       const isSmallScreen = window.innerWidth <= 768
-      return isMobileDevice || (isTouchDevice && isSmallScreen)
+      
+      // More strict mobile detection - require both touch AND small screen AND (mobile user agent OR very small screen)
+      const isTrulyMobile = isMobileDevice || (isTouchDevice && isSmallScreen && window.innerWidth <= 480)
+      
+      console.log('🎵 Mobile detection:', {
+        userAgent,
+        isMobileDevice,
+        isTouchDevice,
+        isSmallScreen,
+        screenWidth: window.innerWidth,
+        isTrulyMobile
+      })
+      
+      return isTrulyMobile
     }
     
     setIsMobile(checkMobile())
@@ -119,17 +131,21 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
     }
   }
 
-  // Don't render anything on mobile, or show controls when not in world, or when hideControls is true
-  if (isMobile || !isInWorld || hideControls) {
-    return isMobile ? null : (
-      <audio
-        ref={audioRef}
-        loop
-        preload="auto"
-        src="/audio/background-music.mp3" // You'll add your MP3 file here
-      />
-    )
+    // Don't render controls on mobile
+  if (isMobile) {
+    return null
   }
+
+  // Show controls when in world - just like other panels
+  const shouldShowControls = isInWorld
+
+  console.log('🎵 BackgroundMusic render:', {
+    isInWorld,
+    isMobile,
+    shouldShowControls,
+    isPlaying,
+    hasUserInteracted
+  })
 
   return (
     <>
@@ -140,9 +156,10 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
         src="/audio/background-music.mp3"
       />
       
-      {/* Music Controls - SMALLER & LOWER Z-INDEX */}
-      <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-20 bg-white/90 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-lg border border-gray-200/50">
-        <div className="p-2 sm:p-3">
+      {/* Music Controls */}
+      {shouldShowControls && (
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-30">
+          <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-3 sm:p-4 transition-all duration-300 ease-out">
           {/* Music Label - SMALLER */}
           <div className="text-center mb-2">
             <span className="text-gray-700 font-semibold text-xs sm:text-sm tracking-wider uppercase">Music</span>
@@ -217,7 +234,8 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
             />
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       <style jsx>{`
         .music-slider::-webkit-slider-thumb {
