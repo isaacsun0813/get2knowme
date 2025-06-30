@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "postbuild": "echo 'Build completed successfully'",
     "start": "next start",
     "lint": "next lint"
   },
