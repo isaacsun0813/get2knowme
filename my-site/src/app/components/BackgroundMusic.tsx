@@ -13,6 +13,7 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
   const [volume, setVolume] = useState(0.3) // Default to 30% volume
   const [isMuted, setIsMuted] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [hasUserInteracted, setHasUserInteracted] = useState(false) // Track if user has manually controlled music
 
   // Detect if device is mobile
   useEffect(() => {
@@ -27,12 +28,13 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
     setIsMobile(checkMobile())
   }, [])
 
+  // Handle automatic music start/stop based on world entry (only if user hasn't manually interacted)
   useEffect(() => {
     const audio = audioRef.current
-    if (!audio || isMobile) return // Don't play music on mobile
+    if (!audio || isMobile || hasUserInteracted) return // Don't auto-control if user has taken manual control
 
-    if (isInWorld && !isPlaying) {
-      // Only auto-start if user hasn't manually paused
+    if (isInWorld) {
+      // Auto-start when entering world (only if user hasn't manually controlled)
       console.log('🎵 useEffect: Entering world, auto-starting music')
       audio.volume = 0
       audio.play().then(() => {
@@ -41,15 +43,15 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
       }).catch(error => {
         console.log('Audio play failed:', error)
       })
-    } else if (!isInWorld && isPlaying) {
-      // Auto-stop when leaving world
+    } else {
+      // Auto-stop when leaving world (only if user hasn't manually controlled)
       console.log('🎵 useEffect: Leaving world, auto-stopping music')
       fadeOut(audio, () => {
         audio.pause()
         setIsPlaying(false)
       })
     }
-  }, [isInWorld, isMobile, isPlaying, volume])
+  }, [isInWorld, isMobile, hasUserInteracted, volume])
 
   const fadeIn = (audio: HTMLAudioElement, targetVolume: number) => {
     const fadeStep = targetVolume / 30 // 30 steps over ~1 second
@@ -85,25 +87,24 @@ export default function BackgroundMusic({ isInWorld, hideControls = false }: Bac
 
   const togglePlayPause = () => {
     console.log('🎵 togglePlayPause called, current isPlaying:', isPlaying)
+    
+    // Mark that user has manually interacted with music controls
+    setHasUserInteracted(true)
+    
     if (audioRef.current) {
       if (isPlaying) {
-        console.log('🎵 Pausing music...')
-        // Instantly update UI state, then fade out audio
+        console.log('🎵 Manually pausing music...')
+        // Instant pause for manual control
+        audioRef.current.pause()
         setIsPlaying(false)
-        console.log('🎵 Set isPlaying to false')
-        fadeOut(audioRef.current, () => {
-          audioRef.current?.pause()
-          console.log('🎵 Audio paused')
-        })
+        console.log('🎵 Audio paused instantly')
       } else {
-        console.log('🎵 Playing music...')
-        // Instantly update UI state, then fade in audio
-        setIsPlaying(true)
-        console.log('🎵 Set isPlaying to true')
-        audioRef.current.volume = 0
+        console.log('🎵 Manually playing music...')
+        // Instant play for manual control
+        audioRef.current.volume = volume // Set to target volume immediately
         audioRef.current.play().then(() => {
-          fadeIn(audioRef.current!, volume)
-          console.log('🎵 Audio playing')
+          setIsPlaying(true)
+          console.log('🎵 Audio playing instantly')
         }).catch(error => {
           console.log('Audio play failed:', error)
         })

@@ -29,14 +29,11 @@
   --color-career-primary: var(--color-deep-blue);
   --color-home-primary: var(--color-sky-primary);
   --color-vibes-primary: var(--color-sunset-orange);
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-plus-jakarta-sans: var(--font-plus-jakarta-sans);
+  
+  /* Font Variables */
+  --font-geist-sans: 'Geist Sans', system-ui, sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
+  --font-plus-jakarta-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
