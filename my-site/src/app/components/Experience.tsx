@@ -18,6 +18,7 @@ import MobileLandingPage from './MobileLandingPage'
 import VisitedLandmarks from './VisitedLandmarks'
 import BackgroundMusic from './BackgroundMusic'
 import ImagePreloader from './ImagePreloader'
+import WebGLErrorBoundary from './WebGLErrorBoundary'
 
 // 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
 const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
@@ -181,7 +182,7 @@ export default function Experience() {
 
   const handleSpacebarPressed = () => {
     console.log('🚀 Space pressed, opening popup for:', currentLandmark?.displayName)
-    setShowSpacebarPrompt(null)
+    // Keep the spacebar prompt visible so user can re-enter after closing popup
     setShowPopup(currentLandmark)
     
     // Mark landmark as visited
@@ -212,6 +213,17 @@ export default function Experience() {
 
   const handleEnterWorld = () => {
     setShowIntro(false)
+    
+    // Ensure the window is focused for keyboard events
+    if (typeof window !== 'undefined') {
+      window.focus()
+      
+      // Also ensure the document has focus
+      if (document.body) {
+        document.body.focus()
+        document.body.click() // Some browsers need a click to enable keyboard events
+      }
+    }
   }
 
   // Debug earthScene state
@@ -220,7 +232,7 @@ export default function Experience() {
   }, [earthScene])
   
   return (
-    <>
+    <WebGLErrorBoundary>
       {/* Preload 3D world in background */}
       <div className={`${showIntro ? 'opacity-0 pointer-events-none' : 'animate-zoom-into-earth'}`}>
       <Canvas 
@@ -228,12 +240,30 @@ export default function Experience() {
           position: [0, 5, 10], 
           fov: 50 // Keep camera FOV fixed at 50
         }}
-          style={{ 
-            background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6)',
-            width: '100vw',
-            height: '100vh'
-          }}
+        style={{ 
+          background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6)',
+          width: '100vw',
+          height: '100vh'
+        }}
         shadows
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: "high-performance",
+          failIfMajorPerformanceCaveat: false,
+          preserveDrawingBuffer: false
+        }}
+        onCreated={({ gl }) => {
+          console.log('WebGL Context Created:', gl.getContextAttributes())
+          const context = gl.getContext() as WebGLRenderingContext
+          if (context) {
+            console.log('WebGL Renderer:', context.getParameter(context.RENDERER))
+            console.log('WebGL Version:', context.getParameter(context.VERSION))
+          }
+        }}
+        onError={(error) => {
+          console.error('Canvas Error:', error)
+        }}
       >
         {/* Balanced neutral lighting - split the difference */}
         <ambientLight intensity={0.90} color="white" />
@@ -288,7 +318,7 @@ export default function Experience() {
       {/* Background Music - part of world entrance animation */}
       <BackgroundMusic isInWorld={!showIntro} />
       
-      {/* Spacebar prompt */}
+      {/* Spacebar prompt - always visible when near a landmark */}
       <LocationPrompt 
         landmark={showSpacebarPrompt}
         onClose={handleClosePrompt}
@@ -342,6 +372,6 @@ export default function Experience() {
           onProceedAnyway={() => setBypassMobileLanding(true)}
         />
       )}
-    </>
+    </WebGLErrorBoundary>
   )
 }

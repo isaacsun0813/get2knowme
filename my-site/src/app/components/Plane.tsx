@@ -28,8 +28,8 @@ export default function Plane({
   const dragFactor = 2.5
 
   // Flight state - using quaternion-based orientation instead of euler angles
-  // Start the plane over the Pacific Ocean for a better initial view
-  const position = useRef(new THREE.Vector3(-15, earthRadius + flightAltitude, 15))
+  // Start the plane directly over Saratoga (AboutMe landmark) - coordinates from flight testing
+  const position = useRef(new THREE.Vector3(-10.360, 18.038, 29.206))
   const speed = useRef(0)
   const orientation = useRef(new THREE.Quaternion()) // Store orientation directly as quaternion
   
@@ -75,13 +75,22 @@ export default function Plane({
     }
   }, [actions])
 
-  // Keyboard handlers
+  // Keyboard handlers with cross-browser compatibility
   useEffect(() => {
-    const down = (e: KeyboardEvent) => { keysPressed.current[e.code] = true }
-    const up = (e: KeyboardEvent) => { keysPressed.current[e.code] = false }
+    const down = (e: KeyboardEvent) => { 
+      // Prevent default for flight controls to avoid page scrolling
+      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+        e.preventDefault()
+      }
+      keysPressed.current[e.code] = true
+    }
+    const up = (e: KeyboardEvent) => { 
+      keysPressed.current[e.code] = false 
+    }
     
-    window.addEventListener('keydown', down)
-    window.addEventListener('keyup', up)
+    // Add event listeners with passive: false for preventDefault to work
+    window.addEventListener('keydown', down, { passive: false })
+    window.addEventListener('keyup', up, { passive: false })
     
     return () => {
       window.removeEventListener('keydown', down)
@@ -235,7 +244,7 @@ export default function Plane({
       const movement = forwardDirection.clone().multiplyScalar(speed.current * delta)
       position.current.add(movement)
       
-      console.log(`Moving at speed ${speed.current.toFixed(1)}, forward: ${forwardDirection.x.toFixed(2)}, ${forwardDirection.y.toFixed(2)}, ${forwardDirection.z.toFixed(2)}`)
+
     }
 
     // 5. MAINTAIN ALTITUDE - Keep plane at proper distance from Earth center

@@ -305,7 +305,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                                      <div className="break-words text-stone-600 leading-relaxed break-words">
                      <p className="break-words font-medium">
                        I was <span className="font-medium text-red-600">obsessed with AOT</span> as a kid because I wanted to 
-                       <span className="font-medium text-blue-600"> fly around like Erin does</span> in this scene. 
+                       <span className="font-medium text-blue-600"> fly around like Eren does</span> in this scene. 
                        Looking forward to the day this is possible <span>:)</span>
                      </p>
                    </div>

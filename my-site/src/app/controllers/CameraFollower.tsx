@@ -38,13 +38,7 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     const baseHeightOffset = 10
     const heightOffset = baseHeightOffset / zoomMultiplier
     
-    console.log('📹 Camera zoom adjustment:', {
-      zoomLevel,
-      zoomMultiplier,
-      viewDistance,
-      heightOffset,
-      baseViewDistance
-    })
+
     
     // Position camera behind the plane's orbital position
     const planeDirection = planePosition.clone().normalize()
