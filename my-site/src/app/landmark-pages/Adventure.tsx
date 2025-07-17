@@ -109,9 +109,9 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
 
   return (
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ease-out ${
+      className={`fixed inset-0 z-50 flex items-start sm:items-center justify-center transition-all duration-300 ease-out ${
         isAnimating ? 'opacity-100' : 'opacity-0'
-      }`}
+      } pt-4 sm:pt-0`}
     >
       {/* Adventure themed backdrop */}
       <div 
@@ -267,53 +267,6 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                 </div>
               </div>
             </div>
-
-            {/* Attack on Titan Section */}
-            <div className="max-w-5xl mx-auto landmark-section-spacing">
-              <div className="relative bg-gradient-to-br from-red-100/70 via-orange-50/70 to-red-100/70 landmark-card overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(239, 68, 68, 0.2)'
-                   }}>
-                
-                <div className="break-words text-center break-words relative z-10">
-                  
-                  {/* Attack on Titan GIF */}
-                  <div className="mb-8">
-                    <div className="w-full max-w-sm mx-auto h-64 rounded-xl overflow-hidden shadow-lg bg-gray-200 relative">
-                      {/* Placeholder when no GIF loads */}
-                                              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-100 to-orange-100">
-                          <div className="break-words text-center break-words">
-                            <span className="break-words mb-2 block">🎌</span>
-                            <p className="break-words text-gray-600">Add aot.gif to</p>
-                            <p className="break-words text-gray-600 font-mono">/photos/adventure/</p>
-                          </div>
-                        </div>
-                      
-                      <Image 
-                        src="/photos/adventure/aot.gif"
-                        alt="Attack on Titan GIF"
-                        fill
-                        className="object-cover relative z-10"
-                        sizes="(max-width: 768px) 90vw, 512px"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                  
-                                     <div className="break-words text-stone-600 leading-relaxed break-words">
-                     <p className="break-words font-medium">
-                       I was <span className="font-medium text-red-600">obsessed with AOT</span> as a kid because I wanted to 
-                       <span className="font-medium text-blue-600"> fly around like Eren does</span> in this scene. 
-                       Looking forward to the day this is possible <span>:)</span>
-                     </p>
-                   </div>
-                </div>
-              </div>
-            </div>
-
-
           </div>
         </div>
       </div>

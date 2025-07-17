@@ -74,9 +74,9 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
 
   return (
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ease-out ${
+      className={`fixed inset-0 z-50 flex items-start sm:items-center justify-center transition-all duration-300 ease-out ${
         isAnimating ? 'opacity-100' : 'opacity-0'
-      }`}
+      } pt-4 sm:pt-0`}
     >
       {/* About Me themed backdrop */}
       <div 
