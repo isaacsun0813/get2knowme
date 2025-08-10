@@ -45,12 +45,12 @@ export default function LocationPrompt({
   }, [])
 
   useEffect(() => {
-    console.log('🎪 LocationPrompt useEffect - landmark:', landmark)
+    // LocationPrompt useEffect - landmark updated
     if (landmark) {
-      console.log('🎪 Setting popup visible for:', landmark.displayName)
+              // Setting popup visible
       setIsVisible(true)
     } else {
-      console.log('🎪 Hiding popup')
+              // Hiding popup
       setIsVisible(false)
     }
   }, [landmark])

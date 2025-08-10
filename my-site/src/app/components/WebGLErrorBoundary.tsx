@@ -40,7 +40,7 @@ export default class WebGLErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('WebGL Error:', error, errorInfo)
+          // WebGL Error occurred
   }
 
   // Check WebGL support - more comprehensive detection
@@ -63,19 +63,11 @@ export default class WebGLErrorBoundary extends Component<Props, State> {
       const webglContext = gl as WebGLRenderingContext
       const hasRequiredExtensions = webglContext.getExtension('OES_texture_float') !== null
       
-      console.log('WebGL Detection:', {
-        webgl2: !!canvas.getContext('webgl2'),
-        webgl1: !!canvas.getContext('webgl'),
-        experimental: !!canvas.getContext('experimental-webgl'),
-        vendor: webglContext.getParameter(webglContext.VENDOR),
-        renderer: webglContext.getParameter(webglContext.RENDERER),
-        version: webglContext.getParameter(webglContext.VERSION),
-        hasExtensions: hasRequiredExtensions
-      })
+      // WebGL Detection completed
       
       return true
     } catch (e) {
-      console.error('WebGL detection error:', e)
+      // WebGL detection error
       return false
     }
   }

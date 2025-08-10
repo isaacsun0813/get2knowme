@@ -22,17 +22,7 @@ export default function FlightControls() {
       // More aggressive mobile detection
       const shouldHide = isSmallScreen || isMobileUserAgent || isIOS || isTouchDevice
       
-      console.log('🔍 FlightControls detection (DETAILED):', {
-        userAgent: userAgent,
-        isMobileUserAgent,
-        isTouchDevice,
-        isSmallScreen,
-        isIOS,
-        screenWidth: window.innerWidth,
-        maxTouchPoints: navigator.maxTouchPoints,
-        shouldHide,
-        windowType: typeof window
-      })
+      // FlightControls detection completed
       
       setIsMobile(shouldHide)
     }
@@ -58,11 +48,8 @@ export default function FlightControls() {
 
   // Don't render on mobile
   if (isMobile || forceHideOnSmallScreen) {
-    console.log('🚫 FlightControls hidden on mobile (mobile:', isMobile, ', smallScreen:', forceHideOnSmallScreen, ')')
     return null
   }
-
-  console.log('✅ FlightControls showing on desktop')
   return (
     <div className="absolute bottom-4 left-4 z-10">
       <div className="bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg border border-gray-200">

@@ -31,17 +31,7 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
       // More aggressive mobile detection
       const shouldShow = isSmallScreen || isMobileUserAgent || isIOS || isTouchDevice
       
-      console.log('🎮 MobileControls detection (DETAILED):', {
-        userAgent: userAgent,
-        isMobileUserAgent,
-        isTouchDevice,
-        isSmallScreen,
-        isIOS,
-        screenWidth: window.innerWidth,
-        maxTouchPoints: navigator.maxTouchPoints,
-        shouldShow,
-        windowType: typeof window
-      })
+      // Mobile detection completed
       
       setIsMobile(shouldShow)
     }
@@ -67,7 +57,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
 
   // Don't render on desktop
   if (!isMobile && !forceShowOnSmallScreen) {
-    console.log('🚫 MobileControls hidden on desktop (mobile:', isMobile, ', smallScreen:', forceShowOnSmallScreen, ')')
     return null
   }
 
@@ -163,7 +152,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     setIsActive(true)
     
     const touch = e.touches[0]
-    console.log('🎮 Touch start:', touch.clientX, touch.clientY)
     handleJoystickMove(touch.clientX, touch.clientY)
   }
 
@@ -174,7 +162,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     e.stopPropagation()
     
     const touch = e.touches[0]
-    console.log('🎮 Touch move:', touch.clientX, touch.clientY)
     handleJoystickMove(touch.clientX, touch.clientY)
   }
 
@@ -186,7 +173,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     setIsActive(false)
     setJoystickPosition({ x: 0, y: 0 })
     
-    console.log('🎮 Touch end - releasing all keys')
     // Release all active keys
     activeKeysRef.current.forEach(key => {
       simulateKeyEvent(key, 'keyup')
@@ -200,7 +186,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     e.preventDefault()
     setIsActive(true)
     
-    console.log('🖱️ Mouse down:', e.clientX, e.clientY)
     handleJoystickMove(e.clientX, e.clientY)
   }
 
@@ -208,7 +193,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     if (!isActive || disabled) return
     e.preventDefault()
     
-    console.log('🖱️ Mouse move:', e.clientX, e.clientY)
     handleJoystickMove(e.clientX, e.clientY)
   }
 
@@ -218,7 +202,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     setIsActive(false)
     setJoystickPosition({ x: 0, y: 0 })
     
-    console.log('🖱️ Mouse up - releasing all keys')
     // Release all active keys
     activeKeysRef.current.forEach(key => {
       simulateKeyEvent(key, 'keyup')
@@ -226,7 +209,6 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     activeKeysRef.current.clear()
   }
 
-  console.log('✅ MobileControls showing on mobile')
   return (
     <div className="fixed bottom-20 right-6 z-50 pointer-events-auto">
       {/* Joystick Container - Made bigger */}

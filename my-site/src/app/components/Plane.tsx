@@ -56,11 +56,11 @@ export default function Plane({
       group.current.position.copy(position.current)
       group.current.setRotationFromQuaternion(orientation.current)
       
-      console.log('Plane initialized at position:', position.current.x.toFixed(2), position.current.y.toFixed(2), position.current.z.toFixed(2))
+      // Plane initialized
       
       // Log available animations but don't start them yet
       if (actions && Object.keys(actions).length > 0) {
-        console.log('Available animations:', Object.keys(actions))
+        // Animations available
         // Prepare animations but don't play them yet
         Object.values(actions).forEach(action => {
           if (action) {
@@ -70,7 +70,7 @@ export default function Plane({
           }
         })
       } else {
-        console.log('No animations found in the model')
+        // No animations found in the model
       }
     }
   }, [actions])
@@ -200,7 +200,7 @@ export default function Plane({
         bankRotation.setFromAxisAngle(currentForwardVector, bankingForce * delta * 3)
         orientation.current.multiply(bankRotation)
         
-        console.log(`Banking: ${turnInput > 0 ? 'Left' : 'Right'} bank angle: ${(bankingForce * 180/Math.PI).toFixed(1)}°`)
+        // Banking applied
       }
     }
 

@@ -76,25 +76,12 @@ export default function LandmarkDetection({
     currentActiveLandmark.current = null
     lastTriggeredTime.current = {}
     
-    console.log('🔍 Scanning scene for landmarks...')
     earthScene.traverse((child) => {
-      // Debug: Log all object names to help identify landmarks
-      if (child.name && child.name !== '') {
-        console.log(`👀 Found object: "${child.name}" type: ${child.type}`)
-      }
-      
       const config = landmarkConfig.find(l => l.name === child.name)
       if (config) {
         landmarks.current.push({ object: child, config })
-        console.log(`🗺️ ✅ Found landmark: ${config.displayName} at`, child.position)
       }
     })
-    
-    console.log(`📍 Total landmarks found: ${landmarks.current.length}`)
-    if (landmarks.current.length === 0) {
-      console.log('⚠️ No landmarks found! Check that object names in Blender match the config names:')
-      landmarkConfig.forEach(config => console.log(`   Expected: "${config.name}"`))
-    }
   }, [earthScene])
 
   // Throttle debug logs
@@ -104,13 +91,6 @@ export default function LandmarkDetection({
 
   useFrame(() => {
     if (!planeRef.current || landmarks.current.length === 0) {
-      // Debug why useFrame might be exiting early
-      if (!planeRef.current) {
-        console.log('⚠️ No plane reference')
-      }
-      if (landmarks.current.length === 0) {
-        console.log('⚠️ No landmarks found in current array')
-      }
       return
     }
 
@@ -123,9 +103,8 @@ export default function LandmarkDetection({
       return
     }
 
-    // Debug: Check if plane position is valid
+    // Check if plane position is valid
     if (!planePosition || planePosition.length() === 0) {
-      console.log('⚠️ Invalid plane position:', planePosition)
       return
     }
 
@@ -133,25 +112,16 @@ export default function LandmarkDetection({
     let closestLandmark: ClosestLandmark | null = null
 
     landmarks.current.forEach(({ object, config }) => {
-      // Debug: Check if object position is valid
+      // Check if object position is valid
       if (!object.position) {
-        console.log('⚠️ Invalid object position for:', config.name)
         return
       }
 
       const distance = planePosition.distanceTo(object.position)
       
-      // Debug: Check for NaN or invalid distances
+      // Check for NaN or invalid distances
       if (isNaN(distance) || distance === Infinity) {
-        console.log(`⚠️ Invalid distance calculated for ${config.name}:`, distance)
-        console.log(`   Plane pos:`, planePosition)
-        console.log(`   Object pos:`, object.position)
         return
-      }
-      
-      // More aggressive debug logging - log ALL distances every 2 seconds
-      if (debugTimer.current > 2.0) {
-        console.log(`📏 ${config.displayName}: ${distance.toFixed(1)} (trigger: ${config.triggerDistance})`)
       }
       
       // Check if this landmark is in range
@@ -163,10 +133,9 @@ export default function LandmarkDetection({
       }
     })
 
-    // Reset debug timer after logging
+    // Reset debug timer
     if (debugTimer.current > 2.0) {
       debugTimer.current = 0
-      console.log('🔄 useFrame is running, landmarks count:', landmarks.current.length)
     }
 
     const currentTime = Date.now()
@@ -181,13 +150,6 @@ export default function LandmarkDetection({
       const timeSinceLastTrigger = currentTime - lastTriggered
       
       if (currentActiveLandmark.current !== config.name && timeSinceLastTrigger > 3000) {
-        console.log(`🎯🎯🎯 TRIGGERING LANDMARK: ${config.displayName} 🎯🎯🎯`)
-        console.log(`📍 Object name in Blender: "${config.name}"`)
-        console.log(`📍 Display name: "${config.displayName}"`)
-        console.log(`📍 Distance was: ${distance.toFixed(1)} (trigger: ${config.triggerDistance})`)
-        console.log(`📍 Plane position:`, planePosition)
-        console.log(`📍 Object position:`, lm.object.position)
-        
         currentActiveLandmark.current = config.name
         lastTriggeredTime.current[config.name] = currentTime
         onLandmarkNear(config)
@@ -195,7 +157,6 @@ export default function LandmarkDetection({
     } else {
       // No landmarks in range - dismiss popup if we had one active
       if (currentActiveLandmark.current !== null) {
-        console.log(`📤 Left landmark range, dismissing popup for: ${currentActiveLandmark.current}`)
         currentActiveLandmark.current = null
         onLandmarkLeft()
       }
@@ -210,7 +171,6 @@ export default function LandmarkDetection({
         const distanceToActive = planePosition.distanceTo(activeLandmarkData.object.position)
         
         if (distanceToActive > dismissalDistance) {
-          console.log(`📤 Moved too far from active landmark (${distanceToActive.toFixed(1)} > ${dismissalDistance}), dismissing`)
           currentActiveLandmark.current = null
           onLandmarkLeft()
         }

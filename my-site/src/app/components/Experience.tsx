@@ -48,7 +48,6 @@ function useZoomLevel() {
     if (window.visualViewport) {
       const viewportZoom = window.visualViewport.scale || 1
       if (viewportZoom !== 1) {
-        console.log('📱 Trackpad/touch zoom detected:', viewportZoom)
         return viewportZoom
       }
     }
@@ -73,11 +72,7 @@ function useZoomLevel() {
     // Calculate zoom based on expected vs actual pixel measurements
     const zoomFromCSS = actualWidth / 100
     
-    console.log('🔍 Zoom detection methods:', {
-      viewportScale: window.visualViewport?.scale || 1,
-      devicePixelRatio: browserZoom,
-      cssZoom: zoomFromCSS
-    })
+    // Zoom detection methods evaluated
     
     // Return the zoom level that's different from 1, prioritizing viewport scale
     if (window.visualViewport && Math.abs((window.visualViewport.scale || 1) - 1) > 0.01) {
@@ -93,7 +88,6 @@ function useZoomLevel() {
   useEffect(() => {
     const updateZoom = () => {
       const z = getZoom()
-      console.log('🔄 Zoom updated to:', z)
       setZoomLevel(z)
     }
 
@@ -110,7 +104,6 @@ function useZoomLevel() {
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === '=' || e.key === '+' || e.key === '-' || e.key === '0') {
-          console.log('🎹 Zoom shortcut detected:', e.key)
           // Small delay to let browser apply zoom before measuring
           setTimeout(updateZoom, 100)
         }
@@ -122,7 +115,6 @@ function useZoomLevel() {
     // Also listen for wheel events with Ctrl held (zoom via mouse wheel)
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
-        console.log('🖱️ Ctrl+wheel zoom detected')
         setTimeout(updateZoom, 100)
       }
     }
@@ -144,7 +136,6 @@ function useZoomLevel() {
 }
 
 export default function Experience() {
-  console.log('🚀 Experience component mounted')
   const planeRef = useRef<THREE.Group>(new THREE.Group())
   const [earthScene, setEarthScene] = useState<THREE.Group | null>(null)
   const [currentLandmark, setCurrentLandmark] = useState<LandmarkConfig | null>(null)
@@ -161,27 +152,26 @@ export default function Experience() {
   
   // Debug: Log currentLandmark changes
   useEffect(() => {
-    console.log('🔄 currentLandmark state changed:', currentLandmark?.displayName || 'null')
+    // currentLandmark state changed
   }, [currentLandmark])
 
   // Debug zoom changes
   useEffect(() => {
-    console.log('🔍 Zoom level changed:', zoomLevel)
+    // Zoom level changed
   }, [zoomLevel])
 
     const handleLandmarkNear = (baseLandmark: Omit<LandmarkConfig, 'component'>) => {
     // Find the full landmark config with component
     const landmark = updatedLandmarkConfig.find(l => l.name === baseLandmark.name)
     if (landmark) {
-    console.log('🚨🚨🚨 LANDMARK HANDLER CALLED:', landmark.displayName)
-    console.log('🚨 Setting spacebar prompt...')
+    // Landmark handler called
     setShowSpacebarPrompt(landmark)
     setCurrentLandmark(landmark)
     }
   }
 
   const handleSpacebarPressed = () => {
-    console.log('🚀 Space pressed, opening popup for:', currentLandmark?.displayName)
+    // Space pressed, opening popup
     // Keep the spacebar prompt visible so user can re-enter after closing popup
     setShowPopup(currentLandmark)
     
@@ -190,7 +180,7 @@ export default function Experience() {
       setVisitedLandmarks(prev => {
         const newSet = new Set(prev)
         newSet.add(currentLandmark.name)
-        console.log('📍 Landmark visited:', currentLandmark.displayName, 'Total visited:', newSet.size)
+        // Landmark visited
         return newSet
       })
     }
@@ -206,7 +196,7 @@ export default function Experience() {
   }
 
   const handleLandmarkLeft = () => {
-    console.log('🚨 LANDMARK LEFT - dismissing prompts')
+    // Landmark left - dismissing prompts
     setShowSpacebarPrompt(null)
     setCurrentLandmark(null)
   }
@@ -228,7 +218,7 @@ export default function Experience() {
 
   // Debug earthScene state
   useEffect(() => {
-    console.log('🌍 EarthScene state changed:', earthScene ? 'READY' : 'NULL')
+    // EarthScene state changed
   }, [earthScene])
   
   return (
@@ -254,15 +244,13 @@ export default function Experience() {
           preserveDrawingBuffer: false
         }}
         onCreated={({ gl }) => {
-          console.log('WebGL Context Created:', gl.getContextAttributes())
           const context = gl.getContext() as WebGLRenderingContext
           if (context) {
-            console.log('WebGL Renderer:', context.getParameter(context.RENDERER))
-            console.log('WebGL Version:', context.getParameter(context.VERSION))
+            // WebGL context created successfully
           }
         }}
         onError={(error) => {
-          console.error('Canvas Error:', error)
+          // Canvas error occurred
         }}
       >
         {/* Balanced neutral lighting - split the difference */}

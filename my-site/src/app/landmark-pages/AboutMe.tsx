@@ -15,12 +15,12 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
   // Profile image to preload
   const profileImage = '/photos/profilePic.jpeg'
 
-  // Preload profile image in the background
+      // Preload profile image in the background
   useEffect(() => {
     const img = new window.Image()
     // Image loads in background - no need to track state
     img.onerror = () => {
-      console.warn(`Failed to preload profile image: ${profileImage}`)
+      // Silent fail for production
     }
     img.src = profileImage
   }, [])

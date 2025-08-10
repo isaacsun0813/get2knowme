@@ -72,7 +72,6 @@ export default function BrowserCompatibility() {
       }
       
       setBrowserInfo(info)
-      console.log('🔍 Browser Compatibility Info:', info)
     }
   }, [])
 

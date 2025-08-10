@@ -36,8 +36,6 @@ export default function ImagePreloader({ isInWorld }: ImagePreloaderProps) {
       '/photos/projects/PrizeSole.png'
     ]
 
-    console.log('🖼️ Starting aggressive image preload...')
-    
     // Create multiple concurrent preload batches for faster loading
     const batchSize = 5
     const batches = []
@@ -53,11 +51,11 @@ export default function ImagePreloader({ isInWorld }: ImagePreloaderProps) {
           const img = new window.Image()
           
           img.onload = () => {
-            console.log(`✅ Preloaded: ${imageSrc}`)
+            // Image preloaded successfully
           }
           
           img.onerror = () => {
-            console.warn(`❌ Failed to preload: ${imageSrc}`)
+            // Image failed to preload
           }
           
           // Set high priority for first few images

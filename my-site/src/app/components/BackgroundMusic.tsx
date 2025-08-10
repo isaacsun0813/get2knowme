@@ -25,14 +25,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       // More strict mobile detection - require both touch AND small screen AND (mobile user agent OR very small screen)
       const isTrulyMobile = isMobileDevice || (isTouchDevice && isSmallScreen && window.innerWidth <= 480)
       
-      console.log('🎵 Mobile detection:', {
-        userAgent,
-        isMobileDevice,
-        isTouchDevice,
-        isSmallScreen,
-        screenWidth: window.innerWidth,
-        isTrulyMobile
-      })
+      // Mobile detection completed
       
       return isTrulyMobile
     }
@@ -47,17 +40,15 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
 
     if (isInWorld) {
       // Auto-start when entering world (only if user hasn't manually controlled)
-      console.log('🎵 useEffect: Entering world, auto-starting music')
       audio.volume = 0
       audio.play().then(() => {
         setIsPlaying(true)
         fadeIn(audio, volume)
       }).catch(error => {
-        console.log('Audio play failed:', error)
+        // Audio play failed silently
       })
     } else {
       // Auto-stop when leaving world (only if user hasn't manually controlled)
-      console.log('🎵 useEffect: Leaving world, auto-stopping music')
       fadeOut(audio, () => {
         audio.pause()
         setIsPlaying(false)
@@ -98,27 +89,25 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
   }
 
   const togglePlayPause = () => {
-    console.log('🎵 togglePlayPause called, current isPlaying:', isPlaying)
+    // togglePlayPause called
     
     // Mark that user has manually interacted with music controls
     setHasUserInteracted(true)
     
     if (audioRef.current) {
       if (isPlaying) {
-        console.log('🎵 Manually pausing music...')
+        // Manually pausing music
         // Instant pause for manual control
         audioRef.current.pause()
         setIsPlaying(false)
-        console.log('🎵 Audio paused instantly')
       } else {
-        console.log('🎵 Manually playing music...')
+        // Manually playing music
         // Instant play for manual control
         audioRef.current.volume = volume // Set to target volume immediately
         audioRef.current.play().then(() => {
           setIsPlaying(true)
-          console.log('🎵 Audio playing instantly')
         }).catch(error => {
-          console.log('Audio play failed:', error)
+          // Audio play failed silently
         })
       }
     }
@@ -139,13 +128,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
   // Show controls when in world - just like other panels
   const shouldShowControls = isInWorld
 
-  console.log('🎵 BackgroundMusic render:', {
-    isInWorld,
-    isMobile,
-    shouldShowControls,
-    isPlaying,
-    hasUserInteracted
-  })
+  // BackgroundMusic render
 
   return (
     <>
@@ -175,7 +158,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
             >
               {/* Simple toggle between play and pause icons */}
               {(() => {
-                console.log('🎵 Rendering button, isPlaying:', isPlaying)
+                // Rendering button
                 return isPlaying ? (
                   // Pause Icon (two bars) - shows when music IS playing
                   <svg 

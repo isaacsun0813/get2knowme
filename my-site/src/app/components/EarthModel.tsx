@@ -52,9 +52,9 @@ export default function EarthModel(props: EarthModelProps) {
 
   // Notify parent when scene is ready for landmark detection
   useEffect(() => {
-    console.log('🎬 Model scene ready, calling onSceneReady...', scene ? 'Scene exists' : 'No scene')
+    // Model scene ready, calling onSceneReady
     if (props.onSceneReady && scene) {
-      console.log('📞 Calling onSceneReady with scene')
+              // Calling onSceneReady with scene
       props.onSceneReady(scene)
     }
   }, [scene, props])

@@ -24,15 +24,7 @@ export default function MobileLandingPage({ onProceedAnyway }: MobileLandingPage
       // Only show on actual mobile devices (not just small screens on desktop)
       const shouldShow = (isSmallScreen && (isMobileUserAgent || isTouchDevice)) || isMobileUserAgent || isIOS
       
-      console.log('📱 Mobile Landing Page Detection:', {
-        userAgent: userAgent.substring(0, 30) + '...',
-        isMobileUserAgent,
-        isTouchDevice,
-        isSmallScreen,
-        isIOS,
-        screenWidth: window.innerWidth,
-        shouldShow
-      })
+      // Mobile Landing Page Detection completed
       
       setIsMobile(shouldShow)
     }
