@@ -39,7 +39,7 @@ export default class WebGLErrorBoundary extends Component<Props, State> {
     }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch() {
           // WebGL Error occurred
   }
 
@@ -60,13 +60,13 @@ export default class WebGLErrorBoundary extends Component<Props, State> {
       }
       
       // Additional checks for WebGL functionality
-      const webglContext = gl as WebGLRenderingContext
-      const hasRequiredExtensions = webglContext.getExtension('OES_texture_float') !== null
+      // const webglContext = gl as WebGLRenderingContext
+      // const hasRequiredExtensions = webglContext.getExtension('OES_texture_float') !== null
       
       // WebGL Detection completed
       
       return true
-    } catch (e) {
+    } catch {
       // WebGL detection error
       return false
     }

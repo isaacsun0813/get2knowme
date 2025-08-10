@@ -44,7 +44,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       audio.play().then(() => {
         setIsPlaying(true)
         fadeIn(audio, volume)
-      }).catch(error => {
+      }).catch(() => {
         // Audio play failed silently
       })
     } else {
@@ -106,7 +106,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         audioRef.current.volume = volume // Set to target volume immediately
         audioRef.current.play().then(() => {
           setIsPlaying(true)
-        }).catch(error => {
+        }).catch(() => {
           // Audio play failed silently
         })
       }

@@ -143,7 +143,7 @@ export default function LandmarkDetection({
     // If we have a closest landmark and it's different from the current active one
     if (closestLandmark) {
       const lm = closestLandmark as ClosestLandmark
-      const { config, distance } = lm
+      const { config } = lm
       
       // Check if enough time has passed since last trigger (reduce to 3 seconds for testing)
       const lastTriggered = lastTriggeredTime.current[config.name] || 0

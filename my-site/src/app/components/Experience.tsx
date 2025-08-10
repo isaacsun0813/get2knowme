@@ -54,7 +54,7 @@ function useZoomLevel() {
     
     // Method 2: Browser zoom detection (Ctrl+/-)
     // This works by comparing the screen pixel ratio with device pixel ratio
-    const browserZoom = window.devicePixelRatio || 1
+    // const browserZoom = window.devicePixelRatio || 1
     
     // Method 3: Alternative browser zoom detection using computed styles
     // Create a test element to measure actual vs expected sizing
@@ -249,7 +249,7 @@ export default function Experience() {
             // WebGL context created successfully
           }
         }}
-        onError={(error) => {
+        onError={() => {
           // Canvas error occurred
         }}
       >
