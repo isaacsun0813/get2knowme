@@ -144,7 +144,8 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                       className="object-cover"
                       style={{ objectPosition: '50% 25%' }}
                       sizes="320px"
-                      priority
+                      priority={true}
+                      loading="eager"
                     />
                   </div>
 

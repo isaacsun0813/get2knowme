@@ -207,6 +207,8 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                        fill
                        className="object-cover"
                        sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 70vw"
+                       priority={true}
+                       loading="eager"
                        onLoad={handleImageLoad}
                        onError={handleImageError}
                      />

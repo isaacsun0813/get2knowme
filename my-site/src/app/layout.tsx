@@ -30,6 +30,35 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preload critical images for instant loading */}
+        <link rel="preload" as="image" href="/photos/profilePic.jpeg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/adventure/adventure1.jpg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/adventure/adventure2.jpg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/adventure/adventure3.jpg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/adventure/adventure4.jpg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/adventure/adventure5.jpg" type="image/jpeg" />
+        <link rel="preload" as="image" href="/photos/projects/Verdra.png" type="image/png" />
+        <link rel="preload" as="image" href="/photos/projects/PrizeSole.png" type="image/png" />
+        
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} antialiased`}
         suppressHydrationWarning

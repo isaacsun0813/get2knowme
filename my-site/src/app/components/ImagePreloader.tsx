@@ -6,12 +6,11 @@ interface ImagePreloaderProps {
   isInWorld: boolean
 }
 
-export default function ImagePreloader({ isInWorld }: ImagePreloaderProps) {
+export default function ImagePreloader({ }: ImagePreloaderProps) {
   useEffect(() => {
-    if (!isInWorld) return
-
+    // Start preloading immediately when component mounts, not just when entering world
     const allImages = [
-      // Adventure photos
+      // Adventure photos - load these immediately for instant access
       '/photos/adventure/adventure1.jpg',
       '/photos/adventure/adventure2.jpg', 
       '/photos/adventure/adventure3.jpg',
@@ -36,39 +35,49 @@ export default function ImagePreloader({ isInWorld }: ImagePreloaderProps) {
       '/photos/projects/PrizeSole.png'
     ]
 
-    // Create multiple concurrent preload batches for faster loading
-    const batchSize = 5
-    const batches = []
-    
-    for (let i = 0; i < allImages.length; i += batchSize) {
-      batches.push(allImages.slice(i, i + batchSize))
-    }
-
-    // Process batches with small delays to prevent overwhelming the browser
-    batches.forEach((batch, batchIndex) => {
-      setTimeout(() => {
-        batch.forEach((imageSrc) => {
-          const img = new window.Image()
-          
-          img.onload = () => {
-            // Image preloaded successfully
-          }
-          
-          img.onerror = () => {
-            // Image failed to preload
-          }
-          
-          // Set high priority for first few images
-          if (batchIndex === 0) {
-            img.loading = 'eager'
-          }
-          
-          img.src = imageSrc
-        })
-      }, batchIndex * 100) // 100ms delay between batches
+    // Strategy 1: Add preload links to head for highest priority
+    allImages.forEach((imageSrc) => {
+      const link = document.createElement('link')
+      link.rel = 'preload'
+      link.as = 'image'
+      link.href = imageSrc
+      link.type = 'image/jpeg'
+      document.head.appendChild(link)
     })
 
-  }, [isInWorld])
+    // Strategy 2: Load ALL images immediately with maximum priority
+    allImages.forEach((imageSrc) => {
+      const img = new window.Image()
+      
+      // Set maximum priority for instant loading
+      img.loading = 'eager'
+      img.decoding = 'sync'
+      
+      // Preload with high priority
+      img.onload = () => {
+        // Image loaded successfully - keep in memory
+      }
+      
+      img.onerror = () => {
+        // Image failed to load - will retry when actually needed
+      }
+      
+      // Start loading immediately
+      img.src = imageSrc
+    })
 
-  return null // This component doesn't render anything
+    // Strategy 3: Fetch preload for critical images (first 5)
+    const criticalImages = allImages.slice(0, 5)
+    criticalImages.forEach((imageSrc) => {
+      fetch(imageSrc, { 
+        method: 'GET',
+        cache: 'force-cache'
+      }).catch(() => {
+        // Ignore fetch errors - fallback to img preload
+      })
+    })
+
+  }, []) // Remove isInWorld dependency to start loading immediately
+
+  return null
 } 
