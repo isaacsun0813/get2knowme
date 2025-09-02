@@ -115,7 +115,7 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
                 
                 <div className="break-words text-xl text-black leading-relaxed break-words space-y-6">
                   <p>
-                  That was my childhood dream. I would always think about it. I made every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off way too many tall structures chasing that dream. I still remember when my cousin let me fly his drone before school in 2nd grade, right before I crashed it into the ground.                  </p>
+                  That was my childhood dream. I would always think about it. I made every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off way too many tall buildings chasing that dream. I still remember when my cousin let me fly his drone before school in 2nd grade, right before I crashed it into the ground.                  </p>
                   <div className="my-8 flex justify-center">
                     <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
                   </div>

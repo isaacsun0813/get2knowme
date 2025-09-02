@@ -268,7 +268,6 @@ div {
     @apply mb-3 sm:mb-4 md:mb-6 lg:mb-8;
   }
 }
-
 /* Shimmer animation for loading states */
 @keyframes shimmer {
   0% {
@@ -282,3 +281,4 @@ div {
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
+

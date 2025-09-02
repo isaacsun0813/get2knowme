@@ -64,6 +64,8 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        {/* Global dim overlay (non-interactive) */}
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[9999] bg-black/5" />
       </body>
     </html>
   );

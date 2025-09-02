@@ -234,10 +234,9 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                        <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50"></div>
                        <span className="break-words font-bold text-yellow-600 tracking-wider">RESEARCHING</span>
                      </div>
-                     <h3 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">Cloud spend tied to carbon footprint</h3>
+                     <h3 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">Carbon Aware Scheduling for ML Training/Inference</h3>
                      <p className="break-words text-black mb-8 leading-relaxed break-words">
-                       Also interested in greener CI/CD pipelines and carbon-aware job scheduling for training 
-                       ML models 
+                       Also interested in greener CI/CD pipelines, distributed systems, and broadly security specifically attacks. 
                      </p>
                    </div>
                  </div>

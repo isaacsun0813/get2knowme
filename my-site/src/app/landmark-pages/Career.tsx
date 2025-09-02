@@ -231,7 +231,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Make a beef wellington</span>
+                         <span>Beef Wellington</span>
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
@@ -239,27 +239,23 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Dunk a basketball</span>
+                         <span>Dunk</span>
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Study more sociology</span>
+                         <span>Study Sociology</span>
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Learn to play euphonium</span>
+                         <span>Play Tuba/Euphonium</span>
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Get back into playing the tuba</span>
+                         <span>Backflip</span>
                        </li>
                        <li className="flex items-start gap-4">
                          <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Do a backflip</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Vlog more</span>
+                         <span>Vlog</span>
                        </li>
                      </ul>
                    </div>
