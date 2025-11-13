@@ -1,312 +1,771 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Plane } from 'lucide-react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
+import { motion, AnimatePresence } from 'framer-motion'
+import * as THREE from 'three'
 
 interface IntroScreenProps {
+  onLaunch: () => void
   onEnter: () => void
 }
 
-export default function IntroScreen({ onEnter }: IntroScreenProps) {
-  const [, setShowEnterPrompt] = useState(false)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+// Interactive Nature Garden Component - shows current activities with vanishing effect
+function NatureGarden() {
+  const [currentActivityIndex, setCurrentActivityIndex] = useState(0)
+  const [activities, setActivities] = useState([
+    { text: 'Growing 3D worlds', icon: '🌱', color: '#22c55e' },
+    { text: 'Crafting motion stories', icon: '🍃', color: '#16a34a' },
+    { text: 'Planting playful ideas', icon: '🌿', color: '#15803d' },
+    { text: 'Nurturing design systems', icon: '🌳', color: '#166534' },
+  ])
+  const [fadingActivities, setFadingActivities] = useState<Set<number>>(new Set())
 
   useEffect(() => {
-    // Show enter prompt immediately
-    setShowEnterPrompt(true)
-  }, [])
+    const interval = setInterval(() => {
+      setFadingActivities(prev => {
+        const newSet = new Set(prev)
+        newSet.add(currentActivityIndex)
+        return newSet
+      })
+      
+      setTimeout(() => {
+        setCurrentActivityIndex((prev) => (prev + 1) % activities.length)
+        setFadingActivities(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(currentActivityIndex)
+          return newSet
+        })
+      }, 800)
+    }, 3000)
 
+    return () => clearInterval(interval)
+  }, [currentActivityIndex, activities.length])
+
+  return (
+    <div className="relative w-64 h-96 flex flex-col items-center justify-end pb-8">
+      {/* Pot/Container */}
+      <motion.div
+        className="nature-pot relative z-10"
+        animate={{ y: [0, -2, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <svg width="120" height="80" viewBox="0 0 120 80" className="nature-pot-svg">
+          <path
+            d="M 20 80 Q 20 60, 30 50 L 90 50 Q 100 60, 100 80 Z"
+            fill="#8b5a3c"
+            stroke="#6b4423"
+            strokeWidth="2"
+          />
+          <path
+            d="M 25 80 Q 25 65, 32 55 L 88 55 Q 95 65, 95 80 Z"
+            fill="#a67c52"
+          />
+        </svg>
+      </motion.div>
+
+      {/* Growing Stem */}
+      <motion.div
+        className="nature-stem absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 }}
+      />
+
+      {/* Leaves with activities */}
+      <div className="relative w-full h-64 mt-4">
+        {activities.map((activity, idx) => {
+          const isActive = idx === currentActivityIndex
+          const isFading = fadingActivities.has(idx)
+          const angle = (idx * 90) - 45 // Distribute leaves around
+          const distance = 80
+
+          return (
+            <motion.div
+              key={idx}
+              className="absolute left-1/2 top-1/2"
+              style={{
+                x: Math.cos((angle * Math.PI) / 180) * distance - 50,
+                y: Math.sin((angle * Math.PI) / 180) * distance - 30,
+              }}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{
+                scale: isActive ? 1 : isFading ? 0 : 0.3,
+                rotate: isActive ? [0, 5, -5, 0] : 0,
+                opacity: isActive ? 1 : isFading ? 0 : 0.2,
+              }}
+              transition={{
+                scale: { duration: 0.5, ease: 'easeOut' },
+                rotate: isActive
+                  ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
+                  : { duration: 0.5 },
+                opacity: { duration: 0.8, ease: 'easeInOut' },
+              }}
+              whileHover={isActive ? { scale: 1.15, rotate: 10 } : {}}
+            >
+              {/* Leaf shape */}
+              <div className="nature-leaf">
+                <div className="nature-leaf-content">
+                  <span className="text-3xl mb-2">{activity.icon}</span>
+                  <span
+                    className="nature-leaf-text"
+                    style={{ color: activity.color }}
+                  >
+                    {activity.text}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )
+        })}
+      </div>
+
+      {/* Floating particles */}
+      {[0, 1, 2, 3, 4].map((particle) => (
+        <motion.div
+          key={particle}
+          className="nature-particle"
+          style={{
+            left: `${20 + particle * 20}%`,
+            bottom: `${10 + particle * 15}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, (particle % 2 === 0 ? 1 : -1) * 15, 0],
+            opacity: [0.3, 0.7, 0.3],
+            scale: [0.8, 1.2, 0.8],
+          }}
+          transition={{
+            duration: 3 + particle * 0.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: particle * 0.3,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+
+// Flying button plane - flies off screen to the right
+function FlyingButtonPlane({ onComplete }: { onComplete: () => void }) {
+  const { scene } = useGLTF('/models/newPlane.glb')
+  const groupRef = useRef<THREE.Group>(null)
+  const startTime = useRef(Date.now())
+  const prevPos = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, -80))
+  const planeScene = useMemo(() => scene.clone(true), [scene])
+
+  useEffect(() => {
+    if (groupRef.current) {
+      groupRef.current.position.set(0, 0, -80)
+      groupRef.current.rotation.set(0, 0, 0)
+      groupRef.current.scale.setScalar(0.35)
+    }
+  }, [])
+  
+  useFrame(() => {
+    if (!groupRef.current) return
+    
+    const elapsed = (Date.now() - startTime.current) / 1000
+    const duration = 1.5 // 1.5 seconds to fly off
+    
+    if (elapsed < duration) {
+      const t = elapsed / duration
+      const easedT = 1 - Math.pow(1 - t, 3) // Ease-out cubic
+      
+      // Fly from center to right off-screen (in 3D space)
+      // Convert screen coordinates to 3D space
+      const startX = 0
+      const endX = 200 // Far to the right in 3D space
+      const x = startX + (endX - startX) * easedT
+      
+      // Slight upward arc
+      const y = 10 * Math.sin(t * Math.PI)
+      
+      // Move forward (toward camera) slightly
+      const z = -80 - (easedT * 40)
+      
+      const pos = new THREE.Vector3(x, y, z)
+      groupRef.current.position.copy(pos)
+      
+      // Orient plane along flight path
+      if (elapsed > 0.05) {
+        const direction = pos.clone().sub(prevPos.current)
+        if (direction.length() > 0.01) {
+          direction.normalize()
+          // Plane's forward is typically along -Z, but we need to align with direction
+          const forward = new THREE.Vector3(0, 0, -1)
+          const quaternion = new THREE.Quaternion()
+          quaternion.setFromUnitVectors(forward, direction)
+          groupRef.current.setRotationFromQuaternion(quaternion)
+        }
+      }
+      
+      prevPos.current.copy(pos)
+      
+      // Scale up slightly as it flies
+      const scale = 0.12 + (easedT * 0.03)
+      groupRef.current.scale.setScalar(scale)
+    } else if (elapsed >= duration) {
+      onComplete()
+    }
+  })
+  
+  return (
+    <primitive 
+      ref={groupRef} 
+      object={planeScene} 
+    />
+  )
+}
+
+export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showButton, setShowButton] = useState(true)
+  const [buttonPlaneFlying, setButtonPlaneFlying] = useState(false)
+  const [showLiftOffOverlay, setShowLiftOffOverlay] = useState(false)
+  
+  // Pre-generate particle data for consistent animation
+  const particleData = useMemo(() => {
+    return Array.from({ length: 15 }, (_, idx) => ({
+      top: 10 + (idx * 6) + (Math.random() * 3),
+      left: 20 + (Math.random() * 60),
+      size: 4 + (Math.random() * 6),
+      y: (Math.random() - 0.5) * 80,
+      delay: Math.random() * 0.3,
+      duration: 0.6 + (Math.random() * 0.4),
+    }))
+  }, [])
   const handleEnter = () => {
-    if (!isTransitioning) {
+    if (!isTransitioning && !buttonPlaneFlying) {
+      onLaunch?.()
       setIsTransitioning(true)
-      // Quick transition
+      setButtonPlaneFlying(true)
+      setShowButton(false)
+      setShowLiftOffOverlay(true)
+      
+      setTimeout(() => {
+        setShowLiftOffOverlay(false)
+      }, 1600)
+      
+      // Complete transition after plane flies off
       setTimeout(() => {
         onEnter()
-      }, 800)
+      }, 1650)
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden break-words">
-      {/* Static gradient background - matching 3D world blue */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6, #E0F6FF)' }} />
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      {/* Sky gradient background */}
+      <div 
+        className="absolute inset-0 transition-opacity duration-1000"
+        style={{ 
+          background: 'linear-gradient(to bottom, #a8d8f0 0%, #87CEEB 30%, #6BB6D6 70%, #4A9BC4 100%)',
+          opacity: isTransitioning ? 0 : 1
+        }} 
+      />
       
-      {/* Enhanced vertical parallax clouds - back to original style but improved */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Layer 1 - Fastest, largest clouds */}
-        <div className="absolute w-full h-full opacity-90">
-          <div className="cloud-large cloud-1 animate-cloud-fastest"></div>
-          <div className="cloud-large cloud-2 animate-cloud-fastest" style={{ animationDelay: '-2s' }}></div>
-          <div className="cloud-large cloud-3 animate-cloud-fastest" style={{ animationDelay: '-4s' }}></div>
-          <div className="cloud-large cloud-4 animate-cloud-fastest" style={{ animationDelay: '-6s' }}></div>
+      <motion.div
+        className="absolute inset-0 overflow-hidden"
+        animate={{ opacity: isTransitioning ? 0 : 1 }}
+        transition={{ duration: 0.6, ease: 'easeInOut' }}
+      >
+        {/* Cloud layer 1 - Large, slow moving */}
+        <div className="absolute inset-0">
+          <div className="realistic-cloud cloud-1" style={{ 
+            left: '10%', 
+            top: '15%',
+            width: '600px',
+            height: '200px',
+            animation: 'cloud-drift-1 45s infinite ease-in-out',
+            opacity: 0.9
+          }}></div>
+          <div className="realistic-cloud cloud-2" style={{ 
+            left: '60%', 
+            top: '25%',
+            width: '500px',
+            height: '180px',
+            animation: 'cloud-drift-2 50s infinite ease-in-out',
+            opacity: 0.85,
+            animationDelay: '-10s'
+          }}></div>
         </div>
         
-        {/* Layer 2 - Fast, medium clouds */}
-        <div className="absolute w-full h-full opacity-75">
-          <div className="cloud-medium cloud-5 animate-cloud-fast"></div>
-          <div className="cloud-medium cloud-6 animate-cloud-fast" style={{ animationDelay: '-3s' }}></div>
-          <div className="cloud-medium cloud-7 animate-cloud-fast" style={{ animationDelay: '-6s' }}></div>
-          <div className="cloud-medium cloud-8 animate-cloud-fast" style={{ animationDelay: '-9s' }}></div>
+        {/* Cloud layer 2 - Medium, medium speed */}
+        <div className="absolute inset-0">
+          <div className="realistic-cloud cloud-3" style={{ 
+            left: '30%', 
+            top: '40%',
+            width: '400px',
+            height: '150px',
+            animation: 'cloud-drift-3 35s infinite ease-in-out',
+            opacity: 0.8,
+            animationDelay: '-5s'
+          }}></div>
+          <div className="realistic-cloud cloud-4" style={{ 
+            left: '70%', 
+            top: '50%',
+            width: '450px',
+            height: '160px',
+            animation: 'cloud-drift-4 40s infinite ease-in-out',
+            opacity: 0.75,
+            animationDelay: '-15s'
+          }}></div>
         </div>
         
-        {/* Layer 3 - Medium speed, smaller clouds */}
-        <div className="absolute w-full h-full opacity-60">
-          <div className="cloud-small cloud-9 animate-cloud-medium"></div>
-          <div className="cloud-small cloud-10 animate-cloud-medium" style={{ animationDelay: '-4s' }}></div>
-          <div className="cloud-small cloud-11 animate-cloud-medium" style={{ animationDelay: '-8s' }}></div>
-          <div className="cloud-small cloud-12 animate-cloud-medium" style={{ animationDelay: '-12s' }}></div>
+        {/* Cloud layer 3 - Small, fast moving */}
+        <div className="absolute inset-0">
+          <div className="realistic-cloud cloud-5" style={{ 
+            left: '5%', 
+            top: '60%',
+            width: '300px',
+            height: '120px',
+            animation: 'cloud-drift-5 25s infinite ease-in-out',
+            opacity: 0.7,
+            animationDelay: '-8s'
+          }}></div>
+          <div className="realistic-cloud cloud-6" style={{ 
+            left: '80%', 
+            top: '70%',
+            width: '350px',
+            height: '140px',
+            animation: 'cloud-drift-6 30s infinite ease-in-out',
+            opacity: 0.65,
+            animationDelay: '-12s'
+          }}></div>
         </div>
+      </motion.div>
 
-        {/* Layer 4 - Slowest, background clouds */}
-        <div className="absolute w-full h-full opacity-40">
-          <div className="cloud-tiny cloud-13 animate-cloud-slow"></div>
-          <div className="cloud-tiny cloud-14 animate-cloud-slow" style={{ animationDelay: '-5s' }}></div>
-          <div className="cloud-tiny cloud-15 animate-cloud-slow" style={{ animationDelay: '-10s' }}></div>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className={`absolute inset-0 flex flex-col items-center justify-center text-center break-words transition-all duration-800 ${isTransitioning ? 'opacity-0 scale-[0.3]' : ''}`}>
-        <div className="relative bg-gradient-to-br from-white/20 via-white/15 to-white/10 backdrop-blur-xl p-16 overflow-hidden break-words w-[90%] max-w-4xl mx-4"
-             style={{
-               borderRadius: '2.5rem',
-               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(255, 255, 255, 0.3)'
-             }}>
-          
-          {/* Decorative shapes matching landmark pages */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/30 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/30 to-transparent rounded-full transform -translate-x-12 translate-y-12"></div>
-          <div className="relative z-10 flex flex-col items-center justify-center gap-6 mb-8">
-            <div className="flex flex-row items-center justify-center gap-6">
-              <h1 className="break-words text-8xl font-extrabold text-stone-800 tracking-tight">
-                Hello
-              </h1>
-              <span className="break-words text-6xl animate-wave-slow">👋</span>
-            </div>
-          </div>
-          <p className="relative z-10 text-center text-4xl mb-16 leading-tight font-semibold text-stone-700">
-            Welcome to Isaac&apos;s World
-          </p>
-          
-          <div className="relative z-10">
-            {/* Wind animation elements */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="wind-line wind-1"></div>
-              <div className="wind-line wind-2"></div>
-              <div className="wind-line wind-3"></div>
-              <div className="wind-line wind-4"></div>
-              <div className="wind-line wind-5"></div>
-              <div className="wind-line wind-6"></div>
+      <AnimatePresence>
+        {showLiftOffOverlay && (
+          <motion.div
+            className="fixed inset-0 pointer-events-none z-40 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Main gradient sweep - faster, more dramatic */}
+            <motion.div
+              className="liftoff-gradient"
+              initial={{ x: '0%', scale: 1 }}
+              animate={{ 
+                x: ['0%', '-20%', '-50%', '-85%', '-100%'],
+                scale: [1, 1.1, 1.3, 1.5, 1.8]
+              }}
+              transition={{ 
+                duration: 1.2, 
+                ease: [0.16, 1, 0.3, 1], // Custom cubic-bezier for acceleration
+                times: [0, 0.3, 0.6, 0.85, 1]
+              }}
+            />
+            
+            {/* Wind streaks - more lines, faster, varied speeds */}
+            <div className="liftoff-lines">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((line) => (
+                <motion.span
+                  key={`liftoff-line-${line}`}
+                  className="liftoff-line"
+                  style={{
+                    top: `${5 + line * 9}%`,
+                    height: line % 3 === 0 ? '3px' : line % 3 === 1 ? '2px' : '1.5px',
+                    opacity: 0.9 - (line * 0.08),
+                  }}
+                  initial={{ x: '150%', opacity: 0 }}
+                  animate={{ 
+                    x: '-180%', 
+                    opacity: [0, 0.9, 1, 0.7, 0],
+                    scale: [0.8, 1, 1.1, 1, 0.9]
+                  }}
+                  transition={{ 
+                    duration: 0.8 + (line * 0.05), 
+                    ease: [0.5, 0, 0.8, 1], // Fast acceleration
+                    delay: line * 0.03,
+                    times: [0, 0.2, 0.5, 0.8, 1]
+                  }}
+                />
+              ))}
             </div>
             
-            <button
-              onClick={handleEnter}
-              className="group btn-primary px-16 py-5"
-            >
-              <span className="relative z-10 flex items-center gap-3 tracking-normal text-2xl">
-                Take Flight
-                <Plane className="w-8 h-8 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+            {/* Motion blur overlay - creates whoosh effect */}
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.6) 60%, transparent 100%)',
+                filter: 'blur(20px)',
+              }}
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ 
+                x: ['100%', '0%', '-100%'],
+                opacity: [0, 0.8, 0]
+              }}
+              transition={{ 
+                duration: 1.0,
+                ease: [0.4, 0, 0.6, 1],
+                times: [0, 0.5, 1]
+              }}
+            />
+            
+            {/* Particle-like dots for speed effect */}
+            <div className="liftoff-particles">
+              {particleData.map((particle, idx) => (
+                <motion.div
+                  key={`particle-${idx}`}
+                  className="liftoff-particle"
+                  style={{
+                    top: `${particle.top}%`,
+                    left: `${particle.left}%`,
+                    width: `${particle.size}px`,
+                    height: `${particle.size}px`,
+                  }}
+                  initial={{ x: 0, opacity: 0, scale: 0 }}
+                  animate={{ 
+                    x: '-200vw',
+                    opacity: [0, 1, 1, 0],
+                    scale: [0, 1, 1.2, 0],
+                    y: particle.y
+                  }}
+                  transition={{ 
+                    duration: particle.duration,
+                    ease: 'easeOut',
+                    delay: particle.delay,
+                    times: [0, 0.1, 0.7, 1]
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* CSS for enhanced vertical cloud animations */}
+      {/* Organic layout with hero text + right-side accent */}
+      <motion.div 
+        className="absolute inset-0 flex flex-col md:flex-row items-center justify-center px-6 sm:px-12 lg:px-20 gap-12 md:gap-24"
+        animate={isTransitioning ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+      >
+        <div className="relative flex-1 max-w-xl">
+          <AnimatePresence>
+            {isTransitioning && (
+              <motion.div
+                key="text-wash"
+                className="absolute inset-0 z-10 rounded-[32px]"
+                initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                animate={{ clipPath: 'inset(0 -40% 0 0)' }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
+                style={{
+                  background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.9) 55%, rgba(255,255,255,1) 100%)',
+                  filter: 'blur(18px)',
+                }}
+              />
+            )}
+          </AnimatePresence>
+          {/* Hello - large, organic, slightly rotated */}
+          <motion.div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <motion.h1
+              className="text-[clamp(4rem,10vw,8rem)] font-black leading-none flex items-center gap-4"
+              style={{
+                color: '#1a1a1a',
+                textShadow: '2px 2px 0px rgba(255,255,255,0.3), -1px -1px 0px rgba(0,0,0,0.08)',
+                letterSpacing: '-0.05em',
+              }}
+              animate={{
+                y: [0, -10, 0],
+                rotate: [-4, -3, -4],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            >
+              Hello
+              <motion.span
+                className="text-6xl md:text-7xl inline-block"
+                animate={{
+                  rotate: [0, 14, -14, 14, -14, 0],
+                  y: [0, -5, 0],
+                }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 0.5
+                }}
+              >
+                👋
+              </motion.span>
+            </motion.h1>
+            
+            {/* Tagline */}
+            <motion.p
+              className="text-[clamp(1.6rem,3vw,2.6rem)] font-medium mt-12 leading-tight text-zinc-700"
+              style={{
+                fontFamily: 'var(--font-plus-jakarta-sans)',
+                transformOrigin: 'center',
+              }}
+              animate={{
+                opacity: [0.9, 1, 0.9],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: 1
+              }}
+            >
+              Welcome to Isaac&apos;s World
+            </motion.p>
+            
+            {/* Button */}
+            {showButton && !buttonPlaneFlying && (
+              <motion.button
+                onClick={handleEnter}
+                className="mt-16 px-12 py-6 text-2xl font-semibold relative overflow-hidden group"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,240,240,0.9) 100%)',
+                  border: 'none',
+                  borderRadius: '50px',
+                  color: '#1a1a1a',
+                  cursor: 'pointer',
+                  boxShadow: 'none',
+                  fontFamily: 'var(--font-plus-jakarta-sans)',
+                }}
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                whileHover={{ 
+                  scale: 1.06,
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              >
+                <span className="relative z-10">
+                  Take Flight
+                </span>
+                
+                <motion.div
+                  className="absolute inset-0 bg-white/30 rounded-full"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 2, opacity: [0, 0.4, 0] }}
+                  transition={{ duration: 0.6 }}
+                />
+              </motion.button>
+            )}
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Flying button plane - appears when button is clicked */}
+      {buttonPlaneFlying && (
+        <div className="fixed inset-0 pointer-events-none z-[60]">
+          <Canvas
+            camera={{ position: [0, 0, 200], fov: 50 }}
+            style={{ background: 'transparent' }}
+          >
+            <ambientLight intensity={0.8} />
+            <directionalLight position={[10, 10, 5]} intensity={0.6} />
+            <FlyingButtonPlane onComplete={() => {}} />
+          </Canvas>
+        </div>
+      )}
+
+      {/* Realistic cloud styles */}
       <style jsx>{`
-        .cloud-large, .cloud-medium, .cloud-small, .cloud-tiny {
+        .realistic-cloud {
           position: absolute;
+          background: radial-gradient(
+            ellipse 80% 50% at 50% 50%,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.7) 25%,
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0.3) 75%,
+            transparent 100%
+          );
           border-radius: 100px;
-          filter: blur(1px);
+          filter: blur(20px);
+          box-shadow: 
+            0 20px 40px rgba(255, 255, 255, 0.3),
+            inset -10px -10px 20px rgba(255, 255, 255, 0.5),
+            inset 10px 10px 20px rgba(0, 0, 0, 0.05);
         }
         
-        /* Large clouds - closest layer with improved gradients */
-        .cloud-large { 
-          background: radial-gradient(ellipse 60% 40% at 40% 50%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(245,245,245,0.4) 70%, transparent 100%);
-          filter: blur(0.5px); 
-          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        .cloud-1 { width: 400px; height: 120px; left: 5%; }
-        .cloud-2 { width: 500px; height: 150px; left: 55%; }
-        .cloud-3 { width: 450px; height: 135px; left: 25%; }
-        .cloud-4 { width: 380px; height: 115px; left: 75%; }
-
-        /* Medium clouds with softer appearance */
-        .cloud-medium { 
-          background: radial-gradient(ellipse 65% 45% at 45% 50%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 50%, rgba(240,240,240,0.3) 75%, transparent 100%);
-          filter: blur(1px); 
-          box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-        }
-        .cloud-5 { width: 300px; height: 90px; left: 15%; }
-        .cloud-6 { width: 350px; height: 105px; left: 65%; }
-        .cloud-7 { width: 320px; height: 95px; left: 45%; }
-        .cloud-8 { width: 280px; height: 85px; left: 85%; }
-
-        /* Small clouds - more wispy */
-        .cloud-small { 
-          background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.4) 60%, rgba(235,235,235,0.2) 80%, transparent 100%);
-          filter: blur(1.5px); 
-          box-shadow: 0 1px 5px rgba(0,0,0,0.04);
-        }
-        .cloud-9 { width: 200px; height: 60px; left: 35%; }
-        .cloud-10 { width: 220px; height: 65px; left: 10%; }
-        .cloud-11 { width: 180px; height: 55px; left: 70%; }
-        .cloud-12 { width: 210px; height: 63px; left: 90%; }
-
-        /* Tiny clouds - distant background */
-        .cloud-tiny { 
-          background: radial-gradient(ellipse 75% 55% at 50% 50%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 70%, rgba(230,230,230,0.15) 85%, transparent 100%);
-          filter: blur(2px); 
-        }
-        .cloud-13 { width: 120px; height: 36px; left: 20%; }
-        .cloud-14 { width: 140px; height: 42px; left: 60%; }
-        .cloud-15 { width: 130px; height: 39px; left: 80%; }
-
-        @keyframes cloud-fastest {
-          0% { transform: translateY(-120vh) scale(0.3); opacity: 0; }
-          8% { opacity: 0.9; }
-          92% { opacity: 0.9; }
-          100% { transform: translateY(120vh) scale(1.8); opacity: 0; }
-        }
-
-        @keyframes cloud-fast {
-          0% { transform: translateY(-110vh) scale(0.4); opacity: 0; }
-          12% { opacity: 0.75; }
-          88% { opacity: 0.75; }
-          100% { transform: translateY(110vh) scale(1.6); opacity: 0; }
-        }
-
-        @keyframes cloud-medium {
-          0% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
-          18% { opacity: 0.6; }
-          82% { opacity: 0.6; }
-          100% { transform: translateY(100vh) scale(1.4); opacity: 0; }
-        }
-
-        @keyframes cloud-slow {
-          0% { transform: translateY(-90vh) scale(0.6); opacity: 0; }
-          22% { opacity: 0.4; }
-          78% { opacity: 0.4; }
-          100% { transform: translateY(90vh) scale(1.2); opacity: 0; }
-        }
-
-        @keyframes wave-slow {
-          0%, 85% { transform: rotate(0deg); }
-          87%, 91%, 95% { transform: rotate(14deg); }
-          89%, 93% { transform: rotate(-14deg); }
-          97%, 100% { transform: rotate(0deg); }
-        }
-
-        .animate-cloud-fastest { animation: cloud-fastest 7s infinite linear; }
-        .animate-cloud-fast { animation: cloud-fast 10s infinite linear; }
-        .animate-cloud-medium { animation: cloud-medium 14s infinite linear; }
-        .animate-cloud-slow { animation: cloud-slow 20s infinite linear; }
-        .animate-wave-slow { animation: wave-slow 4s ease-in-out infinite; }
-
-        /* Enhanced wind animation around the button */
-        .wind-line {
+        /* Multiple cloud puffs for realistic look */
+        .realistic-cloud::before,
+        .realistic-cloud::after {
+          content: '';
           position: absolute;
-          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-          border-radius: 2px;
-          opacity: 0;
+          background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 100%
+          );
+          border-radius: 50%;
+          filter: blur(15px);
+        }
+        
+        .realistic-cloud::before {
+          width: 60%;
+          height: 60%;
+          top: -20%;
+          left: 10%;
+        }
+        
+        .realistic-cloud::after {
+          width: 50%;
+          height: 50%;
+          bottom: -15%;
+          right: 15%;
+        }
+        
+        @keyframes cloud-drift-1 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          25% { transform: translateX(55px) translateY(-25px) scale(1.08); }
+          50% { transform: translateX(110px) translateY(-18px) scale(1.14); }
+          75% { transform: translateX(55px) translateY(-35px) scale(1.08); }
+        }
+        
+        @keyframes cloud-drift-2 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          33% { transform: translateX(-70px) translateY(25px) scale(0.92); }
+          66% { transform: translateX(-130px) translateY(40px) scale(0.88); }
+        }
+        
+        @keyframes cloud-drift-3 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          50% { transform: translateX(80px) translateY(-22px) scale(1.12); }
+        }
+        
+        @keyframes cloud-drift-4 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          50% { transform: translateX(-90px) translateY(32px) scale(0.9); }
+        }
+        
+        @keyframes cloud-drift-5 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          50% { transform: translateX(110px) translateY(-32px) scale(1.16); }
+        }
+        
+        @keyframes cloud-drift-6 {
+          0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+          50% { transform: translateX(-80px) translateY(36px) scale(0.84); }
         }
 
-        .wind-1 {
-          width: 40px;
-          height: 2px;
-          top: 20%;
-          left: -60px;
-          animation: windFlow1 3s infinite ease-in-out;
+        .liftoff-gradient {
+          position: absolute;
+          inset: -20%;
+          background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.1) 40%, transparent 70%), linear-gradient(120deg, rgba(135, 206, 235, 0.9) 0%, rgba(79, 152, 204, 0.7) 40%, rgba(36, 65, 110, 0.65) 100%);
+          filter: blur(40px);
+          opacity: 0.85;
         }
 
-        .wind-2 {
-          width: 60px;
-          height: 1px;
-          top: 35%;
-          left: -80px;
-          animation: windFlow2 3.5s infinite ease-in-out 0.5s;
+        .liftoff-lines {
+          position: absolute;
+          inset: 0;
         }
 
-        .wind-3 {
-          width: 50px;
-          height: 2px;
-          top: 65%;
-          left: -70px;
-          animation: windFlow3 4s infinite ease-in-out 1s;
-        }
+                .liftoff-line {
+                  position: absolute;
+                  left: -40%;
+                  width: 180%;
+                  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.9) 70%, transparent 100%);
+                  filter: blur(1.5px);
+                  transform-origin: left center;
+                }
+                
+                .liftoff-particles {
+                  position: absolute;
+                  inset: 0;
+                }
+                
+                .liftoff-particle {
+                  position: absolute;
+                  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 50%, transparent 100%);
+                  border-radius: 50%;
+                  filter: blur(1px);
+                }
 
-        .wind-4 {
-          width: 35px;
-          height: 1px;
-          top: 80%;
-          left: -50px;
-          animation: windFlow4 3.2s infinite ease-in-out 1.5s;
-        }
+                /* Nature Garden Styles */
+                .nature-pot {
+                  position: relative;
+                  z-index: 1;
+                }
 
-        .wind-5 {
-          width: 45px;
-          height: 2px;
-          top: 15%;
-          right: -70px;
-          animation: windFlowReverse1 3.8s infinite ease-in-out 0.8s;
-        }
+                .nature-pot-svg {
+                  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+                }
 
-        .wind-6 {
-          width: 55px;
-          height: 1px;
-          top: 70%;
-          right: -80px;
-          animation: windFlowReverse2 3.3s infinite ease-in-out 2s;
-        }
+                .nature-stem {
+                  position: absolute;
+                  width: 8px;
+                  height: 120px;
+                  background: linear-gradient(to top, #166534 0%, #22c55e 100%);
+                  border-radius: 4px;
+                  transform-origin: bottom center;
+                  z-index: 0;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
 
-        @keyframes windFlow1 {
-          0% { transform: translateX(-20px); opacity: 0; }
-          30% { opacity: 0.8; }
-          70% { opacity: 0.8; }
-          100% { transform: translateX(200px); opacity: 0; }
-        }
+                .nature-leaf {
+                  position: relative;
+                  width: 100px;
+                  height: 80px;
+                  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+                  border-radius: 0 100% 0 100%;
+                  transform: rotate(-45deg);
+                  box-shadow: 
+                    0 4px 12px rgba(34, 197, 94, 0.3),
+                    inset 0 2px 4px rgba(255,255,255,0.2);
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                }
 
-        @keyframes windFlow2 {
-          0% { transform: translateX(-30px); opacity: 0; }
-          25% { opacity: 0.6; }
-          75% { opacity: 0.6; }
-          100% { transform: translateX(250px); opacity: 0; }
-        }
+                .nature-leaf::before {
+                  content: '';
+                  position: absolute;
+                  top: 10px;
+                  left: 10px;
+                  width: 60%;
+                  height: 60%;
+                  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+                  border-radius: 50%;
+                }
 
-        @keyframes windFlow3 {
-          0% { transform: translateX(-25px); opacity: 0; }
-          35% { opacity: 0.7; }
-          65% { opacity: 0.7; }
-          100% { transform: translateX(220px); opacity: 0; }
-        }
+                .nature-leaf-content {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%) rotate(45deg);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  width: 100%;
+                  pointer-events: none;
+                }
 
-        @keyframes windFlow4 {
-          0% { transform: translateX(-15px); opacity: 0; }
-          40% { opacity: 0.5; }
-          60% { opacity: 0.5; }
-          100% { transform: translateX(180px); opacity: 0; }
-        }
+                .nature-leaf-text {
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  text-align: center;
+                  white-space: nowrap;
+                  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                }
 
-        @keyframes windFlowReverse1 {
-          0% { transform: translateX(20px); opacity: 0; }
-          30% { opacity: 0.6; }
-          70% { opacity: 0.6; }
-          100% { transform: translateX(-200px); opacity: 0; }
-        }
-
-        @keyframes windFlowReverse2 {
-          0% { transform: translateX(25px); opacity: 0; }
-          35% { opacity: 0.7; }
-          65% { opacity: 0.7; }
-          100% { transform: translateX(-220px); opacity: 0; }
-        }
-
-        /* Enhanced button hover effects with wind interaction */
-        .group:hover .wind-line {
-          animation-duration: 1.5s;
-        }
+                .nature-particle {
+                  position: absolute;
+                  width: 6px;
+                  height: 6px;
+                  background: radial-gradient(circle, #22c55e 0%, #16a34a 50%, transparent 100%);
+                  border-radius: 50%;
+                  filter: blur(1px);
+                  pointer-events: none;
+                }
       `}</style>
     </div>
   )
-} 
+}

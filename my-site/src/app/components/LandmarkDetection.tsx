@@ -84,8 +84,8 @@ export default function LandmarkDetection({
     })
   }, [earthScene])
 
-  // Throttle debug logs
-  const debugTimer = useRef<number>(0)
+  // Throttle frame checks - only check every 3 frames (~20fps instead of 60fps)
+  const frameCount = useRef<number>(0)
   // Prevent immediate triggering on mount
   const mountTimer = useRef<number>(0)
 
@@ -94,9 +94,14 @@ export default function LandmarkDetection({
       return
     }
 
+    // Throttle: Only check every 3rd frame for better performance
+    frameCount.current++
+    if (frameCount.current % 3 !== 0) {
+      return
+    }
+
     const planePosition = planeRef.current.position
-    debugTimer.current += 0.016 // ~60fps
-    mountTimer.current += 0.016 // ~60fps
+    mountTimer.current += 0.05 // ~20fps (3 frames)
     
     // Reduce mount timer to 0.5 seconds for faster testing
     if (mountTimer.current < 0.5) {
@@ -132,11 +137,6 @@ export default function LandmarkDetection({
         }
       }
     })
-
-    // Reset debug timer
-    if (debugTimer.current > 2.0) {
-      debugTimer.current = 0
-    }
 
     const currentTime = Date.now()
 

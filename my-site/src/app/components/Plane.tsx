@@ -7,10 +7,12 @@ import * as THREE from 'three'
 
 export default function Plane({ 
   planeRef, 
-  controlsDisabled = false 
+  controlsDisabled = false,
+  worldJustAppeared = false
 }: { 
   planeRef: React.RefObject<THREE.Group | null>
   controlsDisabled?: boolean
+  worldJustAppeared?: boolean
 }) {
   const { scene, animations } = useGLTF('/models/newPlane.glb')
   const group = useRef<THREE.Group>(null)
@@ -29,12 +31,37 @@ export default function Plane({
 
   // Flight state - using quaternion-based orientation instead of euler angles
   // Start the plane directly over Saratoga (AboutMe landmark) - coordinates from flight testing
-  const position = useRef(new THREE.Vector3(-10.360, 18.038, 29.206))
+  const targetPosition = new THREE.Vector3(-10.360, 18.038, 29.206)
+  const position = useRef(targetPosition.clone())
   const speed = useRef(0)
   const orientation = useRef(new THREE.Quaternion()) // Store orientation directly as quaternion
   
+  // Drop-in animation state
+  const dropInStartTime = useRef<number | null>(null)
+  const dropInDuration = 1.0 // 1 second to drop in (faster)
+  const dropInHeightMultiplier = 2.5 // Start 2.5x higher than target altitude
+  const hasDroppedIn = useRef(false)
+  const dropInProgress = useRef(0) // Track drop-in progress (0-1) for camera zoom
+  
   // Input state
   const keysPressed = useRef<Record<string, boolean>>({})
+
+  // Initialize drop-in animation when world appears
+  useEffect(() => {
+    if (worldJustAppeared && dropInStartTime.current === null) {
+      // Calculate starting position (higher altitude)
+      const targetDistance = earthRadius + flightAltitude
+      const startDistance = targetDistance * dropInHeightMultiplier
+      
+      // Start plane at higher altitude, same direction from center
+      const direction = targetPosition.clone().normalize()
+      const startPosition = direction.clone().multiplyScalar(startDistance)
+      position.current.copy(startPosition)
+      
+      // Initialize drop-in animation
+      dropInStartTime.current = Date.now()
+    }
+  }, [worldJustAppeared])
 
   // Initialize the plane orientation to be properly aligned with the surface
   useEffect(() => {
@@ -100,6 +127,74 @@ export default function Plane({
 
   useFrame((state, delta) => {
     if (!group.current) return
+
+    // 0. HANDLE DROP-IN ANIMATION
+    if (dropInStartTime.current !== null) {
+      const elapsed = (Date.now() - dropInStartTime.current) / 1000
+      
+      if (elapsed < dropInDuration) {
+        // Smooth ease-out curve for natural drop
+        const t = elapsed / dropInDuration
+        const easedT = 1 - Math.pow(1 - t, 3) // Ease-out cubic
+        
+        // Track progress for camera zoom
+        dropInProgress.current = t
+        
+        // Interpolate from start to target position
+        const targetDistance = earthRadius + flightAltitude
+        const startDistance = targetDistance * dropInHeightMultiplier
+        const currentDistance = startDistance + (targetDistance - startDistance) * easedT
+        
+        // Maintain same direction, just change distance from center
+        const direction = targetPosition.clone().normalize()
+        const currentPosition = direction.clone().multiplyScalar(currentDistance)
+        position.current.copy(currentPosition)
+        
+        // Update orientation to align with surface at current position
+        const surfaceNormal = currentPosition.clone().normalize()
+        const worldUp = new THREE.Vector3(0, 1, 0)
+        const quaternionToSurface = new THREE.Quaternion()
+        quaternionToSurface.setFromUnitVectors(worldUp, surfaceNormal)
+        orientation.current.copy(quaternionToSurface)
+        
+        // Update visual immediately
+        group.current.position.copy(position.current)
+        group.current.setRotationFromQuaternion(orientation.current)
+        
+        // Update planeRef for camera (include drop-in progress for zoom effect)
+        if (planeRef.current) {
+          planeRef.current.position.copy(position.current)
+          planeRef.current.quaternion.copy(orientation.current)
+          planeRef.current.userData.dropInProgress = dropInProgress.current
+          
+          // Set forward vector for camera (plane's forward is +X in local space)
+          const cameraForward = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
+          planeRef.current.userData.forward = cameraForward
+          planeRef.current.userData.up = surfaceNormal
+          planeRef.current.userData.speed = 0
+        }
+        
+        // Don't process other movement during drop-in
+        return
+      } else {
+        // Drop-in complete, snap to final position
+        position.current.copy(targetPosition)
+        dropInStartTime.current = null
+        dropInProgress.current = 1
+        hasDroppedIn.current = true
+        
+        // Clear drop-in progress after a moment
+        if (planeRef.current) {
+          planeRef.current.userData.dropInProgress = 1
+        }
+      }
+    } else {
+      // Clear drop-in progress when not dropping
+      dropInProgress.current = 1
+      if (planeRef.current) {
+        planeRef.current.userData.dropInProgress = 1
+      }
+    }
 
     // 1. HANDLE SPEED CONTROL
     let isThrottling = false

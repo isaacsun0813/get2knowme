@@ -1,271 +1,543 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Briefcase } from 'lucide-react'
+import { useEffect, useState, useRef, useCallback } from 'react'
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion'
+import { 
+  Briefcase, 
+  FileText, 
+  X, 
+  Plane, 
+  UtensilsCrossed, 
+  Dumbbell, 
+  Target, 
+  BookOpen, 
+  Music, 
+  Sparkles, 
+  Video 
+} from 'lucide-react'
 
 interface CareerProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export default function Career({ isOpen, onClose }: CareerProps) {
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [shouldRender, setShouldRender] = useState(false)
+// Goal icons mapping with lucide-react icons
+const goalIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  'Paragliding license': Plane,
+  'Beef Wellington': UtensilsCrossed,
+  'Squat 500, bench 300, deadlift 400': Dumbbell,
+  'Dunk': Target, // Using Target icon for basketball dunk
+  'Study Sociology': BookOpen,
+  'Play Tuba/Euphonium': Music,
+  'Backflip': Sparkles,
+  'Vlog': Video
+}
 
-  // Handle escape key to close
+export default function Career({ isOpen, onClose }: CareerProps) {
+  const [shouldRender, setShouldRender] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ container: scrollRef })
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 })
+  const underlineWidth = useTransform(smoothProgress, [0, 1], [0.5, 1])
+
+  const handleClose = useCallback(() => {
+    onClose()
+  }, [onClose])
+
+  // Handle escape key and space to close
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        handleClose()
+      }
+      // Only close on space if not typing in an input
+      if (e.key === ' ' && isOpen && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault()
         handleClose()
       }
     }
 
     if (isOpen) {
-      window.addEventListener('keydown', handleEscape)
-      // Prevent body scroll when popup is open
+      window.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
     }
 
     return () => {
-      window.removeEventListener('keydown', handleEscape)
+      window.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen])
+  }, [isOpen, handleClose])
 
-  // Animation handling
+  // Animation handling - keep component mounted during exit animation
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true)
-      // Small delay to ensure DOM is ready, then start animation
-      requestAnimationFrame(() => {
-        setIsAnimating(true)
-      })
     } else {
-      setIsAnimating(false)
-      // Wait for animation to complete before removing from DOM
       const timer = setTimeout(() => {
         setShouldRender(false)
-      }, 300)
+      }, 800)
       return () => clearTimeout(timer)
     }
   }, [isOpen])
 
-  const handleClose = () => {
-    setIsAnimating(false)
-    setTimeout(() => {
-      onClose()
-    }, 200)
-  }
-
   if (!shouldRender) return null
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-start sm:items-center justify-center transition-all duration-300 ease-out ${
-        isAnimating ? 'opacity-100' : 'opacity-0'
-      } pt-4 sm:pt-0`}
-    >
-      {/* Career themed backdrop */}
-      <div 
-        className={`absolute inset-0 theme-career theme-backdrop backdrop-blur-sm transition-all duration-500 ${
-          isAnimating ? 'opacity-100' : 'opacity-0'
-        }`}
-        onClick={handleClose}
-      />
-      
-      {/* Popup Container with organic animation - RESPONSIVE */}
-      <div 
-        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
-          isAnimating 
-            ? 'scale-100 opacity-100 translate-y-0' 
-            : 'scale-95 opacity-0 translate-y-4'
-        }`}
-      >
-        {/* Main content container with cohesive Career styling */}
-        <div className="relative theme-career theme-container backdrop-blur-md overflow-hidden break-words"
-             style={{
-               borderRadius: '2.5rem',
-               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(74, 144, 194, 0.3)'
-             }}>
-          
-          {/* Decorative themed shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full transform translate-x-16 -translate-y-16" style={{ background: 'radial-gradient(circle, rgba(74, 144, 194, 0.2) 0%, transparent 70%)' }}></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full transform -translate-x-12 translate-y-12" style={{ background: 'radial-gradient(circle, rgba(74, 144, 194, 0.15) 0%, transparent 70%)' }}></div>
-          
-          {/* Close button */}
-          <button
+    <AnimatePresence>
+      {shouldRender && (
+        <>
+          {/* Backdrop - Increased dimming */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isOpen ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+            className="fixed inset-0 z-50"
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 btn-close"
+            style={{
+              backdropFilter: 'blur(40px) saturate(0.3)',
+              background: 'rgba(0,0,0,0.55)'
+            }}
+          />
+
+          {/* Skyglass Journal Modal */}
+          <motion.div
+            key="modal"
+            initial={{ 
+              opacity: 0, 
+              scale: 0.94,
+              filter: 'blur(12px)'
+            }}
+            animate={{ 
+              opacity: isOpen ? 1 : 0, 
+              scale: isOpen ? 1 : 0.94,
+              filter: isOpen ? 'blur(0px)' : 'blur(8px)'
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.94,
+              filter: 'blur(10px)'
+            }}
+            transition={{
+              duration: 0.8,
+              ease: [0.23, 1, 0.32, 1]
+            }}
+            className="fixed inset-0 z-[52] flex items-center justify-center p-4 sm:p-6 pointer-events-none"
+            onClick={(e) => e.stopPropagation()}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            {/* Main Glass Container - Skyglass Journal */}
+            <motion.div
+              ref={scrollRef}
+              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
+                style={{
+                  borderRadius: '22px',
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.92) 100%)',
+                  backdropFilter: 'blur(40px)',
+                boxShadow: `
+                  0px 20px 60px rgba(0,0,0,0.4),
+                  0px 0px 0px 1px rgba(255,255,255,0.8),
+                  inset 0px 1px 0px rgba(255,255,255,0.95),
+                  0px 0px 100px rgba(255,255,255,0.4),
+                  0px 0px 0px 2px rgba(37,99,235,0.1)
+                `,
+                border: '2px solid rgba(255,255,255,0.9)',
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(0,0,0,0.2) transparent'
+              }}
+            >
 
-          {/* Content area */}
-          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
-            
+              {/* Close Button */}
+              <motion.button
+                onClick={handleClose}
+                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                style={{
+                  background: 'rgba(255,255,255,0.85)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
+                  border: '1px solid rgba(255,255,255,0.5)'
+                }}
+                whileHover={{ 
+                  scale: 1.1, 
+                  rotate: 90,
+                  background: 'rgba(255,255,255,0.95)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              >
+                <X 
+                  size={24} 
+                  className="text-gray-600 group-hover:text-gray-800 transition-colors duration-200"
+                  strokeWidth={2.5}
+                />
+              </motion.button>
 
-            {/* Header */}
-            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                <Briefcase size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-deep-blue)' }} />
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-deep-blue)' }}>Career</h1>
-              </div>
-              <div className="landmark-divider"></div>
-            </div>
-
-            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
-              <div className="relative theme-career theme-card landmark-card overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
-                   }}>
-                
-                <div className="break-words text-center break-words relative z-10">
-                  <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words" style={{ color: 'var(--color-deep-blue)' }}>My career goal</h2>
-                  </div>
+              {/* Content */}
+              <div className="relative p-8 sm:p-10 md:p-12">
+                {/* Header - Glowing Embossed */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+                  transition={{ delay: 0.15, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                  className="text-center mb-12"
+                >
+                  <motion.div
+                    className="flex items-center justify-center gap-4 mb-4"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
+                    transition={{ delay: 0.2, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                  >
+                    <div className="relative">
+                      <Briefcase 
+                        size={48} 
+                        className="relative"
+                        style={{
+                          color: '#2563eb',
+                          filter: 'drop-shadow(0 4px 8px rgba(37,99,235,0.3))'
+                        }}
+                      />
+                    </div>
+                    <h1 
+                      className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight"
+                      style={{
+                        fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
+                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        letterSpacing: '-0.02em'
+                      }}
+                    >
+                      Career
+                    </h1>
+                  </motion.div>
                   
-                  <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
-                    <p className="break-words text-center break-words max-w-4xl mx-auto break-words">
+                  {/* Animated Underline */}
+                  <motion.div
+                    className="h-0.5 mx-auto"
+                    style={{
+                      background: 'linear-gradient(to right, transparent, #2563eb, transparent)',
+                      width: '120px',
+                      scaleX: isOpen ? underlineWidth : 0,
+                      transformOrigin: 'center'
+                    }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: isOpen ? 1 : 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  />
+
+                  {/* Warm microtext */}
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isOpen ? 1 : 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                    className="mt-6 text-base sm:text-lg flex items-center justify-center"
+                    style={{
+                      color: 'rgba(15,23,42,0.75)',
+                      fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                      fontWeight: '400'
+                    }}
+                  >
+                    Things I&apos;m chasing on this journey
+                  </motion.p>
+                </motion.div>
+
+                {/* Stacked Floating Panels */}
+                <div className="space-y-6">
+                  {/* Panel 1: My Career Goal */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+                    animate={{ 
+                      opacity: isOpen ? 1 : 0, 
+                      y: isOpen ? 0 : 30,
+                      filter: isOpen ? 'blur(0px)' : 'blur(8px)'
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: 30,
+                      filter: 'blur(8px)'
+                    }}
+                    transition={{ delay: 0.3, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                    className="relative p-8 sm:p-10 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      boxShadow: `
+                        0px 16px 32px rgba(0,0,0,0.15),
+                        0px 0px 0px 1px rgba(255,255,255,0.8),
+                        inset 0px 1px 0px rgba(255,255,255,0.95)
+                      `,
+                      border: '1px solid rgba(255,255,255,0.6)',
+                      transform: 'translateZ(0)'
+                    }}
+                  >
+                    <h2 
+                      className="text-center mb-6 text-lg sm:text-xl font-semibold uppercase tracking-wider"
+                      style={{
+                        fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        letterSpacing: '0.1em'
+                      }}
+                    >
+                      My Career Goal
+                    </h2>
+                    <p 
+                      className="text-center text-base sm:text-lg leading-relaxed max-w-3xl mx-auto"
+                      style={{
+                        color: 'rgba(15,23,42,1)',
+                        fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                        lineHeight: '1.7',
+                        fontWeight: '400'
+                      }}
+                    >
                       Tackle climate and environmental policy challenges through scalable, efficient technology solutions
                     </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </motion.div>
 
-
-
-            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
-              <div className="relative theme-career theme-card landmark-card overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
-                   }}>
-                
-                <div className="break-words text-center break-words relative z-10">
-                  <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words" style={{ color: 'var(--color-deep-blue)' }}>Future Opportunities</h2>
-                  </div>
-                  
-                  <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
-                    <p className="break-words text-left">
-                      I&apos;m interested in climate tech specifically:
-                    </p>
+                  {/* Panel 2: Future Opportunities */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+                    animate={{ 
+                      opacity: isOpen ? 1 : 0, 
+                      y: isOpen ? -8 : 30,
+                      filter: isOpen ? 'blur(0px)' : 'blur(10px)'
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: 30,
+                      filter: 'blur(10px)'
+                    }}
+                    transition={{ delay: 0.42, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                    className="relative p-8 sm:p-10 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.93) 100%)',
+                      backdropFilter: 'blur(18px)',
+                      boxShadow: `
+                        0px 16px 32px rgba(0,0,0,0.15),
+                        0px 0px 0px 1px rgba(255,255,255,0.7),
+                        inset 0px 1px 0px rgba(255,255,255,0.9)
+                      `,
+                      border: '1px solid rgba(255,255,255,0.5)',
+                      transform: 'translateZ(0)',
+                      marginTop: '-8px'
+                    }}
+                  >
+                    <h2 
+                      className="text-center mb-6 text-lg sm:text-xl font-semibold uppercase tracking-wider"
+                      style={{
+                        fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        letterSpacing: '0.1em'
+                      }}
+                    >
+                      Future Opportunities
+                    </h2>
                     
-                    <div className="max-w-4xl mx-auto break-words">
-                      <ul className="space-y-6 break-words text-left ml-8">
-                        <li className="flex items-start gap-4">
-                          <span className="break-words font-bold text-black">•</span>
-                          <span>Scope 2 Emissions tracking and optimization platforms</span>
-                        </li>
-                        <li className="flex items-start gap-4">
-                          <span className="break-words font-bold text-black">•</span>
-                          <span>Carbon Reduction measurement and verification systems</span>
-                        </li>
-                        <li className="flex items-start gap-4">
-                          <span className="break-words font-bold text-black">•</span>
-                          <span>Scalable Data Infrastructure</span>
-                        </li>
+                    <div className="mb-6">
+                      <p 
+                        className="mb-6"
+                        style={{
+                          color: 'rgba(15,23,42,1)',
+                          fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                          fontSize: '16px',
+                          lineHeight: '1.7',
+                          fontWeight: '400',
+                          paddingLeft: '0px'
+                        }}
+                      >
+                        I&apos;m interested in climate tech specifically:
+                      </p>
+                      
+                      <ul className="space-y-4 mb-10" style={{ paddingLeft: '0px', listStyle: 'none' }}>
+                        {[
+                          'Scope 2 Emissions tracking and optimization platforms',
+                          'Carbon Reduction measurement and verification systems',
+                          'Scalable Data Infrastructure'
+                        ].map((item, index) => (
+                          <motion.li
+                            key={index}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: isOpen ? 1 : 0, x: isOpen ? 0 : -20 }}
+                            transition={{ delay: 0.54 + index * 0.1, duration: 0.4 }}
+                            className="flex items-start gap-3"
+                            style={{
+                              color: 'rgba(15,23,42,1)',
+                              fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                              fontSize: '16px',
+                              lineHeight: '1.7',
+                              fontWeight: '400'
+                            }}
+                          >
+                            <span className="text-blue-500 font-bold text-lg flex-shrink-0" style={{ marginTop: '0.125rem' }}>•</span>
+                            <span>{item}</span>
+                          </motion.li>
+                        ))}
                       </ul>
                     </div>
                     
-                    {/* Resume Button */}
-                    <div className="break-words text-center break-words mt-12">
-                      <a 
-                        href="https://drive.google.com/file/d/130KQWH7hviU7HDY7dztdG4wLoJAI8ryw/view?usp=sharing" 
-                        target="_blank" 
+                    {/* Glass Capsule Resume Button */}
+                    <div className="text-center">
+                      <motion.a
+                        href="https://drive.google.com/file/d/130KQWH7hviU7HDY7dztdG4wLoJAI8ryw/view?usp=sharing"
+                        target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-8 py-4"
-                        style={{ 
-                          background: `linear-gradient(135deg, var(--color-deep-blue) 0%, rgba(74, 144, 194, 0.8) 100%)`,
+                        className="inline-flex items-center gap-3 px-8 py-4 rounded-full group relative overflow-hidden"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(59,130,246,0.9) 0%, rgba(96,165,250,0.85) 100%)',
+                          backdropFilter: 'blur(10px)',
                           color: 'white',
-                          fontWeight: 'medium',
-                          borderRadius: '0.75rem',
-                          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-                          transform: 'translateZ(0)',
-                          transition: 'all 0.3s ease'
+                          fontWeight: '500',
+                          boxShadow: '0 8px 20px rgba(59,130,246,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                          fontFamily: 'Satoshi, Manrope, system-ui, sans-serif'
                         }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)'
-                          e.currentTarget.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)'
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: '0 12px 28px rgba(59,130,246,0.4), inset 0 1px 0 rgba(255,255,255,0.4)',
+                          background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                          e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
-                        }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
                       >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        View Resume
-                      </a>
+                        {/* Ripple effect on hover */}
+                        <motion.div
+                          className="absolute inset-0 rounded-full"
+                          style={{
+                            background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
+                            scale: 0
+                          }}
+                          whileHover={{
+                            scale: 2,
+                            opacity: [0, 0.5, 0]
+                          }}
+                          transition={{ duration: 0.6 }}
+                        />
+                        <FileText size={20} className="relative z-10 group-hover:scale-110 transition-transform duration-200" />
+                        <span className="relative z-10">View Resume</span>
+                      </motion.a>
                     </div>
-                  </div>
+                  </motion.div>
+
+                  {/* Panel 3: Non-Career Goals */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30, filter: 'blur(12px)' }}
+                    animate={{ 
+                      opacity: isOpen ? 1 : 0, 
+                      y: isOpen ? -12 : 30,
+                      filter: isOpen ? 'blur(0px)' : 'blur(12px)'
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: 30,
+                      filter: 'blur(12px)'
+                    }}
+                    transition={{ delay: 0.54, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                    className="relative p-8 sm:p-10 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(248,250,252,0.91) 100%)',
+                      backdropFilter: 'blur(16px)',
+                      boxShadow: `
+                        0px 16px 32px rgba(0,0,0,0.15),
+                        0px 0px 0px 1px rgba(255,255,255,0.6),
+                        inset 0px 1px 0px rgba(255,255,255,0.85)
+                      `,
+                      border: '1px solid rgba(255,255,255,0.45)',
+                      transform: 'translateZ(0)',
+                      marginTop: '-12px'
+                    }}
+                  >
+                    {/* Faint grid background */}
+                    <div
+                      className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                      style={{
+                        backgroundImage: `
+                          linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+                        `,
+                        backgroundSize: '40px 40px'
+                      }}
+                    />
+
+                    <h2 
+                      className="text-center mb-8 text-lg sm:text-xl font-semibold uppercase tracking-wider relative z-10"
+                      style={{
+                        fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        letterSpacing: '0.1em'
+                      }}
+                    >
+                      Non-Career Goals
+                    </h2>
+                    
+                    <div className="grid md:grid-cols-2 gap-4 relative z-10">
+                      {[
+                        'Paragliding license',
+                        'Beef Wellington',
+                        'Squat 500, bench 300, deadlift 400',
+                        'Dunk',
+                        'Study Sociology',
+                        'Play Tuba/Euphonium',
+                        'Backflip',
+                        'Vlog'
+                      ].map((goal, index) => {
+                        const IconComponent = goalIcons[goal]
+                        return (
+                          <motion.div
+                            key={goal}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+                            transition={{ delay: 0.66 + index * 0.08, duration: 0.4 }}
+                            className="flex items-center gap-3 p-3 rounded-xl group"
+                            style={{
+                              background: 'rgba(255,255,255,0.3)',
+                              backdropFilter: 'blur(8px)',
+                              transition: 'all 0.3s ease'
+                            }}
+                            whileHover={{
+                              background: 'rgba(255,255,255,0.5)',
+                              scale: 1.02,
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                            }}
+                          >
+                            {IconComponent && (
+                              <IconComponent 
+                                size={24} 
+                                className="text-blue-500 flex-shrink-0"
+                                style={{ filter: 'drop-shadow(0 2px 4px rgba(37,99,235,0.2))' }}
+                              />
+                            )}
+                            <span 
+                              className="text-base flex-1"
+                              style={{
+                                color: 'rgba(15,23,42,1)',
+                                fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
+                                lineHeight: '1.7',
+                                fontWeight: '400'
+                              }}
+                            >
+                              {goal}
+                            </span>
+                          </motion.div>
+                        )
+                      })}
+                    </div>
+                  </motion.div>
                 </div>
               </div>
-            </div>
-
-            {/* Non-Career Goals Section - Moved to End */}
-            <div className="max-w-4xl mx-auto break-words landmark-section-spacing">
-              <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 landmark-card overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(100, 116, 139, 0.2)'
-                   }}>
-                
-                <div className="break-words text-center break-words relative z-10">
-                  <div className="inline-flex items-center gap-4 mb-8">
-                    <h2 className="break-words text-stone-800">Non-Career Goals</h2>
-                  </div>
-                  
-                                     <div className="break-words text-black leading-relaxed break-words space-y-8 break-words">
-                                           <ul className="break-words text-left max-w-4xl mx-auto break-words space-y-6 break-words">
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Paragliding license</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Beef Wellington</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Squat 500, bench 300, deadlift 400</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Dunk</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Study Sociology</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Play Tuba/Euphonium</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Backflip</span>
-                       </li>
-                       <li className="flex items-start gap-4">
-                         <span className="break-words text-stone-600 font-bold">•</span>
-                         <span>Vlog</span>
-                       </li>
-                     </ul>
-                   </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
-} 
+}

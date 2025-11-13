@@ -2,7 +2,7 @@
 
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 
 import Plane from './Plane'
 import CameraFollower from '../controllers/CameraFollower'
@@ -15,7 +15,6 @@ import MobileControls from './MobileControls'
 import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
-import VisitedLandmarks from './VisitedLandmarks'
 import BackgroundMusic from './BackgroundMusic'
 import ImagePreloader from './ImagePreloader'
 import WebGLErrorBoundary from './WebGLErrorBoundary'
@@ -52,35 +51,9 @@ function useZoomLevel() {
       }
     }
     
-    // Method 2: Browser zoom detection (Ctrl+/-)
-    // This works by comparing the screen pixel ratio with device pixel ratio
-    // const browserZoom = window.devicePixelRatio || 1
-    
-    // Method 3: Alternative browser zoom detection using computed styles
-    // Create a test element to measure actual vs expected sizing
-    const testDiv = document.createElement('div')
-    testDiv.style.width = '100px'
-    testDiv.style.height = '100px'
-    testDiv.style.position = 'absolute'
-    testDiv.style.visibility = 'hidden'
-    document.body.appendChild(testDiv)
-    
-    const computedStyle = window.getComputedStyle(testDiv)
-    const actualWidth = parseFloat(computedStyle.width)
-    document.body.removeChild(testDiv)
-    
-    // Calculate zoom based on expected vs actual pixel measurements
-    const zoomFromCSS = actualWidth / 100
-    
-    // Zoom detection methods evaluated
-    
-    // Return the zoom level that's different from 1, prioritizing viewport scale
-    if (window.visualViewport && Math.abs((window.visualViewport.scale || 1) - 1) > 0.01) {
-      return window.visualViewport.scale || 1
-    }
-    
-    // Fallback to CSS-based detection for browser zoom
-    return zoomFromCSS
+    // Optimized: Use devicePixelRatio instead of DOM manipulation
+    // This avoids creating/removing DOM elements on every check
+    return window.devicePixelRatio || 1
   }
 
   const [zoomLevel, setZoomLevel] = useState(getZoom())
@@ -143,6 +116,7 @@ export default function Experience() {
   const [showPopup, setShowPopup] = useState<LandmarkConfig | null>(null)
   const [showIntro, setShowIntro] = useState(true)
   const [bypassMobileLanding, setBypassMobileLanding] = useState(false)
+  const [worldSlidingIn, setWorldSlidingIn] = useState(false)
   
   // Track visited landmarks
   const [visitedLandmarks, setVisitedLandmarks] = useState<Set<string>>(new Set())
@@ -150,29 +124,17 @@ export default function Experience() {
   // Detect browser zoom level
   const zoomLevel = useZoomLevel()
   
-  // Debug: Log currentLandmark changes
-  useEffect(() => {
-    // currentLandmark state changed
-  }, [currentLandmark])
-
-  // Debug zoom changes
-  useEffect(() => {
-    // Zoom level changed
-  }, [zoomLevel])
-
-    const handleLandmarkNear = (baseLandmark: Omit<LandmarkConfig, 'component'>) => {
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleLandmarkNear = useCallback((baseLandmark: Omit<LandmarkConfig, 'component'>) => {
     // Find the full landmark config with component
     const landmark = updatedLandmarkConfig.find(l => l.name === baseLandmark.name)
     if (landmark) {
-    // Landmark handler called
-    setShowSpacebarPrompt(landmark)
-    setCurrentLandmark(landmark)
+      setShowSpacebarPrompt(landmark)
+      setCurrentLandmark(landmark)
     }
-  }
+  }, [])
 
-  const handleSpacebarPressed = () => {
-    // Space pressed, opening popup
-    // Keep the spacebar prompt visible so user can re-enter after closing popup
+  const handleSpacebarPressed = useCallback(() => {
     setShowPopup(currentLandmark)
     
     // Mark landmark as visited
@@ -180,51 +142,65 @@ export default function Experience() {
       setVisitedLandmarks(prev => {
         const newSet = new Set(prev)
         newSet.add(currentLandmark.name)
-        // Landmark visited
         return newSet
       })
     }
-  }
+  }, [currentLandmark])
 
-  const handleClosePrompt = () => {
+  const handleClosePrompt = useCallback(() => {
     setShowSpacebarPrompt(null)
     setCurrentLandmark(null)
-  }
+  }, [])
 
-  const handleClosePopup = () => {
+  const handleClosePopup = useCallback(() => {
     setShowPopup(null)
-  }
+  }, [])
 
-  const handleLandmarkLeft = () => {
-    // Landmark left - dismissing prompts
+  const handleLandmarkLeft = useCallback(() => {
     setShowSpacebarPrompt(null)
     setCurrentLandmark(null)
+  }, [])
+
+  const handleLaunchWorld = () => {
+    setWorldSlidingIn(true)
   }
 
   const handleEnterWorld = () => {
-    setShowIntro(false)
-    
-    // Ensure the window is focused for keyboard events
-    if (typeof window !== 'undefined') {
-      window.focus()
+    // After slide animation completes, hide intro and show world
+    setTimeout(() => {
+      setShowIntro(false)
       
-      // Also ensure the document has focus
-      if (document.body) {
-        document.body.focus()
-        document.body.click() // Some browsers need a click to enable keyboard events
+      // Ensure the window is focused for keyboard events
+      if (typeof window !== 'undefined') {
+        window.focus()
+        
+        // Also ensure the document has focus
+        if (document.body) {
+          document.body.focus()
+          document.body.click() // Some browsers need a click to enable keyboard events
+        }
       }
-    }
+    }, 1600) // Slightly after the 1.5s slide animation
   }
 
-  // Debug earthScene state
-  useEffect(() => {
-    // EarthScene state changed
-  }, [earthScene])
   
   return (
     <WebGLErrorBoundary>
-      {/* Preload 3D world in background */}
-      <div className={`${showIntro ? 'opacity-0 pointer-events-none' : 'animate-zoom-into-earth'}`}>
+      {/* Preload 3D world in background - always rendered but slides in from right when plane flies */}
+      <div 
+        className={`${showIntro && !worldSlidingIn ? 'pointer-events-none' : ''}`}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: showIntro && !worldSlidingIn ? 30 : 40,
+          opacity: worldSlidingIn ? 1 : (showIntro ? 0 : 1),
+          transform: worldSlidingIn ? 'translateX(0)' : (showIntro ? 'translateX(100%)' : 'translateX(0)'),
+          transition: worldSlidingIn 
+            ? 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s cubic-bezier(0.4, 0, 0.6, 1)'
+            : 'none',
+          willChange: worldSlidingIn ? 'transform, opacity' : 'auto',
+        }}
+      >
       <Canvas 
         camera={{ 
           position: [0, 5, 10], 
@@ -277,6 +253,7 @@ export default function Experience() {
         <Plane 
           planeRef={planeRef} 
           controlsDisabled={!!showPopup}
+          worldJustAppeared={worldSlidingIn}
         />
         
         {/* Landmark detection using hook inside Canvas */}
@@ -296,12 +273,6 @@ export default function Experience() {
       
       {/* Mobile joystick controls */}
       <MobileControls disabled={!!showPopup} />
-      
-      {/* Visited landmarks tracker - desktop only */}
-      <VisitedLandmarks 
-        visitedLandmarks={visitedLandmarks}
-        totalLandmarks={landmarkConfig.length}
-      />
       
       {/* Background Music - part of world entrance animation */}
       <BackgroundMusic isInWorld={!showIntro} />
@@ -352,7 +323,7 @@ export default function Experience() {
       <ImagePreloader isInWorld={!showIntro} />
       
       {/* Show intro screen on top when needed */}
-      {showIntro && <IntroScreen onEnter={handleEnterWorld} />}
+      {showIntro && <IntroScreen onLaunch={handleLaunchWorld} onEnter={handleEnterWorld} />}
       
       {/* Mobile landing page - shows on mobile devices */}
       {SHOW_MOBILE_LANDING && !bypassMobileLanding && (

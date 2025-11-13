@@ -1,19 +1,41 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react'
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import { Mountain } from 'lucide-react'
+import { Mountain, X } from 'lucide-react'
 
 interface AdventureProps {
   isOpen: boolean
   onClose: () => void
 }
 
+// Pin colors for Polaroid photos
+const pinColors = [
+  { color: '#ef4444', name: 'red' },
+  { color: '#3b82f6', name: 'blue' },
+  { color: '#eab308', name: 'yellow' },
+  { color: '#10b981', name: 'green' },
+  { color: '#d97706', name: 'orange' },
+  { color: '#8b5cf6', name: 'purple' },
+  { color: '#ec4899', name: 'pink' },
+  { color: '#f59e0b', name: 'amber' },
+  { color: '#14b8a6', name: 'teal' },
+  { color: '#a78bfa', name: 'violet' },
+  { color: '#f97316', name: 'orange-red' },
+  { color: '#06b6d4', name: 'cyan' },
+  { color: '#84cc16', name: 'lime' },
+  { color: '#f43f5e', name: 'rose' },
+  { color: '#6366f1', name: 'indigo' },
+  { color: '#64748b', name: 'slate' },
+  { color: '#78716c', name: 'stone' },
+]
+
 export default function Adventure({ isOpen, onClose }: AdventureProps) {
-  const [isAnimating, setIsAnimating] = useState(false)
   const [shouldRender, setShouldRender] = useState(false)
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
-  const [imageLoaded, setImageLoaded] = useState(true) // Start as true since images are pre-loaded globally
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
+  const [imageLoaded, setImageLoaded] = useState<Record<number, boolean>>({})
+  const modalRef = useRef<HTMLDivElement>(null)
 
   const adventurePhotos = useMemo(() => [
     { src: '/photos/adventure/adventure1.jpg', caption: 'Ticino' },
@@ -35,17 +57,31 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     { src: '/photos/adventure/adventure17.jpg', caption: 'Stoos' },
   ], [])
 
+  // Generate random rotations and offsets for natural arrangement
+  const photoPositions = useMemo(() => 
+    adventurePhotos.map((_, index) => ({
+      rotation: (Math.random() - 0.5) * 8, // ±4 degrees
+      x: (Math.random() - 0.5) * 20, // ±10px
+      y: (Math.random() - 0.5) * 20, // ±10px
+      pinColor: pinColors[index % pinColors.length],
+      zIndex: Math.floor(Math.random() * 5) + 1
+    }))
+  , [adventurePhotos])
+
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        handleClose()
+        if (selectedPhotoIndex !== null) {
+          setSelectedPhotoIndex(null)
+        } else {
+          handleClose()
+        }
       }
     }
 
     if (isOpen) {
       window.addEventListener('keydown', handleEscape)
-      // Prevent body scroll when popup is open
       document.body.style.overflow = 'hidden'
     }
 
@@ -53,225 +89,445 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
       window.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen])
+  }, [isOpen, selectedPhotoIndex])
 
   // Animation handling
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true)
-      // Small delay to ensure DOM is ready, then start animation
-      requestAnimationFrame(() => {
-        setIsAnimating(true)
-      })
     } else {
-      setIsAnimating(false)
-      // Wait for animation to complete before removing from DOM
       const timer = setTimeout(() => {
         setShouldRender(false)
-      }, 300)
+        setSelectedPhotoIndex(null)
+      }, 800)
       return () => clearTimeout(timer)
     }
   }, [isOpen])
 
-  // Images are preloaded globally, so they should be ready immediately
-  useEffect(() => {
-    setImageLoaded(true)
-  }, [currentPhotoIndex])
-
-  const handleClose = () => {
-    setIsAnimating(false)
-    setTimeout(() => {
+  const handleClose = useCallback(() => {
+    if (selectedPhotoIndex !== null) {
+      setSelectedPhotoIndex(null)
+      setTimeout(() => onClose(), 400)
+    } else {
       onClose()
-    }, 200)
-  }
+    }
+  }, [selectedPhotoIndex, onClose])
 
-  const nextPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev + 1) % adventurePhotos.length)
-  }
+  const handlePhotoClick = useCallback((index: number) => {
+    setSelectedPhotoIndex(index)
+  }, [])
 
-  const prevPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev - 1 + adventurePhotos.length) % adventurePhotos.length)
-  }
-
-  const goToPhoto = (index: number) => {
-    setCurrentPhotoIndex(index)
-  }
-
-  const handleImageLoad = () => {
-    setImageLoaded(true)
-  }
-
-  const handleImageError = () => {
-    setImageLoaded(false)
-  }
+  const handleImageLoad = useCallback((index: number) => {
+    setImageLoaded(prev => ({ ...prev, [index]: true }))
+  }, [])
 
   if (!shouldRender) return null
 
+  const selectedPhoto = selectedPhotoIndex !== null ? adventurePhotos[selectedPhotoIndex] : null
+  const selectedPosition = selectedPhotoIndex !== null ? photoPositions[selectedPhotoIndex] : null
+
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-start sm:items-center justify-center transition-all duration-300 ease-out ${
-        isAnimating ? 'opacity-100' : 'opacity-0'
-      } pt-4 sm:pt-0`}
-    >
-      {/* Adventure themed backdrop */}
-      <div 
-        className={`absolute inset-0 theme-adventure theme-backdrop backdrop-blur-sm transition-all duration-500 ${
-          isAnimating ? 'opacity-100' : 'opacity-0'
-        }`}
-        onClick={handleClose}
-      />
-      
-      {/* Popup Container with organic animation - RESPONSIVE */}
-      <div 
-        className={`relative landmark-container my-2 sm:my-4 transition-all duration-500 ease-out ${
-          isAnimating 
-            ? 'scale-100 opacity-100 translate-y-0' 
-            : 'scale-95 opacity-0 translate-y-4'
-        }`}
-      >
-        {/* Main content container with cohesive Adventure styling */}
-        <div className="relative theme-adventure theme-container backdrop-blur-md overflow-hidden break-words"
-             style={{
-               borderRadius: '2.5rem',
-               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
-               border: '2px solid rgba(95, 184, 95, 0.3)'
-             }}>
-          
-          {/* Decorative themed shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full transform translate-x-16 -translate-y-16" style={{ background: 'radial-gradient(circle, rgba(95, 184, 95, 0.2) 0%, transparent 70%)' }}></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full transform -translate-x-12 translate-y-12" style={{ background: 'radial-gradient(circle, rgba(95, 184, 95, 0.15) 0%, transparent 70%)' }}></div>
-          
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 btn-close"
+    <AnimatePresence>
+      {shouldRender && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isOpen ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+            className="fixed inset-0 z-50"
+            onClick={() => {
+              if (selectedPhotoIndex !== null) {
+                setSelectedPhotoIndex(null)
+              } else {
+                handleClose()
+              }
+            }}
+            style={{
+              backdropFilter: selectedPhotoIndex !== null ? 'blur(40px) saturate(0.2)' : 'blur(40px) saturate(0.3)',
+              background: selectedPhotoIndex !== null ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.55)'
+            }}
+          />
+
+          {/* Ambient Particle Dust */}
+          <div className="fixed inset-0 z-[51] pointer-events-none overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  width: `${2 + Math.random() * 3}px`,
+                  height: `${2 + Math.random() * 3}px`,
+                  background: 'rgba(255,255,255,0.03)',
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  x: [0, (Math.random() - 0.5) * 150],
+                  y: [0, (Math.random() - 0.5) * 150],
+                  opacity: [0, 0.03, 0]
+                }}
+                transition={{
+                  duration: 20 + Math.random() * 15,
+                  repeat: Infinity,
+                  ease: 'linear',
+                  delay: Math.random() * 5
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Main Modal Container */}
+          <motion.div
+            key="modal"
+            ref={modalRef}
+            initial={{ 
+              opacity: 0, 
+              scale: 0.94,
+              y: 40,
+              filter: 'blur(12px) brightness(0.8)'
+            }}
+            animate={{ 
+              opacity: isOpen ? 1 : 0, 
+              scale: isOpen ? 1 : 0.94,
+              y: isOpen ? 0 : 40,
+              filter: isOpen ? 'blur(0px) brightness(1)' : 'blur(8px) brightness(0.8)',
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.94,
+              y: 40,
+              filter: 'blur(8px) brightness(0.8)'
+            }}
+            transition={{
+              duration: 0.8,
+              ease: [0.23, 1, 0.32, 1]
+            }}
+            className="fixed inset-0 z-[52] flex items-center justify-center p-4 sm:p-6 pointer-events-none"
+            onClick={(e) => e.stopPropagation()}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            {/* Skyglass Modal Container - Photo Wall Board */}
+            <motion.div
+              className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto pointer-events-auto"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(248,250,252,0.5) 50%, rgba(240,248,255,0.45) 100%)',
+                backdropFilter: 'blur(40px)',
+                borderRadius: '2rem',
+                boxShadow: `
+                  0px 20px 60px rgba(0,0,0,0.4),
+                  0px 0px 0px 1px rgba(255,255,255,0.8),
+                  inset 0px 1px 0px rgba(255,255,255,0.95),
+                  0px 0px 120px rgba(16,185,129,0.08),
+                  0px 0px 0px 2px rgba(16,185,129,0.1)
+                `,
+                border: '2px solid rgba(255,255,255,0.9)',
+                transform: 'translateZ(0)',
+                overflow: 'hidden'
+              }}
+            >
+              {/* Close Button */}
+              <motion.button
+                onClick={handleClose}
+                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                style={{
+                  background: 'rgba(255,255,255,0.85)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
+                  border: '1px solid rgba(255,255,255,0.5)'
+                }}
+                whileHover={{ 
+                  scale: 1.1, 
+                  rotate: 90,
+                  background: 'rgba(255,255,255,0.95)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              >
+                <X size={24} className="text-gray-600 group-hover:text-gray-800" strokeWidth={2.5} />
+              </motion.button>
 
-          {/* Content area */}
-          <div className="break-words landmark-content overflow-y-auto max-h-[95vh]">
-            
-            {/* Header */}
-            <div className="break-words text-center break-words pt-3 sm:pt-4 md:pt-5 pb-4 sm:pb-5 md:pb-6">
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                <Mountain size={40} className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" style={{ color: 'var(--color-earth-green)' }} />
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-earth-green)' }}>Adventure</h1>
-              </div>
-              <div className="landmark-divider"></div>
-            </div>
-
-            {/* Story Section */}
-            <div className="max-w-6xl mx-auto landmark-section-spacing">
-              <div className="relative bg-gradient-to-r from-green-50/60 to-transparent landmark-card-compact border-l-4 border-green-400"
-                   style={{
-                     borderRadius: '0 1rem 1rem 0'
-                   }}>
+              {/* Content Area */}
+              <div className="relative p-8 sm:p-10 md:p-12">
                 
-                <div className="text-left">
-                  <p className="font-medium text-stone-700 italic">
+                {/* Header */}
+                <motion.div
+                  className="text-center mb-10"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -20 }}
+                  transition={{ delay: 0.2, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <motion.div
+                    className="flex items-center justify-center gap-4 mb-4"
+                    animate={{
+                      y: [0, -4, 0]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: 'easeInOut'
+                    }}
+                  >
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background: 'radial-gradient(circle, rgba(16,185,129,0.3) 0%, transparent 70%)',
+                        filter: 'blur(8px)',
+                        transform: 'scale(1.5)'
+                      }}
+                    />
+                    <Mountain 
+                      size={48} 
+                      className="relative"
+                      style={{
+                        color: '#10b981',
+                        filter: 'drop-shadow(0 4px 8px rgba(16,185,129,0.3))'
+                      }}
+                    />
+                  </motion.div>
+                  <h1 
+                    className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight mb-4"
+                    style={{
+                      fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
+                      background: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      textShadow: '0 2px 20px rgba(16,185,129,0.2)',
+                      letterSpacing: '-0.02em'
+                    }}
+                  >
+                    Adventure
+                  </h1>
+                  <p
+                    className="text-lg sm:text-xl text-gray-800 mt-4 font-medium"
+                    style={{
+                      fontFamily: 'Inter, Nunito, Lato, system-ui, sans-serif',
+                      lineHeight: '1.6',
+                      fontWeight: '500',
+                      color: '#1A1A1A'
+                    }}
+                  >
                     I&apos;m a nature guy. Check out some of my favorite places!
                   </p>
-                </div>
-              </div>
-            </div>
+                </motion.div>
 
-            {/* Photo Collage Section - More compact images */}
-            <div className="max-w-4xl mx-auto mb-8">
-              <div className="relative bg-gradient-to-br from-slate-100/70 via-gray-50/70 to-slate-100/70 p-3 overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
-                     border: '1px solid rgba(100, 116, 139, 0.2)'
-                   }}>
-                
-                 {/* Photo Display - More reasonable size */}
-                 <div className="relative flex justify-center">
-                   <div className="relative w-full max-w-2xl aspect-[4/3] rounded-xl overflow-hidden shadow-lg bg-gray-200">
-                     {/* Minimal placeholder for any brief loading - should rarely show since images are preloaded */}
-                     {!imageLoaded && (
-                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100 z-10">
-                         <div className="break-words text-center break-words">
-                           <span className="break-words text-3xl mb-4 block">📸</span>
-                           <p className="break-words text-gray-600">Loading photo...</p>
-                         </div>
-                       </div>
-                     )}
-                     
-                     {/* Actual photo - HD quality with proper fitting */}
-                     <Image 
-                       src={adventurePhotos[currentPhotoIndex].src}
-                       alt={adventurePhotos[currentPhotoIndex].caption}
-                       fill
-                       className="object-cover"
-                       sizes="(max-width: 768px) 95vw, (max-width: 1200px) 80vw, 70vw"
-                       priority={true}
-                       loading="eager"
-                       onLoad={handleImageLoad}
-                       onError={handleImageError}
-                     />
-                   </div>
-
-                  {/* Navigation Arrows */}
-                  <button
-                    onClick={prevPhoto}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 
-                               bg-white/80 hover:bg-white/95 rounded-full p-4 shadow-lg 
-                               transition-all duration-300 hover:scale-110 z-50"
-                  >
-                    <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-
-                  <button
-                    onClick={nextPhoto}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 
-                               bg-white/80 hover:bg-white/95 rounded-full p-4 shadow-lg 
-                               transition-all duration-300 hover:scale-110 z-50"
-                  >
-                    <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-
-
-                </div>
-
-                {/* Photo Gallery Section */}
-                <div className="mt-8">
-                  <div className="relative theme-adventure theme-card px-8 py-4 mx-auto max-w-2xl"
-                       style={{
-                         borderRadius: '1.5rem',
-                         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 25px rgba(0, 0, 0, 0.08)'
-                       }}>
-                    <h3 className="font-medium text-stone-700 text-center">
-                      {adventurePhotos[currentPhotoIndex].caption}
-                    </h3>
-                  </div>
-                  
-                  {/* Photo navigation dots */}
-                  <div className="flex justify-center gap-3 mt-6 mb-8">
-                    {adventurePhotos.map((_, index) => (
-                      <button
+                {/* Polaroid Photo Wall Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
+                  {adventurePhotos.map((photo, index) => {
+                    const position = photoPositions[index]
+                    const isSelected = selectedPhotoIndex === index
+                    
+                    return (
+                      <motion.div
                         key={index}
-                        onClick={() => goToPhoto(index)}
-                        className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                          index === currentPhotoIndex
-                            ? 'bg-green-500 scale-125'
-                            : 'bg-gray-300 hover:bg-gray-400'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                        className="relative cursor-pointer"
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ 
+                          opacity: isOpen ? 1 : 0,
+                          scale: isOpen ? 1 : 0.8,
+                          y: isOpen ? 0 : 20,
+                          rotate: isSelected ? 0 : position.rotation,
+                          x: isSelected ? 0 : position.x,
+                          y: isSelected ? 0 : position.y,
+                          zIndex: isSelected ? 1000 : position.zIndex
+                        }}
+                        transition={{ 
+                          delay: 0.3 + index * 0.05,
+                          duration: 0.6,
+                          ease: [0.23, 1, 0.32, 1],
+                          rotate: { type: 'spring', stiffness: 200, damping: 15 }
+                        }}
+                        onClick={() => handlePhotoClick(index)}
+                        whileHover={!isSelected ? {
+                          scale: 1.05,
+                          rotate: position.rotation * 0.7,
+                          transition: { duration: 0.3 }
+                        } : {}}
+                      >
+                        {/* Colored Pin */}
+                        <div
+                          className="absolute -top-2 left-1/2 -translate-x-1/2 z-10"
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            background: position.pinColor.color,
+                            borderRadius: '50%',
+                            boxShadow: `
+                              0 2px 4px rgba(0,0,0,0.2),
+                              inset 0 1px 0 rgba(255,255,255,0.3)
+                            `,
+                            border: '1px solid rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        
+                        {/* Pin Shadow */}
+                        <div
+                          className="absolute -top-1 left-1/2 -translate-x-1/2 z-9"
+                          style={{
+                            width: '8px',
+                            height: '4px',
+                            background: 'rgba(0,0,0,0.15)',
+                            borderRadius: '50%',
+                            filter: 'blur(2px)'
+                          }}
+                        />
+
+                        {/* Polaroid Frame */}
+                        <div
+                          className="relative bg-white rounded-lg p-2 shadow-lg"
+                          style={{
+                            boxShadow: `
+                              0 8px 24px rgba(0,0,0,0.15),
+                              0 0 0 1px rgba(0,0,0,0.05),
+                              inset 0 1px 0 rgba(255,255,255,0.9)
+                            `,
+                            transform: 'translateZ(0)'
+                          }}
+                        >
+                          {/* Photo Area */}
+                          <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-gray-100">
+                            {imageLoaded[index] ? null : (
+                              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100">
+                                <motion.div
+                                  animate={{ opacity: [0.5, 1, 0.5] }}
+                                  transition={{ duration: 1.5, repeat: Infinity }}
+                                  className="text-gray-600 text-xs"
+                                >
+                                  Loading...
+                                </motion.div>
+                              </div>
+                            )}
+                            <Image
+                              src={photo.src}
+                              alt={photo.caption}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                              onLoad={() => handleImageLoad(index)}
+                            />
+                          </div>
+                          
+                          {/* Caption Area */}
+                          <div className="mt-3 px-2 pb-2">
+                            <p
+                              className="text-base sm:text-lg text-gray-800 text-center font-semibold"
+                              style={{
+                                fontFamily: 'Inter, system-ui, sans-serif',
+                                lineHeight: '1.5',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                color: '#1A1A1A'
+                              }}
+                            >
+                              {photo.caption}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </motion.div>
+
+            {/* Expanded Photo View */}
+            <AnimatePresence>
+              {selectedPhotoIndex !== null && selectedPhoto && selectedPosition && (
+                <motion.div
+                  key="expanded-photo"
+                  className="fixed inset-0 z-[53] flex items-center justify-center p-4 sm:p-6 pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  onClick={() => setSelectedPhotoIndex(null)}
+                >
+                  <motion.div
+                    className="relative max-w-4xl w-full pointer-events-auto"
+                    initial={{
+                      scale: 0.8,
+                      rotate: selectedPosition.rotation,
+                      x: selectedPosition.x * 10,
+                      y: selectedPosition.y * 10,
+                      opacity: 0
+                    }}
+                    animate={{
+                      scale: 1,
+                      rotate: 0,
+                      x: 0,
+                      y: 0,
+                      opacity: 1
+                    }}
+                    exit={{
+                      scale: 0.8,
+                      rotate: selectedPosition.rotation,
+                      x: selectedPosition.x * 10,
+                      y: selectedPosition.y * 10,
+                      opacity: 0
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.23, 1, 0.32, 1]
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Expanded Polaroid */}
+                    <div
+                      className="relative bg-white rounded-xl p-4 shadow-2xl"
+                      style={{
+                        boxShadow: `
+                          0 30px 80px rgba(0,0,0,0.3),
+                          0 0 0 1px rgba(0,0,0,0.05),
+                          inset 0 1px 0 rgba(255,255,255,0.9)
+                        `
+                      }}
+                    >
+                      {/* Close Button */}
+                      <motion.button
+                        onClick={() => setSelectedPhotoIndex(null)}
+                        className="absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center bg-white shadow-lg z-50"
+                        whileHover={{ scale: 1.1, rotate: 90 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <X size={20} className="text-gray-600" strokeWidth={2.5} />
+                      </motion.button>
+
+                      {/* Photo */}
+                      <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 mb-4">
+                        <Image
+                          src={selectedPhoto.src}
+                          alt={selectedPhoto.caption}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 95vw, 80vw"
+                          priority
+                        />
+                      </div>
+
+                      {/* Caption */}
+                      <div className="text-center">
+                        <p
+                          className="text-xl sm:text-2xl font-semibold text-gray-800"
+                          style={{
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            fontWeight: '600',
+                            color: '#1A1A1A'
+                          }}
+                        >
+                          {selectedPhoto.caption}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
-} 
+}

@@ -16,17 +16,27 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     if (!target) return
 
     const planePosition = target.position
-    const forward = target.userData.forward as THREE.Vector3
     
-    if (!forward) return
-
     // ORBITAL VIEW: Position camera to see Earth and plane nicely
     const earthCenter = new THREE.Vector3(0, 0, 0)
     const earthRadius = 25
     
+    // Check if plane is dropping in - start zoomed in, then zoom out
+    const dropInProgress = (target.userData.dropInProgress as number) ?? 1
+    const isDroppingIn = dropInProgress < 1
+    
     // Camera distance adjustments based on zoom level
     // Make much more dramatic changes for noticeable zoom effect
-    const baseViewDistance = earthRadius * 3.5  // 87.5 units back (original distance)
+    let baseViewDistance = earthRadius * 3.5  // 87.5 units back (original distance)
+    
+    // During drop-in: start very close, zoom out as plane drops
+    if (isDroppingIn) {
+      // Start at 1.5x closer (more zoomed in), zoom out to normal distance
+      const startZoom = 1.5 // Start 1.5x closer
+      const zoomOutProgress = dropInProgress // 0 = start, 1 = end
+      const currentZoom = startZoom + (1 - startZoom) * zoomOutProgress
+      baseViewDistance = baseViewDistance / currentZoom
+    }
     
     // Apply more aggressive zoom scaling
     // When zoomed in (zoomLevel > 1): camera gets MUCH closer
@@ -38,16 +48,15 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     const baseHeightOffset = 10
     const heightOffset = baseHeightOffset / zoomMultiplier
     
-
-    
     // Position camera behind the plane's orbital position
     const planeDirection = planePosition.clone().normalize()
     const cameraPosition = earthCenter.clone()
     cameraPosition.add(planeDirection.clone().multiplyScalar(viewDistance))
     cameraPosition.add(planeDirection.clone().multiplyScalar(heightOffset))
     
-    // Smoothly move camera (slightly faster for more responsive zoom)
-    camera.position.lerp(cameraPosition, 0.08)
+    // Smoothly move camera (faster during drop-in for more responsive feel)
+    const lerpSpeed = isDroppingIn ? 0.15 : 0.08
+    camera.position.lerp(cameraPosition, lerpSpeed)
     
     // Always look at the plane (Earth will be beautifully framed)
     camera.lookAt(planePosition)
