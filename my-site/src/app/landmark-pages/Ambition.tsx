@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useTransform, useMotionValue, useSpring } from 'framer-motion'
 import Image from 'next/image'
-import { X, Rocket, Hammer, Search, ExternalLink, Github, Sparkles } from 'lucide-react'
+import { X, Rocket, Hammer, Search, Github, Sparkles } from 'lucide-react'
 
 interface AmbitionProps {
   isOpen: boolean
@@ -68,10 +68,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('All')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
-
-  const { scrollXProgress } = useScroll({ container: containerRef })
   // Removed unused transforms to reduce computation
 
   useEffect(() => {
@@ -211,9 +208,9 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
           >
             {/* Skyglass Modal Container */}
             <motion.div
-              className="relative w-full max-w-7xl max-h-[90vh] overflow-hidden pointer-events-auto rounded-[2rem]"
+              className="relative w-full max-w-7xl max-h-[90vh] overflow-y-auto pointer-events-auto rounded-[2rem] ambition-scroll"
              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(250,245,240,0.4) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,250,245,0.92) 100%)',
                 backdropFilter: 'blur(40px)',
                 boxShadow: `
                   0px 20px 60px rgba(0,0,0,0.4),
@@ -223,9 +220,27 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                   0px 0px 0px 2px rgba(245,158,11,0.1)
                 `,
                 border: '2px solid rgba(255,255,255,0.9)',
-                transform: 'translateZ(0)'
+                transform: 'translateZ(0)',
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(245,158,11,0.3) transparent'
               }}
             >
+              <style dangerouslySetInnerHTML={{__html: `
+                .ambition-scroll::-webkit-scrollbar {
+                  width: 8px;
+                }
+                .ambition-scroll::-webkit-scrollbar-track {
+                  background: transparent;
+                  border-radius: 4px;
+                }
+                .ambition-scroll::-webkit-scrollbar-thumb {
+                  background: rgba(245,158,11,0.3);
+                  border-radius: 4px;
+                }
+                .ambition-scroll::-webkit-scrollbar-thumb:hover {
+                  background: rgba(245,158,11,0.5);
+                }
+              `}} />
 
               {/* Close Button */}
               <motion.button
@@ -250,7 +265,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
               </motion.button>
 
               {/* Content Area */}
-              <div className="relative p-8 sm:p-10 md:p-12">
+              <div className="relative p-8 sm:p-10 md:p-12 pb-16">
             
             {/* Header */}
                 <motion.div
@@ -294,7 +309,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                   </h1>
                   
                   <motion.p
-                    className="text-xl sm:text-2xl mt-4 mb-6 font-semibold"
+                    className="text-xl sm:text-2xl md:text-3xl mt-4 mb-6 font-semibold"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: isOpen ? 1 : 0 }}
                     transition={{ delay: 0.7, duration: 0.5 }}
@@ -302,12 +317,8 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                       fontFamily: 'Inter, Nunito, Lato, system-ui, sans-serif',
                       lineHeight: '1.6',
                       fontWeight: '600',
-                      color: '#1A1A1A',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      background: 'linear-gradient(135deg, #1A1A1A 0%, #374151 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text'
+                      color: '#000000',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.8), 0 2px 6px rgba(0,0,0,0.1)'
                     }}
                   >
                     I&apos;m a builder. Here&apos;s what I&apos;m up to:
@@ -319,20 +330,21 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                       <motion.button
                         key={filterType}
                         onClick={() => setSelectedFilter(filterType)}
-                        className="px-5 py-2.5 rounded-full text-base font-semibold"
+                        className="px-6 py-3 rounded-full text-base sm:text-lg font-semibold"
                         style={{
                           background: selectedFilter === filterType
                             ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)'
-                            : 'rgba(255,255,255,0.6)',
-                          color: selectedFilter === filterType ? '#FFFFFF' : 'rgba(26,26,26,0.8)',
+                            : 'rgba(255,255,255,0.9)',
+                          color: selectedFilter === filterType ? '#FFFFFF' : '#000000',
                           border: selectedFilter === filterType
-                            ? '1px solid #F59E0B'
-                            : '1px solid rgba(255,255,255,0.5)',
+                            ? '2px solid #F59E0B'
+                            : '2px solid rgba(0,0,0,0.15)',
                           fontFamily: 'Inter, system-ui, sans-serif',
                           backdropFilter: 'blur(8px)',
                           boxShadow: selectedFilter === filterType
-                            ? '0 0 25px rgba(245,158,11,0.5)'
-                            : 'none'
+                            ? '0 0 25px rgba(245,158,11,0.5), 0 4px 12px rgba(0,0,0,0.15)'
+                            : '0 2px 8px rgba(0,0,0,0.1)',
+                          fontWeight: '600'
                         }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -344,42 +356,17 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                      </div>
                 </motion.div>
 
-                {/* Floating Capsules Gallery */}
-                <div
-                  ref={containerRef}
-                  className="overflow-x-auto pb-4"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(245,158,11,0.3) transparent'
-                  }}
-                >
-                  <div className="flex gap-6 px-2" style={{ minWidth: 'max-content' }}>
-                    {filteredProjects.map((project, index) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        index={index}
-                        isOpen={isOpen}
-                        onClick={() => setSelectedProject(project)}
-                      />
-                    ))}
-                 </div>
+                {/* Floating Capsules Gallery - Vertical Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pb-8">
+                  {filteredProjects.map((project, index) => (
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      index={index}
+                      isOpen={isOpen}
+                    />
+                  ))}
                </div>
-
-                {/* Scroll Hint */}
-                {filteredProjects.length > 3 && (
-                  <motion.div
-                    className="text-center mt-4 text-base font-medium"
-                    animate={{ opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    style={{ 
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                      color: 'rgba(26,26,26,0.7)'
-                    }}
-                  >
-                    ← Scroll or use arrow keys to explore →
-                  </motion.div>
-                )}
 
                 {/* GitHub CTA */}
                 <motion.div
@@ -389,11 +376,12 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                   transition={{ delay: 0.9, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <p
-                    className="text-xl font-semibold mb-6"
+                    className="text-xl sm:text-2xl font-semibold mb-6"
                     style={{
                       fontFamily: 'Inter, system-ui, sans-serif',
-                      color: '#1A1A1A',
-                      fontWeight: '600'
+                      color: '#000000',
+                      fontWeight: '600',
+                      textShadow: '0 1px 2px rgba(255,255,255,0.8)'
                     }}
                   >
                     Check out what else I&apos;m working on:
@@ -425,44 +413,23 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
             </motion.div>
           </motion.div>
 
-          {/* Expanded Project Modal */}
-          {selectedProject && (
-            <ExpandedProjectModal
-              project={selectedProject}
-              onClose={() => setSelectedProject(null)}
-              isOpen={!!selectedProject}
-            />
-          )}
         </>
       )}
     </AnimatePresence>
   )
 }
 
-function ProjectCard({ project, index, isOpen, onClick }: { project: Project; index: number; isOpen: boolean; onClick: () => void }) {
+function ProjectCard({ project, index, isOpen }: { project: Project; index: number; isOpen: boolean }) {
   const [imageLoaded, setImageLoaded] = useState(false)
-  const [isPulsing, setIsPulsing] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 300, damping: 30 })
-  const z = useTransform(
-    useMotionValue(0),
-    [0, 1],
-    [0.95, 1.05]
-  )
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), { stiffness: 300, damping: 30 })
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 30 })
 
   useEffect(() => {
-    if (project.status === 'building' || project.status === 'researching') {
-      const interval = setInterval(() => {
-        setIsPulsing(true)
-        setTimeout(() => setIsPulsing(false), 1000)
-      }, 3000)
-      return () => clearInterval(interval)
-    }
+    // Removed pulsing animation for performance
   }, [project.status])
 
   useEffect(() => {
@@ -488,7 +455,6 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
           const centerY = rect.top + rect.height / 2
           const newX = (e.clientX - centerX) / rect.width
           const newY = (e.clientY - centerY) / rect.height
-          setMousePos({ x: newX, y: newY })
           x.set(newX)
           y.set(newY)
         }
@@ -510,7 +476,7 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
   return (
     <motion.div
       ref={cardRef}
-      className="flex-shrink-0 w-80 md:w-96"
+      className="w-full"
       initial={{ opacity: 0, y: 50, rotateY: -15 }}
       animate={{ 
         opacity: isOpen ? 1 : 0, 
@@ -530,31 +496,28 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
     >
       {/* Capsule Container */}
       <motion.div
-        className="relative rounded-[28px] p-6 cursor-pointer h-full flex flex-col"
-        onClick={onClick}
+        className="relative rounded-[18px] p-5 sm:p-6 md:p-7 h-full flex flex-col"
         style={{
           background: project.status === 'discontinued'
             ? 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(240,240,240,0.75) 100%)'
             : 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,247,237,0.9) 100%)',
           backdropFilter: 'blur(20px)',
           boxShadow: project.status === 'discontinued'
-            ? `0 12px 32px rgba(0,0,0,0.15),
-              0 0 0 1px rgba(148,163,184,0.4),
+            ? `0 8px 24px rgba(0,0,0,0.12),
+              0 0 0 1px rgba(148,163,184,0.35),
               inset 0 1px 0 rgba(255,255,255,0.9)`
-            : `0 12px 32px rgba(245,158,11,0.35),
-              0 0 0 1px ${project.categoryColor}60,
+            : `0 8px 24px rgba(245,158,11,0.3),
+              0 0 0 1px ${project.categoryColor}55,
               inset 0 1px 0 rgba(255,255,255,0.9),
-              0 0 50px ${project.categoryColor}30`,
+              0 0 40px ${project.categoryColor}25`,
           border: `2px solid ${project.categoryColor}70`,
           transformStyle: 'preserve-3d',
           x,
           y,
-          scale: z,
           rotateX,
           rotateY
         }}
         whileHover={{
-          scale: 1.05,
           boxShadow: project.status === 'discontinued'
             ? `0 16px 40px rgba(0,0,0,0.2),
               0 0 0 1px rgba(148,163,184,0.5),
@@ -567,8 +530,8 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         {/* Category Badge */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-full"
             style={{
               background: `${project.categoryColor}20`,
               border: `1px solid ${project.categoryColor}40`
@@ -576,12 +539,13 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
           >
             {project.status !== 'discontinued' && (
               <CategoryIcon 
-                size={14} 
+                size={11} 
+                className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                 style={{ color: project.categoryColor }}
               />
             )}
             <span
-              className="text-sm font-bold uppercase tracking-wider"
+              className="text-[10px] sm:text-xs font-bold uppercase tracking-wider"
               style={{
                 color: project.categoryColor,
                 fontFamily: 'Inter, system-ui, sans-serif',
@@ -591,19 +555,20 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
               {project.category}
             </span>
                        </div>
-          {isPulsing && (
-            <Sparkles size={14} style={{ color: project.categoryColor }} />
+          {project.status !== 'discontinued' && (
+            <Sparkles size={11} className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: project.categoryColor }} />
           )}
                    </div>
                    
         {/* Title */}
         <h2
-          className="text-2xl font-bold mb-4"
+          className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3"
           style={{
             fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
-            color: '#1A1A1A',
+            color: '#000000',
             lineHeight: '1.3',
-            fontWeight: '700'
+            fontWeight: '700',
+            textShadow: '0 1px 2px rgba(255,255,255,0.8)'
           }}
         >
           {project.title}
@@ -611,12 +576,13 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
 
         {/* Description */}
         <p
-          className="text-base mb-4 flex-grow"
+          className="text-xs sm:text-sm md:text-base mb-2 sm:mb-3 flex-grow leading-relaxed"
           style={{
             fontFamily: 'Inter, system-ui, sans-serif',
-            color: '#1A1A1A',
+            color: '#000000',
             lineHeight: '1.7',
-            fontWeight: '400'
+            fontWeight: '400',
+            textShadow: '0 1px 2px rgba(255,255,255,0.6)'
           }}
         >
           {project.description}
@@ -624,7 +590,7 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
 
         {/* Image */}
         {project.image && (
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-4 bg-gray-100 flex-shrink-0">
+          <div className="relative w-full aspect-video rounded-lg sm:rounded-xl overflow-hidden mb-2 sm:mb-3 bg-gray-100 flex-shrink-0">
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
                 <div className="w-12 h-12 border-4 border-gray-300 border-t-orange-400 rounded-full animate-spin" />
@@ -645,171 +611,14 @@ function ProjectCard({ project, index, isOpen, onClick }: { project: Project; in
         )}
 
         {/* Action Button */}
-        {project.status === 'discontinued' ? (
-          <div className="mt-auto pt-4 border-t border-gray-300">
-            <div className="text-center py-2 px-4 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium">
+        {project.status === 'discontinued' && (
+          <div className="mt-auto pt-2 sm:pt-3 border-t border-gray-300">
+            <div className="text-center py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-gray-100 text-gray-600 text-xs sm:text-sm font-medium">
               Discontinued
                    </div>
                  </div>
-        ) : (
-          <div className="mt-auto pt-4 border-t border-gray-300">
-            <p
-              className="text-sm text-center font-medium"
-                      style={{
-                fontFamily: 'Inter, system-ui, sans-serif',
-                color: 'rgba(26,26,26,0.7)'
-              }}
-            >
-              Click to explore →
-                     </p>
-                   </div>
         )}
       </motion.div>
     </motion.div>
-  )
-}
-
-function ExpandedProjectModal({ project, onClose, isOpen }: { project: Project; onClose: () => void; isOpen: boolean }) {
-  const [imageLoaded, setImageLoaded] = useState(false)
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-[60]"
-            style={{
-              backdropFilter: 'blur(20px)',
-              background: 'rgba(0,0,0,0.7)'
-            }}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 50 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-[61] flex items-center justify-center p-4 pointer-events-none"
-          >
-            <div
-              className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto rounded-3xl p-8"
-                      style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,247,237,0.9) 100%)',
-                backdropFilter: 'blur(40px)',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
-              }}
-            >
-              <button
-                onClick={onClose}
-                className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="flex items-center gap-3 mb-6">
-                <div className="px-3 py-1.5 rounded-full"
-                  style={{
-                    background: `${project.categoryColor}20`,
-                    border: `1px solid ${project.categoryColor}40`
-                  }}
-                >
-                  <span
-                    className="text-sm font-bold uppercase tracking-wider"
-                    style={{
-                      color: project.categoryColor,
-                      fontFamily: 'Inter, system-ui, sans-serif'
-                    }}
-                  >
-                    {project.category}
-                  </span>
-                 </div>
-               </div>
-
-              {/* Title */}
-              <h2
-                className="text-3xl sm:text-4xl font-bold mb-4"
-                style={{
-                  fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
-                  color: '#1A1A1A',
-                  lineHeight: '1.3',
-                  fontWeight: '700'
-                }}
-              >
-                {project.title}
-              </h2>
-
-              {/* Description */}
-              <p
-                className="text-xl mb-6"
-                style={{
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                  color: '#1A1A1A',
-                  lineHeight: '1.7',
-                  fontWeight: '400'
-                }}
-              >
-                {project.description}
-              </p>
-
-              {/* Details */}
-              {project.details && (
-                <p
-                  className="text-lg mb-8"
-                    style={{
-                    fontFamily: 'Inter, system-ui, sans-serif',
-                    color: '#1A1A1A',
-                    lineHeight: '1.7',
-                    fontWeight: '400'
-                  }}
-                >
-                  {project.details}
-                </p>
-              )}
-
-              {/* Image */}
-              {project.image && (
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-8 bg-gray-100">
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
-                      <div className="w-12 h-12 border-4 border-gray-300 border-t-orange-400 rounded-full animate-spin" />
-                    </div>
-                  )}
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                    onLoad={() => setImageLoaded(true)}
-                  />
-                </div>
-              )}
-
-              {/* Link */}
-              {project.link && (
-                <motion.a
-                  href={project.link}
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold"
-                  style={{
-                    background: `linear-gradient(135deg, ${project.categoryColor} 0%, ${project.categoryColor}dd 100%)`,
-                    color: 'white',
-                    fontFamily: 'Inter, system-ui, sans-serif'
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <ExternalLink size={20} />
-                  Check it out
-                </motion.a>
-              )}
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
   )
 }

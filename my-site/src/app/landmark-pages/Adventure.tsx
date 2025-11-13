@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { Mountain, X } from 'lucide-react'
 
@@ -212,7 +212,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
             <motion.div
               className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto pointer-events-auto"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(248,250,252,0.5) 50%, rgba(240,248,255,0.45) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.92) 50%, rgba(240,248,255,0.9) 100%)',
                 backdropFilter: 'blur(40px)',
                 borderRadius: '2rem',
                 boxShadow: `
@@ -224,7 +224,8 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                 `,
                 border: '2px solid rgba(255,255,255,0.9)',
                 transform: 'translateZ(0)',
-                overflow: 'hidden'
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(16,185,129,0.3) transparent'
               }}
             >
               {/* Close Button */}
@@ -250,7 +251,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
               </motion.button>
 
               {/* Content Area */}
-              <div className="relative p-8 sm:p-10 md:p-12">
+              <div className="relative p-8 sm:p-10 md:p-12 pb-16">
                 
                 {/* Header */}
                 <motion.div
@@ -302,15 +303,16 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                     Adventure
                   </h1>
                   <p
-                    className="text-lg sm:text-xl text-gray-800 mt-4 font-medium"
+                    className="text-xl sm:text-2xl md:text-3xl mt-4 font-semibold"
                     style={{
                       fontFamily: 'Inter, Nunito, Lato, system-ui, sans-serif',
                       lineHeight: '1.6',
-                      fontWeight: '500',
-                      color: '#1A1A1A'
+                      fontWeight: '600',
+                      color: '#000000',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.8), 0 2px 6px rgba(0,0,0,0.1)'
                     }}
                   >
-                    I&apos;m a nature guy. Check out some of my favorite places!
+                    Check out some of my favorite places!
                   </p>
                 </motion.div>
 
@@ -328,10 +330,9 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                         animate={{ 
                           opacity: isOpen ? 1 : 0,
                           scale: isOpen ? 1 : 0.8,
-                          y: isOpen ? 0 : 20,
                           rotate: isSelected ? 0 : position.rotation,
                           x: isSelected ? 0 : position.x,
-                          y: isSelected ? 0 : position.y,
+                          y: isSelected ? (isOpen ? 0 : position.y) : (isOpen ? 0 : 20),
                           zIndex: isSelected ? 1000 : position.zIndex
                         }}
                         transition={{ 
@@ -413,13 +414,14 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                           {/* Caption Area */}
                           <div className="mt-3 px-2 pb-2">
                             <p
-                              className="text-base sm:text-lg text-gray-800 text-center font-semibold"
+                              className="text-base sm:text-lg text-center font-semibold"
                               style={{
                                 fontFamily: 'Inter, system-ui, sans-serif',
                                 lineHeight: '1.5',
-                                fontSize: '16px',
+                                fontSize: '18px',
                                 fontWeight: '600',
-                                color: '#1A1A1A'
+                                color: '#000000',
+                                textShadow: '0 1px 2px rgba(255,255,255,0.8)'
                               }}
                             >
                               {photo.caption}
@@ -510,11 +512,12 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                       {/* Caption */}
                       <div className="text-center">
                         <p
-                          className="text-xl sm:text-2xl font-semibold text-gray-800"
+                          className="text-xl sm:text-2xl md:text-3xl font-semibold"
                           style={{
                             fontFamily: 'Inter, system-ui, sans-serif',
                             fontWeight: '600',
-                            color: '#1A1A1A'
+                            color: '#000000',
+                            textShadow: '0 1px 3px rgba(255,255,255,0.8), 0 2px 6px rgba(0,0,0,0.1)'
                           }}
                         >
                           {selectedPhoto.caption}
@@ -526,6 +529,25 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
               )}
             </AnimatePresence>
           </motion.div>
+          
+          {/* Custom Scrollbar Styles */}
+          <style jsx>{`
+            .relative.w-full.max-w-6xl::-webkit-scrollbar {
+              width: 10px;
+            }
+            .relative.w-full.max-w-6xl::-webkit-scrollbar-track {
+              background: rgba(255,255,255,0.1);
+              border-radius: 10px;
+            }
+            .relative.w-full.max-w-6xl::-webkit-scrollbar-thumb {
+              background: rgba(16,185,129,0.4);
+              border-radius: 10px;
+              border: 2px solid rgba(255,255,255,0.8);
+            }
+            .relative.w-full.max-w-6xl::-webkit-scrollbar-thumb:hover {
+              background: rgba(16,185,129,0.6);
+            }
+          `}</style>
         </>
       )}
     </AnimatePresence>

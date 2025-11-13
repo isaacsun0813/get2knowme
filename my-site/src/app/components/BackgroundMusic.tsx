@@ -137,13 +137,13 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Cassette Tape Design */}
-        <div className="relative bg-white/75 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40 min-w-[240px]">
+        <div className="relative bg-white/75 backdrop-blur-xl rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40 min-w-[200px]">
           {/* Inner glow */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
           
           {/* Title */}
-          <div className="relative mb-4">
-            <div className="flex items-center justify-center gap-2">
+          <div className="relative mb-3">
+            <div className="flex items-center justify-center gap-1.5">
               {/* Music icon with pulse */}
               <motion.div
                 animate={{
@@ -156,12 +156,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 }}
               >
                 <Music2 
-                  size={16} 
+                  size={14} 
                   style={{ color: '#6b7280' }}
                 />
               </motion.div>
               <span 
-                className="text-xs font-semibold uppercase tracking-[0.2em]"
+                className="text-[10px] font-semibold uppercase tracking-[0.2em]"
                 style={{
                   fontFamily: 'Inter, system-ui, sans-serif',
                   color: '#374151',
@@ -171,20 +171,20 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 Music
               </span>
             </div>
-            <div className="mt-2 h-px bg-gradient-to-r from-transparent via-gray-300/50 to-transparent" />
+            <div className="mt-1.5 h-px bg-gradient-to-r from-transparent via-gray-300/50 to-transparent" />
           </div>
 
           {/* Cassette Tape Body */}
           <div className="relative">
             {/* Main cassette body */}
-            <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 shadow-inner">
+            <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-3 shadow-inner">
               {/* Cassette window (tape reels visible) */}
-              <div className="relative bg-black rounded-lg p-3 mb-3 overflow-hidden">
+              <div className="relative bg-black rounded-lg p-2.5 mb-2.5 overflow-hidden">
                 {/* Tape reels animation */}
                 <div className="flex justify-between items-center">
                   {/* Left reel */}
                   <motion.div
-                    className="w-12 h-12 rounded-full border-4 border-gray-600 relative"
+                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative"
                     animate={{
                       rotate: isPlaying ? 360 : 0
                     }}
@@ -195,7 +195,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     }}
                   >
                     {/* Reel center */}
-                    <div className="absolute inset-2 rounded-full bg-gray-800 border-2 border-gray-700" />
+                    <div className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700" />
                     {/* Reel spokes */}
                     {[...Array(4)].map((_, i) => (
                       <div
@@ -205,17 +205,17 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                           transform: `rotate(${i * 90}deg)`,
                         }}
                       >
-                        <div className="absolute top-0 left-1/2 w-0.5 h-2 bg-gray-600 -translate-x-1/2" />
+                        <div className="absolute top-0 left-1/2 w-0.5 h-1.5 bg-gray-600 -translate-x-1/2" />
                       </div>
                     ))}
                   </motion.div>
 
                   {/* Tape path */}
-                  <div className="flex-1 h-1 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 mx-2 rounded" />
+                  <div className="flex-1 h-0.5 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 mx-2 rounded" />
 
                   {/* Right reel */}
                   <motion.div
-                    className="w-12 h-12 rounded-full border-4 border-gray-600 relative"
+                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative"
                     animate={{
                       rotate: isPlaying ? -360 : 0
                     }}
@@ -226,7 +226,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     }}
                   >
                     {/* Reel center */}
-                    <div className="absolute inset-2 rounded-full bg-gray-800 border-2 border-gray-700" />
+                    <div className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700" />
                     {/* Reel spokes */}
                     {[...Array(4)].map((_, i) => (
                       <div
@@ -236,7 +236,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                           transform: `rotate(${i * 90}deg)`,
                         }}
                       >
-                        <div className="absolute top-0 left-1/2 w-0.5 h-2 bg-gray-600 -translate-x-1/2" />
+                        <div className="absolute top-0 left-1/2 w-0.5 h-1.5 bg-gray-600 -translate-x-1/2" />
                       </div>
                     ))}
                   </motion.div>
@@ -244,13 +244,13 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
               </div>
 
               {/* Control buttons row */}
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-2.5">
                 {/* Play/Pause button */}
                 <motion.button
                   onClick={togglePlayPause}
                   className={`
                     relative
-                    w-10 h-10
+                    w-8 h-8
                     rounded-lg
                     flex items-center justify-center
                     transition-all duration-300
@@ -269,11 +269,11 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 >
                   <span className="relative z-10 text-white">
                     {isPlaying ? (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                       </svg>
                     ) : (
-                      <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     )}
@@ -285,7 +285,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                   onClick={toggleMute}
                   className={`
                     relative
-                    w-9 h-9
+                    w-7 h-7
                     rounded-lg
                     flex items-center justify-center
                     transition-all duration-200
@@ -298,12 +298,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                   whileTap={{ scale: 0.95 }}
                 >
                   {isMuted ? (
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                     </svg>
                   )}
@@ -316,14 +316,14 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
               {isHovered && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 10 }}
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     {/* Volume icon */}
-                    <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                     </svg>
                     
@@ -336,7 +336,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                         step="0.01"
                         value={isMuted ? 0 : volume}
                         onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                        className="w-full h-1.5 bg-gray-700 rounded-full appearance-none cursor-pointer volume-slider"
+                        className="w-full h-1 bg-gray-700 rounded-full appearance-none cursor-pointer volume-slider"
                         style={{
                           background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(isMuted ? 0 : volume) * 100}%, #374151 ${(isMuted ? 0 : volume) * 100}%, #374151 100%)`
                         }}
@@ -345,7 +345,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     
                     {/* Volume percentage */}
                     <span 
-                      className="text-xs tabular-nums flex-shrink-0 w-10 text-right text-gray-400"
+                      className="text-[10px] tabular-nums flex-shrink-0 w-8 text-right text-gray-400"
                       style={{
                         fontFamily: 'JetBrains Mono, monospace'
                       }}
@@ -363,8 +363,8 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       <style jsx>{`
         .volume-slider::-webkit-slider-thumb {
           appearance: none;
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
           background: #3b82f6;
           cursor: pointer;
@@ -377,8 +377,8 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
           box-shadow: 0 3px 8px rgba(59,130,246,0.5);
         }
         .volume-slider::-moz-range-thumb {
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
           background: #3b82f6;
           cursor: pointer;

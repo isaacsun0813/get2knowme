@@ -11,7 +11,7 @@ interface VibesProps {
 
 export default function Vibes({ isOpen, onClose }: VibesProps) {
   const [shouldRender, setShouldRender] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [, setIsAnimating] = useState(false)
 
   useEffect(() => {
     if (isOpen) {

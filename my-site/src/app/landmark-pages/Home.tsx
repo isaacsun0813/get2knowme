@@ -10,7 +10,7 @@ interface HomeProps {
 
 export default function Home({ isOpen, onClose }: HomeProps) {
   const [shouldRender, setShouldRender] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [, setIsAnimating] = useState(false)
 
   useEffect(() => {
     if (isOpen) {

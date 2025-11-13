@@ -14,6 +14,33 @@ export default function EarthModel(props: EarthModelProps) {
   const { scene, animations } = useGLTF('/models/sickEarthFile2.glb')
   const { actions } = useAnimations(animations, group)
   
+  // Play all animations automatically (simplified) - must be before early returns
+  useEffect(() => {
+    if (actions && Object.keys(actions).length > 0) {
+      Object.values(actions).forEach(action => {
+        if (action) {
+          action.reset()
+          action.setLoop(THREE.LoopRepeat, Infinity)
+          action.play()
+        }
+      })
+    }
+  }, [actions])
+
+  // Notify parent when scene is ready for landmark detection - must be before early returns
+  useEffect(() => {
+    // Model scene ready, calling onSceneReady
+    if (props.onSceneReady && scene) {
+      // Calling onSceneReady with scene
+      props.onSceneReady(scene)
+    }
+  }, [scene, props])
+  
+  // Error handling - after hooks
+  if (!scene) {
+    return null
+  }
+  
   // Make clouds a greyish white for better visibility
   scene.traverse((child) => {
     if (child instanceof THREE.Mesh) {
@@ -36,28 +63,6 @@ export default function EarthModel(props: EarthModelProps) {
   
   scene.userData = { isEarth: true }
   scene.name = 'Earth'
-  
-  // Play all animations automatically (simplified)
-  useEffect(() => {
-    if (actions && Object.keys(actions).length > 0) {
-      Object.values(actions).forEach(action => {
-        if (action) {
-          action.reset()
-          action.setLoop(THREE.LoopRepeat, Infinity)
-          action.play()
-        }
-      })
-    }
-  }, [actions])
-
-  // Notify parent when scene is ready for landmark detection
-  useEffect(() => {
-    // Model scene ready, calling onSceneReady
-    if (props.onSceneReady && scene) {
-              // Calling onSceneReady with scene
-      props.onSceneReady(scene)
-    }
-  }, [scene, props])
   
   return (
     <group ref={group} {...props}>

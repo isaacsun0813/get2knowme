@@ -12,9 +12,11 @@ interface IntroScreenProps {
 }
 
 // Interactive Nature Garden Component - shows current activities with vanishing effect
+// Currently unused but kept for future use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function NatureGarden() {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0)
-  const [activities, setActivities] = useState([
+  const [activities] = useState([
     { text: 'Growing 3D worlds', icon: '🌱', color: '#22c55e' },
     { text: 'Crafting motion stories', icon: '🍃', color: '#16a34a' },
     { text: 'Planting playful ideas', icon: '🌿', color: '#15803d' },

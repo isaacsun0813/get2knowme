@@ -14,13 +14,11 @@ export type LandmarkConfig = {
 
 interface LocationPromptProps {
   landmark: LandmarkConfig | null
-  onClose: () => void
   onSpacePressed: () => void
 }
 
 export default function LocationPrompt({ 
   landmark, 
-  onClose: _,
   onSpacePressed
 }: LocationPromptProps) {
   const [isVisible, setIsVisible] = useState(false)
@@ -162,8 +160,8 @@ export default function LocationPrompt({
               rounded-xl
               shadow-[0_12px_40px_rgba(0,0,0,0.15)]
               border border-white/50
-              min-w-[340px]
-              max-w-[400px]
+              min-w-[280px]
+              max-w-[340px]
               mx-4
               overflow-hidden
             `}>
@@ -178,12 +176,12 @@ export default function LocationPrompt({
               </div>
 
               {/* SunFlights Header - Compact */}
-              <div className="relative px-4 pt-3.5 pb-2.5 border-b border-gray-300/30">
+              <div className="relative px-3.5 pt-3 pb-2 border-b border-gray-300/30">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     {/* Sun icon - smaller */}
                     <motion.div
-                      className="w-6 h-6 rounded-full flex items-center justify-center"
+                      className="w-5 h-5 rounded-full flex items-center justify-center"
                       style={{
                         background: `linear-gradient(135deg, ${styling.accent}, ${styling.accent}dd)`,
                       }}
@@ -195,13 +193,13 @@ export default function LocationPrompt({
                         ease: 'linear'
                       }}
                     >
-                      <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
                       </svg>
                     </motion.div>
                     <div>
                       <h1 
-                        className="text-sm font-bold uppercase tracking-wider"
+                        className="text-xs font-bold uppercase tracking-wider"
                         style={{
                           fontFamily: 'Inter, system-ui, sans-serif',
                           color: '#1f2937',
@@ -211,7 +209,7 @@ export default function LocationPrompt({
                         SunFlights
                       </h1>
                       <p 
-                        className="text-[10px] text-gray-500 uppercase tracking-widest"
+                        className="text-[9px] text-gray-500 uppercase tracking-widest"
                         style={{
                           fontFamily: 'Inter, system-ui, sans-serif',
                           letterSpacing: '0.2em'
@@ -223,7 +221,7 @@ export default function LocationPrompt({
                   </div>
                   {/* Icon badge - smaller */}
                   <motion.div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center"
                     style={{
                       background: `linear-gradient(135deg, ${styling.accent}15, ${styling.accent}25)`,
                       border: `1.5px solid ${styling.accent}30`
@@ -238,7 +236,7 @@ export default function LocationPrompt({
                     }}
                   >
                     <IconComponent 
-                      size={16} 
+                      size={14} 
                       style={{ 
                         color: styling.accent,
                         display: 'block'
@@ -249,11 +247,11 @@ export default function LocationPrompt({
               </div>
 
               {/* Main Content - Compact */}
-              <div className="relative px-4 py-3.5">
+              <div className="relative px-3.5 py-3">
                 {/* Destination - Larger but more compact */}
-                <div className="flex flex-col items-center justify-center gap-1 mb-4">
+                <div className="flex flex-col items-center justify-center gap-1 mb-3">
                   <motion.h2
-                    className="text-2xl font-bold text-center w-full"
+                    className="text-xl font-bold text-center w-full"
                     style={{
                       fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
                       color: '#1f2937',
@@ -269,10 +267,10 @@ export default function LocationPrompt({
                 </div>
 
                 {/* Flight Details Row - 3 columns with category in middle */}
-                <div className="grid grid-cols-3 gap-3 mb-4 pb-3 border-b border-gray-300/30">
+                <div className="grid grid-cols-3 gap-2.5 mb-3 pb-2.5 border-b border-gray-300/30">
                   <div className="text-center">
                     <p 
-                      className="text-[10px] uppercase tracking-wider mb-0.5"
+                      className="text-[9px] uppercase tracking-wider mb-0.5"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -282,7 +280,7 @@ export default function LocationPrompt({
                       Gate
                     </p>
                     <p 
-                      className="text-sm font-bold tabular-nums"
+                      className="text-xs font-bold tabular-nums"
                       style={{
                         fontFamily: 'JetBrains Mono, monospace',
                         color: '#374151'
@@ -293,7 +291,7 @@ export default function LocationPrompt({
                   </div>
                   <div className="text-center">
                     <p 
-                      className="text-[10px] uppercase tracking-wider mb-0.5"
+                      className="text-[9px] uppercase tracking-wider mb-0.5"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -303,7 +301,7 @@ export default function LocationPrompt({
                       Type
                     </p>
                     <p 
-                      className="text-sm font-bold"
+                      className="text-xs font-bold"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: styling.accent,
@@ -316,7 +314,7 @@ export default function LocationPrompt({
                   </div>
                   <div className="text-center">
                     <p 
-                      className="text-[10px] uppercase tracking-wider mb-0.5"
+                      className="text-[9px] uppercase tracking-wider mb-0.5"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -326,7 +324,7 @@ export default function LocationPrompt({
                       Seat
                     </p>
                     <p 
-                      className="text-sm font-bold tabular-nums"
+                      className="text-xs font-bold tabular-nums"
                       style={{
                         fontFamily: 'JetBrains Mono, monospace',
                         color: '#374151'
@@ -339,7 +337,7 @@ export default function LocationPrompt({
 
                 {/* Action Button */}
                 <motion.div
-                  className="flex items-center justify-center gap-2.5"
+                  className="flex items-center justify-center gap-2"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -348,10 +346,10 @@ export default function LocationPrompt({
                     <motion.button
                       className={`
                         relative
-                        px-8 py-3.5
-                        rounded-xl
+                        px-6 py-2.5
+                        rounded-lg
                         font-semibold
-                        text-sm
+                        text-xs
                         uppercase
                         tracking-wider
                         overflow-hidden
@@ -379,7 +377,7 @@ export default function LocationPrompt({
                   ) : (
                     <>
                       <span 
-                        className="text-sm font-medium"
+                        className="text-xs font-medium"
                         style={{
                           fontFamily: 'Inter, system-ui, sans-serif',
                           color: '#6b7280'
@@ -390,10 +388,10 @@ export default function LocationPrompt({
                       <motion.kbd
                         className={`
                           relative
-                          px-5 py-3
-                          rounded-xl
+                          px-4 py-2.5
+                          rounded-lg
                           font-bold
-                          text-sm
+                          text-xs
                           uppercase
                           tracking-wider
                           tabular-nums
@@ -430,7 +428,7 @@ export default function LocationPrompt({
                         />
                         {/* Pulse ring */}
                         <motion.div
-                          className="absolute inset-0 rounded-xl border-2"
+                          className="absolute inset-0 rounded-lg border-2"
                           style={{ borderColor: styling.accent }}
                           animate={{
                             scale: [1, 1.2, 1],
@@ -444,7 +442,7 @@ export default function LocationPrompt({
                         />
                       </motion.kbd>
                       <span 
-                        className="text-sm font-medium"
+                        className="text-xs font-medium"
                         style={{
                           fontFamily: 'Inter, system-ui, sans-serif',
                           color: '#6b7280'

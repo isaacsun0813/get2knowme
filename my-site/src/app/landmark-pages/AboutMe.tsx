@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { X, Linkedin, Github, Youtube, Mail, FileText } from 'lucide-react'
 
@@ -12,7 +12,7 @@ interface AboutMeProps {
 
 export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
   const [shouldRender, setShouldRender] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [, setIsAnimating] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const modalRef = useRef<HTMLDivElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
@@ -502,7 +502,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                         color: '#ea4335',
                         delay: 0.3
                       }
-                    ].map((social, index) => {
+                    ].map((social) => {
                       const driftAmount = (Math.random() - 0.5) * 2
                       const driftDuration = 6 + Math.random() * 2
                       const driftDelay = Math.random() * 2

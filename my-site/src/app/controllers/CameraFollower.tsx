@@ -26,22 +26,22 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     const isDroppingIn = dropInProgress < 1
     
     // Camera distance adjustments based on zoom level
-    // Make much more dramatic changes for noticeable zoom effect
-    let baseViewDistance = earthRadius * 3.5  // 87.5 units back (original distance)
+    // Increased base distance to see more of the globe
+    let baseViewDistance = earthRadius * 10.0  // 125 units back (increased from 87.5)
     
-    // During drop-in: start very close, zoom out as plane drops
+    // During drop-in: start slightly closer, zoom out as plane drops
     if (isDroppingIn) {
-      // Start at 1.5x closer (more zoomed in), zoom out to normal distance
-      const startZoom = 1.5 // Start 1.5x closer
+      // Start at 1.3x closer (less aggressive), zoom out to normal distance
+      const startZoom = 1.3 // Start 1.3x closer (reduced from 1.5)
       const zoomOutProgress = dropInProgress // 0 = start, 1 = end
       const currentZoom = startZoom + (1 - startZoom) * zoomOutProgress
       baseViewDistance = baseViewDistance / currentZoom
     }
     
-    // Apply more aggressive zoom scaling
-    // When zoomed in (zoomLevel > 1): camera gets MUCH closer
-    // When zoomed out (zoomLevel < 1): camera goes MUCH further
-    const zoomMultiplier = Math.pow(zoomLevel, 2) // Square the zoom for more dramatic effect
+    // Apply zoom scaling (less aggressive)
+    // When zoomed in (zoomLevel > 1): camera gets closer
+    // When zoomed out (zoomLevel < 1): camera goes further
+    const zoomMultiplier = Math.pow(zoomLevel, 1.5) // Less aggressive than squared
     const viewDistance = baseViewDistance / zoomMultiplier
     
     // Also adjust height offset dramatically

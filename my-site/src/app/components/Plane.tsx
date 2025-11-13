@@ -46,6 +46,16 @@ export default function Plane({
   // Input state
   const keysPressed = useRef<Record<string, boolean>>({})
 
+  // Initialize planeRef with group when component mounts
+  useEffect(() => {
+    if (group.current && planeRef && !planeRef.current) {
+      planeRef.current = group.current
+      // Set initial position
+      planeRef.current.position.copy(position.current)
+      planeRef.current.quaternion.copy(orientation.current)
+    }
+  }, [])
+  
   // Initialize drop-in animation when world appears
   useEffect(() => {
     if (worldJustAppeared && dropInStartTime.current === null) {
@@ -102,11 +112,51 @@ export default function Plane({
     }
   }, [actions])
 
+  // Track if listeners are active
+  const listenersActive = useRef(false)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  
   // Keyboard handlers with enhanced cross-browser compatibility
   useEffect(() => {
+    // Suppress React DevTools semver errors that can interfere with functionality
+    const originalError = window.onerror
+    window.onerror = (message, source, lineno, colno, error) => {
+      // Suppress React DevTools semver errors
+      if (typeof message === 'string' && message.includes('semver')) {
+        return true // Suppress the error
+      }
+      // Let other errors through
+      if (originalError) {
+        return originalError(message, source, lineno, colno, error)
+      }
+      return false
+    }
+    
     // Browser detection for compatibility fixes
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    // Improved Chrome detection - check for Chrome but not Edge/Opera
+    const isChrome = /Chrome/.test(navigator.userAgent) && 
+                     !/Edg/.test(navigator.userAgent) && 
+                     !/OPR/.test(navigator.userAgent) &&
+                     (/Google Inc/.test(navigator.vendor) || navigator.vendor === '')
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+    
+    // Get canvas reference - retry if not found immediately
+    let canvas = document.querySelector('canvas') as HTMLCanvasElement | null
+    if (canvas) {
+      canvasRef.current = canvas
+    } else {
+      // Retry finding canvas with multiple attempts
+      const findCanvas = (attempts = 0) => {
+        canvas = document.querySelector('canvas') as HTMLCanvasElement | null
+        if (canvas) {
+          canvasRef.current = canvas
+        } else if (attempts < 10) {
+          setTimeout(() => findCanvas(attempts + 1), 100)
+        }
+      }
+      findCanvas()
+    }
     
     // Key code mapping for fallback support
     const keyCodeMap: Record<string, string> = {
@@ -121,65 +171,205 @@ export default function Plane({
     }
     
     const down = (e: KeyboardEvent) => {
-      // Use code if available, fallback to key mapping
-      const code = e.code || keyCodeMap[e.key] || ''
-      
-      // Prevent default for flight controls to avoid page scrolling
-      const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
-      if (controlKeys.includes(code)) {
-        e.preventDefault()
-        e.stopPropagation()
-        keysPressed.current[code] = true
+      try {
+        // Safely get code and key properties first
+        const eventCode = (e && typeof e.code === 'string') ? e.code : ''
+        const eventKey = (e && typeof e.key === 'string') ? e.key : ''
         
-        // Also handle by key for maximum compatibility
-        if (e.key && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(e.key)) {
-          const mappedCode = keyCodeMap[e.key]
-          if (mappedCode) {
-            keysPressed.current[mappedCode] = true
+        // Use code if available, fallback to key mapping
+        const code = eventCode || (eventKey ? keyCodeMap[eventKey] : '') || ''
+        
+        // Prevent default for flight controls to avoid page scrolling
+        const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+        
+        // Process control keys regardless of focus - this ensures keys always work
+        if (code && controlKeys.includes(code)) {
+          // Chrome: Try to restore focus, but don't block key processing
+          if (isChrome) {
+            const canvas = canvasRef.current || document.querySelector('canvas') as HTMLCanvasElement | null
+            if (canvas && document.activeElement !== canvas) {
+              try {
+                // Try to restore focus, but continue processing the key anyway
+                if (canvas) {
+                  canvas.focus()
+                }
+                window.focus()
+              } catch {
+                // Silently handle focus errors - continue processing key
+              }
+            }
+          }
+          
+          // Always process the key, even if focus isn't perfect
+          if (e.preventDefault) e.preventDefault()
+          // Don't stop propagation - let FlightControls component also receive the event
+          // Only stop propagation if it's not a control key (to prevent page scrolling)
+          keysPressed.current[code] = true
+          
+          // Also handle by key for maximum compatibility - store in multiple formats
+          if (eventKey && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(eventKey)) {
+            const mappedCode = keyCodeMap[eventKey]
+            if (mappedCode) {
+              keysPressed.current[mappedCode] = true
+            }
+            // Also store by key name for extra compatibility
+            keysPressed.current[eventKey.toLowerCase()] = true
+            keysPressed.current[eventKey.toUpperCase()] = true
           }
         }
+      } catch {
+        // Silently handle any errors in keyboard event handling
       }
     }
     
     const up = (e: KeyboardEvent) => {
-      const code = e.code || keyCodeMap[e.key] || ''
-      const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
-      
-      if (controlKeys.includes(code)) {
-        e.preventDefault()
-        e.stopPropagation()
-        keysPressed.current[code] = false
+      try {
+        // Safely get code and key properties
+        const eventCode = (e && typeof e.code === 'string') ? e.code : ''
+        const eventKey = (e && typeof e.key === 'string') ? e.key : ''
         
-        // Also handle by key for maximum compatibility
-        if (e.key && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(e.key)) {
-          const mappedCode = keyCodeMap[e.key]
-          if (mappedCode) {
-            keysPressed.current[mappedCode] = false
+        // Use code if available, fallback to key mapping
+        const code = eventCode || (eventKey ? keyCodeMap[eventKey] : '') || ''
+        const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+        
+        if (code && controlKeys.includes(code)) {
+          if (e.preventDefault) e.preventDefault()
+          // Don't stop propagation - let FlightControls component also receive the event
+          keysPressed.current[code] = false
+          
+          // Also handle by key for maximum compatibility - clear all formats
+          if (eventKey && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(eventKey)) {
+            const mappedCode = keyCodeMap[eventKey]
+            if (mappedCode) {
+              keysPressed.current[mappedCode] = false
+            }
+            // Also clear by key name
+            keysPressed.current[eventKey.toLowerCase()] = false
+            keysPressed.current[eventKey.toUpperCase()] = false
           }
         }
+      } catch {
+        // Silently handle any errors in keyboard event handling
       }
     }
     
-    // Ensure window has focus for keyboard events (especially important for Safari/Mac)
-    const ensureFocus = () => {
-      if (document.activeElement?.tagName === 'BODY' || !document.activeElement) {
-        window.focus()
-      }
-    }
     
-    // Focus management for Mac/Safari
-    if (isMac || isSafari) {
-      // Click on canvas area to ensure focus
-      const canvas = document.querySelector('canvas')
-      if (canvas) {
-        canvas.setAttribute('tabindex', '0')
-        canvas.style.outline = 'none'
-        canvas.addEventListener('click', ensureFocus, { once: true })
+    // Focus management for Mac/Safari/Chrome
+    // Chrome especially needs proactive focus management
+    // Use the canvas we already found above
+    const cleanupFunctions: Array<() => void> = []
+    
+    if (canvas) {
+      canvas.setAttribute('tabindex', '0')
+      canvas.style.outline = 'none'
+      canvas.style.cursor = 'default'
+      
+      // Make canvas focusable and ensure it gets focus
+      const focusCanvas = () => {
+        try {
+          if (canvas) {
+            canvas.focus()
+          }
+          window.focus()
+        } catch {
+          // Silently handle focus errors
+        }
       }
       
-      // Also ensure focus on window load
-      window.addEventListener('load', ensureFocus)
-      window.addEventListener('focus', ensureFocus)
+      // Focus on click (persistent, not once)
+      canvas.addEventListener('click', focusCanvas)
+      cleanupFunctions.push(() => {
+        if (canvas) {
+          canvas.removeEventListener('click', focusCanvas)
+        }
+      })
+      
+      // Chrome-specific: More aggressive focus management
+      if (isChrome) {
+        // Focus immediately when component mounts
+        setTimeout(focusCanvas, 100)
+        setTimeout(focusCanvas, 500)
+        setTimeout(focusCanvas, 1000)
+        
+        // Focus on any mouse interaction with canvas
+        canvas.addEventListener('mousedown', focusCanvas)
+        cleanupFunctions.push(() => {
+          if (canvas) {
+            canvas.removeEventListener('mousedown', focusCanvas)
+          }
+        })
+        
+        canvas.addEventListener('mouseenter', focusCanvas)
+        cleanupFunctions.push(() => {
+          if (canvas) {
+            canvas.removeEventListener('mouseenter', focusCanvas)
+          }
+        })
+        
+        // Restore focus after zoom operations
+        const wheelHandler = (e: WheelEvent) => {
+          if (e.ctrlKey || e.metaKey) {
+            setTimeout(focusCanvas, 200)
+          }
+        }
+        window.addEventListener('wheel', wheelHandler, { passive: true })
+        cleanupFunctions.push(() => window.removeEventListener('wheel', wheelHandler))
+        
+        // Proactively restore focus before keyboard events
+        // This is critical - Chrome needs focus BEFORE keydown
+        const restoreFocusBeforeKey = (e: KeyboardEvent) => {
+          try {
+            // Safely check event code
+            const eventCode = (e && typeof e.code === 'string') ? e.code : ''
+            if (!eventCode) return
+            
+            // Only for control keys
+            const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+            if (controlKeys.includes(eventCode)) {
+              // Check if canvas has focus
+              if (document.activeElement !== canvas) {
+                focusCanvas()
+              }
+            }
+          } catch {
+            // Silently handle errors
+          }
+        }
+        
+        // Use capture phase to restore focus BEFORE the event reaches handlers
+        window.addEventListener('keydown', restoreFocusBeforeKey, { capture: true, passive: true })
+        cleanupFunctions.push(() => window.removeEventListener('keydown', restoreFocusBeforeKey, { capture: true }))
+        
+        document.addEventListener('keydown', restoreFocusBeforeKey, { capture: true, passive: true })
+        cleanupFunctions.push(() => document.removeEventListener('keydown', restoreFocusBeforeKey, { capture: true }))
+        
+        // Also restore on window focus
+        window.addEventListener('focus', focusCanvas)
+        cleanupFunctions.push(() => window.removeEventListener('focus', focusCanvas))
+        
+        const blurHandler = () => {
+          setTimeout(focusCanvas, 100)
+        }
+        window.addEventListener('blur', blurHandler)
+        cleanupFunctions.push(() => window.removeEventListener('blur', blurHandler))
+      }
+      
+      // Safari/Mac focus management
+      if (isSafari || isMac) {
+        window.addEventListener('load', focusCanvas)
+        cleanupFunctions.push(() => window.removeEventListener('load', focusCanvas))
+        
+        window.addEventListener('focus', focusCanvas)
+        cleanupFunctions.push(() => window.removeEventListener('focus', focusCanvas))
+        
+        const visibilityHandler = () => {
+          if (!document.hidden) {
+            focusCanvas()
+          }
+        }
+        document.addEventListener('visibilitychange', visibilityHandler)
+        cleanupFunctions.push(() => document.removeEventListener('visibilitychange', visibilityHandler))
+      }
     }
     
     // Add event listeners with multiple options for compatibility
@@ -188,19 +378,81 @@ export default function Plane({
       capture: false
     }
     
-    // Try both window and document for maximum compatibility
+    // Try multiple targets and phases for maximum compatibility
+    // Capture phase listeners (catch events early, before React DevTools can interfere)
+    window.addEventListener('keydown', down, { passive: false, capture: true })
+    window.addEventListener('keyup', up, { passive: false, capture: true })
+    document.addEventListener('keydown', down, { passive: false, capture: true })
+    document.addEventListener('keyup', up, { passive: false, capture: true })
+    
+    // Bubble phase listeners (backup)
     window.addEventListener('keydown', down, options)
     window.addEventListener('keyup', up, options)
     document.addEventListener('keydown', down, options)
     document.addEventListener('keyup', up, options)
     
+    // Also attach to document.body as final fallback
+    if (document.body) {
+      document.body.addEventListener('keydown', down, { passive: false, capture: true })
+      document.body.addEventListener('keyup', up, { passive: false, capture: true })
+      cleanupFunctions.push(() => {
+        document.body.removeEventListener('keydown', down, { capture: true })
+        document.body.removeEventListener('keyup', up, { capture: true })
+      })
+    }
+    
+    // Mark listeners as active
+    listenersActive.current = true
+    
+    // Chrome-specific: Periodic focus check to ensure canvas stays focused
+    let focusCheckInterval: NodeJS.Timeout | null = null
+    if (isChrome && canvas) {
+      const focusCanvas = () => {
+        try {
+          if (canvas) {
+            canvas.focus()
+          }
+          window.focus()
+        } catch {
+          // Silently handle focus errors
+        }
+      }
+      
+      // Check focus every 2 seconds and restore if needed
+      focusCheckInterval = setInterval(() => {
+        if (document.activeElement !== canvas && listenersActive.current) {
+          focusCanvas()
+        }
+      }, 2000)
+    }
+    
     return () => {
+      listenersActive.current = false
+      // Restore original error handler
+      if (originalError) {
+        window.onerror = originalError
+      } else {
+        window.onerror = null
+      }
+      // Remove all event listeners (both capture and non-capture)
+      window.removeEventListener('keydown', down, { capture: true })
+      window.removeEventListener('keyup', up, { capture: true })
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
+      document.removeEventListener('keydown', down, { capture: true })
+      document.removeEventListener('keyup', up, { capture: true })
       document.removeEventListener('keydown', down)
       document.removeEventListener('keyup', up)
-      window.removeEventListener('load', ensureFocus)
-      window.removeEventListener('focus', ensureFocus)
+      if (document.body) {
+        document.body.removeEventListener('keydown', down, { capture: true })
+        document.body.removeEventListener('keyup', up, { capture: true })
+      }
+      // Run all cleanup functions
+      cleanupFunctions.forEach(cleanup => cleanup())
+      // Clear focus check interval
+      if (focusCheckInterval) {
+        clearInterval(focusCheckInterval)
+      }
     }
   }, [])
 
@@ -284,14 +536,25 @@ export default function Plane({
       speed.current -= dragFactor * speed.current * delta * 2
     } else {
       // Enhanced key detection with fallbacks for compatibility
-      const wPressed = keysPressed.current['KeyW'] || keysPressed.current['w'] || keysPressed.current['W']
-      const sPressed = keysPressed.current['KeyS'] || keysPressed.current['s'] || keysPressed.current['S']
-      const aPressed = keysPressed.current['KeyA'] || keysPressed.current['a'] || keysPressed.current['A']
-      const dPressed = keysPressed.current['KeyD'] || keysPressed.current['d'] || keysPressed.current['D']
+      // Check all possible key formats to ensure we catch the key
+      const wPressed = keysPressed.current['KeyW'] || 
+                       keysPressed.current['w'] || 
+                       keysPressed.current['W'] ||
+                       keysPressed.current['keyw'] ||
+                       keysPressed.current['KEYW']
+      const sPressed = keysPressed.current['KeyS'] || 
+                       keysPressed.current['s'] || 
+                       keysPressed.current['S'] ||
+                       keysPressed.current['keys'] ||
+                       keysPressed.current['KEYS']
       
       if (wPressed) {
         isThrottling = true
         speed.current += acceleration * delta
+        // Ensure speed increases even if drag is strong
+        if (speed.current < 0.5) {
+          speed.current = Math.max(speed.current, 0.5) // Minimum speed when throttling
+        }
       }
       if (sPressed) {
         speed.current -= acceleration * delta
@@ -454,7 +717,7 @@ export default function Plane({
     group.current.position.copy(position.current)
     group.current.setRotationFromQuaternion(orientation.current)
 
-    // Update planeRef for camera
+    // Update planeRef for camera - ensure it's always set
     if (planeRef.current) {
       planeRef.current.position.copy(position.current)
       planeRef.current.quaternion.copy(orientation.current)
@@ -463,10 +726,26 @@ export default function Plane({
       planeRef.current.userData.forward = cameraForward
       planeRef.current.userData.up = newSurfaceNormal
       planeRef.current.userData.speed = speed.current
+      planeRef.current.userData.dropInProgress = dropInProgress.current
+    } else {
+      // Initialize planeRef if it doesn't exist
+      if (group.current && planeRef) {
+        planeRef.current = group.current
+      }
     }
   })
+
+  // Error boundary for GLTF loading
+  if (!scene) {
+    return null
+  }
 
   return <primitive ref={group} object={scene} scale={1.1} />
 }
 
-useGLTF.preload('/models/newPlane.glb')
+// Preload plane model with error handling
+try {
+  useGLTF.preload('/models/newPlane.glb')
+} catch {
+  // Silently handle preload errors
+}

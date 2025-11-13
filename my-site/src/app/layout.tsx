@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import DevToolsErrorBoundary from "./components/DevToolsErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,15 +45,89 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // CRITICAL: Suppress React DevTools errors BEFORE React initializes
+              // This must run as early as possible
+              (function() {
+                // Suppress console errors from React DevTools
+                const originalConsoleError = console.error;
+                console.error = function(...args) {
+                  const message = args.join(' ');
+                  if (
+                    typeof message === 'string' && (
+                      message.includes('semver') || 
+                      message.includes('react_devtools') ||
+                      message.includes('Invalid argument not valid semver') ||
+                      message.includes('not valid semver') ||
+                      message.includes('chrome-extension://fmkadmapgofadopljbjfkapdkoienihi')
+                    )
+                  ) {
+                    // Silently suppress React DevTools errors
+                    return;
+                  }
+                  // Let other errors through
+                  originalConsoleError.apply(console, args);
+                };
+                
+                // Override window.onerror
+                const originalError = window.onerror;
+                window.onerror = function(message, source, lineno, colno, error) {
+                  if (typeof message === 'string' && (
+                    message.includes('semver') || 
+                    message.includes('react_devtools') ||
+                    message.includes('Invalid argument not valid semver') ||
+                    message.includes('not valid semver') ||
+                    message.includes('chrome-extension://fmkadmapgofadopljbjfkapdkoienihi')
+                  )) {
+                    // Suppress React DevTools semver errors
+                    return true;
+                  }
+                  // Let other errors through
+                  if (originalError) {
+                    return originalError(message, source, lineno, colno, error);
+                  }
+                  return false;
+                };
+                
+                // Catch errors via error event (capture phase)
+                window.addEventListener('error', function(event) {
+                  const errorMessage = event.message || event.filename || '';
+                  if (
+                    errorMessage.includes('semver') || 
+                    errorMessage.includes('react_devtools') ||
+                    errorMessage.includes('Invalid argument not valid semver') ||
+                    errorMessage.includes('chrome-extension://fmkadmapgofadopljbjfkapdkoienihi')
+                  ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                    return false;
+                  }
+                }, true);
+                
+                // Catch unhandled promise rejections from React DevTools
+                window.addEventListener('unhandledrejection', function(event) {
+                  if (event.reason) {
+                    const message = typeof event.reason === 'string' 
+                      ? event.reason 
+                      : (event.reason.message || String(event.reason));
+                    if (
+                      message.includes('semver') || 
+                      message.includes('react_devtools') ||
+                      message.includes('chrome-extension://fmkadmapgofadopljbjfkapdkoienihi')
+                    ) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      return false;
+                    }
+                  }
+                });
+              })();
+              
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('SW registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                      console.log('SW registration failed: ', registrationError);
-                    });
+                    .then(function() {})
+                    .catch(function() {});
                 });
               }
             `,
@@ -63,7 +138,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} antialiased`}
         suppressHydrationWarning
       >
-        {children}
+        <DevToolsErrorBoundary>
+          {children}
+        </DevToolsErrorBoundary>
         {/* Global dim overlay (non-interactive) */}
         <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[9999] bg-black/5" />
       </body>

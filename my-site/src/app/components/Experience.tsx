@@ -118,8 +118,8 @@ export default function Experience() {
   const [bypassMobileLanding, setBypassMobileLanding] = useState(false)
   const [worldSlidingIn, setWorldSlidingIn] = useState(false)
   
-  // Track visited landmarks
-  const [visitedLandmarks, setVisitedLandmarks] = useState<Set<string>>(new Set())
+  // Track visited landmarks (currently not displayed but kept for future use)
+  const [, setVisitedLandmarks] = useState<Set<string>>(new Set())
   
   // Detect browser zoom level
   const zoomLevel = useZoomLevel()
@@ -147,11 +147,6 @@ export default function Experience() {
     }
   }, [currentLandmark])
 
-  const handleClosePrompt = useCallback(() => {
-    setShowSpacebarPrompt(null)
-    setCurrentLandmark(null)
-  }, [])
-
   const handleClosePopup = useCallback(() => {
     setShowPopup(null)
   }, [])
@@ -169,43 +164,97 @@ export default function Experience() {
     // After slide animation completes, hide intro and show world
     setTimeout(() => {
       setShowIntro(false)
+      // Ensure worldSlidingIn is set so world is visible
+      setWorldSlidingIn(true)
       
-      // Enhanced focus management for keyboard events (critical for Mac/Safari)
+      // Enhanced focus management for keyboard events (critical for Chrome and Safari)
       if (typeof window !== 'undefined') {
-        // Focus the window
+        const isChrome = /Chrome/.test(navigator.userAgent) && 
+                         !/Edg/.test(navigator.userAgent) && 
+                         !/OPR/.test(navigator.userAgent)
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+        
+        // Focus the window first
         window.focus()
         
         // Focus the canvas element for keyboard events
-        const canvas = document.querySelector('canvas')
-        if (canvas) {
-          canvas.setAttribute('tabindex', '0')
-          canvas.style.outline = 'none'
-          canvas.focus()
+        const focusCanvas = () => {
+          const canvas = document.querySelector('canvas')
+          if (canvas) {
+            canvas.setAttribute('tabindex', '0')
+            canvas.style.outline = 'none'
+            canvas.style.cursor = 'default'
+            canvas.focus()
+          }
+        }
+        
+        // Immediate focus
+        focusCanvas()
+        
+        // Chrome needs more aggressive focus management
+        if (isChrome) {
+          // Multiple attempts to ensure focus
+          setTimeout(focusCanvas, 100)
+          setTimeout(focusCanvas, 300)
+          setTimeout(focusCanvas, 600)
+          setTimeout(focusCanvas, 1000)
           
-          // Also click to ensure focus (some browsers need this)
+          // Also click to ensure focus (Chrome sometimes needs this)
           setTimeout(() => {
-            canvas.click()
-          }, 100)
+            const canvas = document.querySelector('canvas')
+            if (canvas) {
+              canvas.click()
+              focusCanvas()
+            }
+          }, 200)
+        }
+        
+        // Safari/Mac focus fix
+        if (isSafari || isMac) {
+          setTimeout(() => {
+            focusCanvas()
+            window.focus()
+          }, 200)
         }
         
         // Also ensure the document has focus
         if (document.body) {
           document.body.focus()
         }
-        
-        // Additional Safari/Mac focus fix
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-        if (isSafari || isMac) {
-          // Force focus after a short delay for Safari
-          setTimeout(() => {
-            if (canvas) canvas.focus()
-            window.focus()
-          }, 200)
-        }
       }
     }, 1600) // Slightly after the 1.5s slide animation
   }
+  
+  // Fallback: If intro is dismissed but worldSlidingIn never triggered, ensure world is visible
+  useEffect(() => {
+    if (!showIntro && !worldSlidingIn) {
+      // Intro was dismissed but transition never happened - show world immediately
+      setWorldSlidingIn(true)
+    }
+  }, [showIntro, worldSlidingIn])
+  
+  // Chrome-specific: Restore focus after zoom operations
+  useEffect(() => {
+    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
+    if (!isChrome) return
+    
+    const handleWheel = (e: WheelEvent) => {
+      // If Ctrl+wheel (zoom), restore focus after a delay
+      if (e.ctrlKey || e.metaKey) {
+        setTimeout(() => {
+          const canvas = document.querySelector('canvas')
+          if (canvas) {
+            canvas.focus()
+            window.focus()
+          }
+        }, 100)
+      }
+    }
+    
+    window.addEventListener('wheel', handleWheel, { passive: true })
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [])
 
   
   return (
@@ -217,63 +266,41 @@ export default function Experience() {
           position: 'fixed',
           inset: 0,
           zIndex: showIntro && !worldSlidingIn ? 30 : 40,
-          opacity: worldSlidingIn ? 1 : (showIntro ? 0 : 1),
-          transform: worldSlidingIn ? 'translateX(0)' : (showIntro ? 'translateX(100%)' : 'translateX(0)'),
+          // Fix: Ensure world is visible when intro is gone, even if worldSlidingIn never triggered
+          opacity: (!showIntro || worldSlidingIn) ? 1 : 0,
+          transform: (!showIntro || worldSlidingIn) ? 'translateX(0)' : 'translateX(100%)',
           transition: worldSlidingIn 
             ? 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s cubic-bezier(0.4, 0, 0.6, 1)'
-            : 'none',
+            : (!showIntro ? 'transform 0.3s ease-out, opacity 0.3s ease-out' : 'none'),
           willChange: worldSlidingIn ? 'transform, opacity' : 'auto',
         }}
       >
       <Canvas 
         camera={{ 
-          position: [0, 5, 10], 
+          position: [0, 20, 60], // Start further back and higher to see more of the globe
           fov: 50 // Keep camera FOV fixed at 50
         }}
         style={{ 
           background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6)',
           width: '100vw',
-          height: '100vh',
-          outline: 'none'
+          height: '100vh'
         }}
-        tabIndex={0}
         shadows
         gl={{
           antialias: true,
           alpha: false,
           powerPreference: "high-performance",
           failIfMajorPerformanceCaveat: false,
-          preserveDrawingBuffer: false,
-          // Enhanced compatibility for newer MacBooks
-          stencil: false,
-          depth: true,
-          logarithmicDepthBuffer: false
+          preserveDrawingBuffer: false
         }}
         onCreated={({ gl }) => {
           const context = gl.getContext() as WebGLRenderingContext
           if (context) {
             // WebGL context created successfully
-            // Ensure canvas can receive focus for keyboard events
-            const canvas = gl.domElement
-            if (canvas) {
-              canvas.setAttribute('tabindex', '0')
-              canvas.style.outline = 'none'
-              // Focus canvas after creation (helps with Mac/Safari)
-              setTimeout(() => {
-                canvas.focus()
-              }, 100)
-            }
           }
         }}
-        onError={(error) => {
-          console.error('Canvas error:', error)
-        }}
-        onClick={() => {
-          // Ensure focus when clicking on canvas (important for Mac/Safari)
-          const canvas = document.querySelector('canvas')
-          if (canvas) {
-            canvas.focus()
-          }
+        onError={() => {
+          // Canvas error occurred
         }}
       >
         {/* Balanced neutral lighting - split the difference */}
@@ -327,7 +354,6 @@ export default function Experience() {
       {/* Spacebar prompt - always visible when near a landmark */}
       <LocationPrompt 
         landmark={showSpacebarPrompt}
-        onClose={handleClosePrompt}
         onSpacePressed={handleSpacebarPressed}
       />
       

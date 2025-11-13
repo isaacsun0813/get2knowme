@@ -227,20 +227,6 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     transition={{ duration: 0.6, delay: 0.3 }}
                   />
 
-                  {/* Warm microtext */}
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isOpen ? 1 : 0 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                    className="mt-6 text-base sm:text-lg flex items-center justify-center"
-                    style={{
-                      color: 'rgba(15,23,42,0.75)',
-                      fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
-                      fontWeight: '400'
-                    }}
-                  >
-                    Things I&apos;m chasing on this journey
-                  </motion.p>
                 </motion.div>
 
                 {/* Stacked Floating Panels */}
@@ -513,7 +499,6 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                               <IconComponent 
                                 size={24} 
                                 className="text-blue-500 flex-shrink-0"
-                                style={{ filter: 'drop-shadow(0 2px 4px rgba(37,99,235,0.2))' }}
                               />
                             )}
                             <span 
