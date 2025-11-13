@@ -102,26 +102,105 @@ export default function Plane({
     }
   }, [actions])
 
-  // Keyboard handlers with cross-browser compatibility
+  // Keyboard handlers with enhanced cross-browser compatibility
   useEffect(() => {
-    const down = (e: KeyboardEvent) => { 
-      // Prevent default for flight controls to avoid page scrolling
-      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-        e.preventDefault()
-      }
-      keysPressed.current[e.code] = true
-    }
-    const up = (e: KeyboardEvent) => { 
-      keysPressed.current[e.code] = false 
+    // Browser detection for compatibility fixes
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+    
+    // Key code mapping for fallback support
+    const keyCodeMap: Record<string, string> = {
+      'w': 'KeyW', 'W': 'KeyW',
+      'a': 'KeyA', 'A': 'KeyA',
+      's': 'KeyS', 'S': 'KeyS',
+      'd': 'KeyD', 'D': 'KeyD',
+      'ArrowUp': 'ArrowUp',
+      'ArrowDown': 'ArrowDown',
+      'ArrowLeft': 'ArrowLeft',
+      'ArrowRight': 'ArrowRight'
     }
     
-    // Add event listeners with passive: false for preventDefault to work
-    window.addEventListener('keydown', down, { passive: false })
-    window.addEventListener('keyup', up, { passive: false })
+    const down = (e: KeyboardEvent) => {
+      // Use code if available, fallback to key mapping
+      const code = e.code || keyCodeMap[e.key] || ''
+      
+      // Prevent default for flight controls to avoid page scrolling
+      const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+      if (controlKeys.includes(code)) {
+        e.preventDefault()
+        e.stopPropagation()
+        keysPressed.current[code] = true
+        
+        // Also handle by key for maximum compatibility
+        if (e.key && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(e.key)) {
+          const mappedCode = keyCodeMap[e.key]
+          if (mappedCode) {
+            keysPressed.current[mappedCode] = true
+          }
+        }
+      }
+    }
+    
+    const up = (e: KeyboardEvent) => {
+      const code = e.code || keyCodeMap[e.key] || ''
+      const controlKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+      
+      if (controlKeys.includes(code)) {
+        e.preventDefault()
+        e.stopPropagation()
+        keysPressed.current[code] = false
+        
+        // Also handle by key for maximum compatibility
+        if (e.key && ['w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(e.key)) {
+          const mappedCode = keyCodeMap[e.key]
+          if (mappedCode) {
+            keysPressed.current[mappedCode] = false
+          }
+        }
+      }
+    }
+    
+    // Ensure window has focus for keyboard events (especially important for Safari/Mac)
+    const ensureFocus = () => {
+      if (document.activeElement?.tagName === 'BODY' || !document.activeElement) {
+        window.focus()
+      }
+    }
+    
+    // Focus management for Mac/Safari
+    if (isMac || isSafari) {
+      // Click on canvas area to ensure focus
+      const canvas = document.querySelector('canvas')
+      if (canvas) {
+        canvas.setAttribute('tabindex', '0')
+        canvas.style.outline = 'none'
+        canvas.addEventListener('click', ensureFocus, { once: true })
+      }
+      
+      // Also ensure focus on window load
+      window.addEventListener('load', ensureFocus)
+      window.addEventListener('focus', ensureFocus)
+    }
+    
+    // Add event listeners with multiple options for compatibility
+    const options: AddEventListenerOptions = { 
+      passive: false,
+      capture: false
+    }
+    
+    // Try both window and document for maximum compatibility
+    window.addEventListener('keydown', down, options)
+    window.addEventListener('keyup', up, options)
+    document.addEventListener('keydown', down, options)
+    document.addEventListener('keyup', up, options)
     
     return () => {
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
+      document.removeEventListener('keydown', down)
+      document.removeEventListener('keyup', up)
+      window.removeEventListener('load', ensureFocus)
+      window.removeEventListener('focus', ensureFocus)
     }
   }, [])
 
@@ -204,11 +283,17 @@ export default function Plane({
       // Apply stronger drag to gradually slow down the plane
       speed.current -= dragFactor * speed.current * delta * 2
     } else {
-      if (keysPressed.current['KeyW']) {
+      // Enhanced key detection with fallbacks for compatibility
+      const wPressed = keysPressed.current['KeyW'] || keysPressed.current['w'] || keysPressed.current['W']
+      const sPressed = keysPressed.current['KeyS'] || keysPressed.current['s'] || keysPressed.current['S']
+      const aPressed = keysPressed.current['KeyA'] || keysPressed.current['a'] || keysPressed.current['A']
+      const dPressed = keysPressed.current['KeyD'] || keysPressed.current['d'] || keysPressed.current['D']
+      
+      if (wPressed) {
         isThrottling = true
         speed.current += acceleration * delta
       }
-      if (keysPressed.current['KeyS']) {
+      if (sPressed) {
         speed.current -= acceleration * delta
       }
 
@@ -257,14 +342,20 @@ export default function Plane({
 
     // Only apply rotations if controls are not disabled
     if (!controlsDisabled) {
+      // Enhanced key detection with fallbacks for compatibility
+      const aPressed = keysPressed.current['KeyA'] || keysPressed.current['a'] || keysPressed.current['A'] || keysPressed.current['ArrowLeft']
+      const dPressed = keysPressed.current['KeyD'] || keysPressed.current['d'] || keysPressed.current['D'] || keysPressed.current['ArrowRight']
+      const upPressed = keysPressed.current['ArrowUp']
+      const downPressed = keysPressed.current['ArrowDown']
+      
       // Apply yaw (heading) rotations around surface normal WITH BANKING
-      if (keysPressed.current['KeyA'] || keysPressed.current['ArrowLeft']) {
+      if (aPressed) {
         const yawRotation = new THREE.Quaternion()
         yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
         orientation.current.premultiply(yawRotation)
         turnInput = 1 // Left turn
       }
-      if (keysPressed.current['KeyD'] || keysPressed.current['ArrowRight']) {
+      if (dPressed) {
         const yawRotation = new THREE.Quaternion()
         yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
         orientation.current.premultiply(yawRotation)
@@ -272,12 +363,12 @@ export default function Plane({
       }
 
       // Apply pitch rotations around current right vector
-      if (keysPressed.current['ArrowUp']) {
+      if (upPressed) {
         const pitchRotation = new THREE.Quaternion()
         pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
         orientation.current.multiply(pitchRotation)
       }
-      if (keysPressed.current['ArrowDown']) {
+      if (downPressed) {
         const pitchRotation = new THREE.Quaternion()
         pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
         orientation.current.multiply(pitchRotation)

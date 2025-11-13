@@ -170,14 +170,38 @@ export default function Experience() {
     setTimeout(() => {
       setShowIntro(false)
       
-      // Ensure the window is focused for keyboard events
+      // Enhanced focus management for keyboard events (critical for Mac/Safari)
       if (typeof window !== 'undefined') {
+        // Focus the window
         window.focus()
+        
+        // Focus the canvas element for keyboard events
+        const canvas = document.querySelector('canvas')
+        if (canvas) {
+          canvas.setAttribute('tabindex', '0')
+          canvas.style.outline = 'none'
+          canvas.focus()
+          
+          // Also click to ensure focus (some browsers need this)
+          setTimeout(() => {
+            canvas.click()
+          }, 100)
+        }
         
         // Also ensure the document has focus
         if (document.body) {
           document.body.focus()
-          document.body.click() // Some browsers need a click to enable keyboard events
+        }
+        
+        // Additional Safari/Mac focus fix
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+        if (isSafari || isMac) {
+          // Force focus after a short delay for Safari
+          setTimeout(() => {
+            if (canvas) canvas.focus()
+            window.focus()
+          }, 200)
         }
       }
     }, 1600) // Slightly after the 1.5s slide animation
@@ -209,24 +233,47 @@ export default function Experience() {
         style={{ 
           background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6)',
           width: '100vw',
-          height: '100vh'
+          height: '100vh',
+          outline: 'none'
         }}
+        tabIndex={0}
         shadows
         gl={{
           antialias: true,
           alpha: false,
           powerPreference: "high-performance",
           failIfMajorPerformanceCaveat: false,
-          preserveDrawingBuffer: false
+          preserveDrawingBuffer: false,
+          // Enhanced compatibility for newer MacBooks
+          stencil: false,
+          depth: true,
+          logarithmicDepthBuffer: false
         }}
         onCreated={({ gl }) => {
           const context = gl.getContext() as WebGLRenderingContext
           if (context) {
             // WebGL context created successfully
+            // Ensure canvas can receive focus for keyboard events
+            const canvas = gl.domElement
+            if (canvas) {
+              canvas.setAttribute('tabindex', '0')
+              canvas.style.outline = 'none'
+              // Focus canvas after creation (helps with Mac/Safari)
+              setTimeout(() => {
+                canvas.focus()
+              }, 100)
+            }
           }
         }}
-        onError={() => {
-          // Canvas error occurred
+        onError={(error) => {
+          console.error('Canvas error:', error)
+        }}
+        onClick={() => {
+          // Ensure focus when clicking on canvas (important for Mac/Safari)
+          const canvas = document.querySelector('canvas')
+          if (canvas) {
+            canvas.focus()
+          }
         }}
       >
         {/* Balanced neutral lighting - split the difference */}
