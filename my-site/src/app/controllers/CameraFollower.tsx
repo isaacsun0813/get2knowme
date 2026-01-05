@@ -201,7 +201,6 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     
     // ORBITAL VIEW: Position camera to see Earth and plane nicely
     const earthCenter = new THREE.Vector3(0, 0, 0)
-    const earthRadius = 25
     
     // Check if plane is dropping in - start zoomed in, then zoom out
     const dropInProgress = (target.userData.dropInProgress as number) ?? 1
