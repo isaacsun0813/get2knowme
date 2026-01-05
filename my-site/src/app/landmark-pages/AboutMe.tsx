@@ -376,7 +376,6 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                         letterSpacing: '0.01em'
                       }}
                     >
-                      SWE / Climate Advocate
                     </motion.p>
                   </div>
                 </motion.div>

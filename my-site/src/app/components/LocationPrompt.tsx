@@ -399,7 +399,7 @@ export default function LocationPrompt({
                           ${isPressed ? 'scale-95' : 'scale-100'}
                         `}
                         style={{
-                          background: `linear-gradient(135deg, ${styling.accent}, ${styling.accent}dd)`,
+                          background: styling.accent,
                           color: 'white',
                           fontFamily: 'JetBrains Mono, monospace',
                           boxShadow: `0 4px 16px ${styling.accent}40`
@@ -407,39 +407,13 @@ export default function LocationPrompt({
                         animate={{
                           boxShadow: isPressed
                             ? `0 2px 8px ${styling.accent}40`
-                            : `0 4px 16px ${styling.accent}40, 0 0 0 0 ${styling.accent}40`
+                            : `0 4px 16px ${styling.accent}40`
                         }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                       >
-                        <span className="relative z-10">SPACE</span>
-                        {/* Shimmer effect */}
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                          animate={{
-                            x: ['-100%', '100%']
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: 'linear'
-                          }}
-                        />
-                        {/* Pulse ring */}
-                        <motion.div
-                          className="absolute inset-0 rounded-lg border-2"
-                          style={{ borderColor: styling.accent }}
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.6, 0, 0.6]
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: 'easeInOut'
-                          }}
-                        />
+                        <span>SPACE</span>
                       </motion.kbd>
                       <span 
                         className="text-xs font-medium"
