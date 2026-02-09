@@ -15,7 +15,8 @@ import MobileControls from './MobileControls'
 import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
-import BackgroundMusic from './BackgroundMusic'
+// import BackgroundMusic from './BackgroundMusic'
+import PlaneMotorSound from './PlaneMotorSound'
 import ImagePreloader from './ImagePreloader'
 import WebGLErrorBoundary from './WebGLErrorBoundary'
 
@@ -264,7 +265,12 @@ export default function Experience() {
         className={`${showIntro && !worldSlidingIn ? 'pointer-events-none' : ''}`}
         style={{
           position: 'fixed',
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          margin: 0,
+          padding: 0,
           zIndex: showIntro && !worldSlidingIn ? 30 : 40,
           // Fix: Ensure world is visible when intro is gone, even if worldSlidingIn never triggered
           opacity: (!showIntro || worldSlidingIn) ? 1 : 0,
@@ -273,6 +279,7 @@ export default function Experience() {
             ? 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s cubic-bezier(0.4, 0, 0.6, 1)'
             : (!showIntro ? 'transform 0.3s ease-out, opacity 0.3s ease-out' : 'none'),
           willChange: worldSlidingIn ? 'transform, opacity' : 'auto',
+          overflow: 'hidden'
         }}
       >
       <Canvas 
@@ -281,14 +288,14 @@ export default function Experience() {
           fov: 50 // Keep camera FOV fixed at 50
         }}
         style={{ 
-          background: 'linear-gradient(to bottom, #87CEEB, #B0E0E6)',
           width: '100vw',
-          height: '100vh'
+          height: '100vh',
+          display: 'block'
         }}
         shadows
         gl={{
           antialias: true,
-          alpha: false,
+          alpha: true,
           powerPreference: "high-performance",
           failIfMajorPerformanceCaveat: false,
           preserveDrawingBuffer: false
@@ -349,7 +356,10 @@ export default function Experience() {
       <MobileControls disabled={!!showPopup} />
       
       {/* Background Music - part of world entrance animation */}
-      <BackgroundMusic isInWorld={!showIntro} />
+      {/* <BackgroundMusic isInWorld={!showIntro} /> */}
+      
+      {/* Plane Motor Sound - plays when plane is flying */}
+      <PlaneMotorSound planeRef={planeRef} isInWorld={!showIntro} />
       
       {/* Spacebar prompt - always visible when near a landmark */}
       <LocationPrompt 

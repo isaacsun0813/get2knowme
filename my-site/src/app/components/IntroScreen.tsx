@@ -509,6 +509,7 @@ export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
               style={{
                 fontFamily: 'var(--font-plus-jakarta-sans)',
                 transformOrigin: 'center',
+                textShadow: '2px 2px 8px rgba(0,0,0,0.3), 0px 0px 12px rgba(255,255,255,0.5), -1px -1px 4px rgba(255,255,255,0.3)',
               }}
               animate={{
                 opacity: [0.9, 1, 0.9],
@@ -534,7 +535,7 @@ export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
                   borderRadius: '50px',
                   color: '#1a1a1a',
                   cursor: 'pointer',
-                  boxShadow: 'none',
+                  boxShadow: '2px 2px 8px rgba(0,0,0,0.3), 0px 0px 12px rgba(255,255,255,0.5), -1px -1px 4px rgba(255,255,255,0.3)',
                   fontFamily: 'var(--font-plus-jakarta-sans)',
                 }}
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}

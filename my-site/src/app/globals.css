@@ -34,7 +34,115 @@
   --font-geist-sans: 'Geist Sans', system-ui, sans-serif;
   --font-geist-mono: 'Geist Mono', monospace;
   --font-plus-jakarta-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  
+  /* RESPONSIVE SIZING - Adjust these to scale UI globally */
+  /* Base unit - increase/decrease to make everything bigger/smaller */
+  --base-unit: clamp(0.75rem, 0.5vw + 0.5rem, 1rem);
+  
+  /* Landmark Modal Sizing */
+  --modal-max-width: clamp(320px, 85vw, 1400px);
+  --modal-padding: clamp(1.5rem, 3vw, 3rem);
+  --modal-content-gap: clamp(1rem, 2vw, 2rem);
+  
+  /* Project Card Sizing */
+  --card-padding: clamp(1.25rem, 2vw, 2rem);
+  --card-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  --card-border-radius: clamp(1rem, 1.5vw, 1.5rem);
+  
+  /* Typography Scaling */
+  --text-xs: clamp(0.625rem, 0.7vw, 0.75rem);
+  --text-sm: clamp(0.75rem, 0.85vw, 0.875rem);
+  --text-base: clamp(0.875rem, 1vw, 1rem);
+  --text-lg: clamp(1rem, 1.2vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 1.4vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 1.6vw, 1.5rem);
+  --text-3xl: clamp(1.5rem, 2vw, 1.875rem);
+  --text-4xl: clamp(1.875rem, 2.5vw, 2.25rem);
+  --text-5xl: clamp(2.25rem, 3vw, 3rem);
+  
+  /* Component Sizing - ADJUST THESE FOR DIFFERENT SCREEN SIZES */
+  /* Flight controls (bottom left) - scaled smaller for compact screens */
+  --flight-controls-width: clamp(6.5rem, 10vw, 8.5rem);
+  --flight-controls-padding: clamp(0.5rem, 0.8vw, 0.7rem);
+  --flight-controls-gap: clamp(0.3rem, 0.4vw, 0.4rem);
+  --flight-controls-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+  --flight-controls-left: clamp(0.75rem, 1.5vw, 1.25rem);
+  
+  /* Music player (bottom right) - scaled smaller for compact screens */
+  --music-controls-width: clamp(8.5rem, 11vw, 10.5rem);
+  --music-controls-padding: clamp(0.5rem, 0.75vw, 0.7rem);
+  --music-controls-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+  --music-controls-right: clamp(0.75rem, 1.5vw, 1.25rem);
+  
+  /* Boarding pass (center bottom) - maintains aspect ratio, properly centered */
+  --boarding-pass-width: clamp(12rem, 18vw, 20rem);
+  --boarding-pass-max-width: 20rem; /* Prevent it from getting too wide */
+  --boarding-pass-padding: clamp(0.5rem, 0.75vw, 0.875rem);
+  --boarding-pass-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+  
+  /* Camera zoom - base multiplier for reference screen (1920×1080) */
+  /* The system automatically scales this for different screen sizes */
+  /* Lower value = camera closer (Earth bigger) */
+  /* Higher value = camera farther (Earth smaller) */
+  --camera-distance-multiplier: 1.2; /* Base multiplier - adjust to fine-tune overall zoom */
+  
+  /* Responsive scaling parameters - adjust these to tune width/height sensitivity */
+  --camera-width-power: 0.4; /* How much width affects zoom (0.2-0.6 recommended) */
+  --camera-height-power: 0.5; /* How much height affects zoom (0.3-0.7 recommended) */
+  --camera-width-sensitivity: 1.0; /* Overall width scaling strength (0.5-1.5) */
+  --camera-height-sensitivity: 1.0; /* Overall height scaling strength (0.5-1.5) */
 }
+
+/* Tablet breakpoint - adjust scale slightly */
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root {
+    --base-unit: clamp(0.8rem, 0.6vw + 0.5rem, 1.1rem);
+  }
+}
+
+/* Desktop breakpoint */
+@media (min-width: 1024px) and (max-width: 1920px) {
+  :root {
+    --base-unit: clamp(0.85rem, 0.55vw + 0.6rem, 1.2rem);
+  }
+}
+
+/* Ultrawide breakpoint - adjust for very wide screens like 3440×1440 */
+@media (min-width: 1920px) {
+  :root {
+    --modal-max-width: 1600px;
+    --flight-controls-size: 12rem;
+    --music-controls-size: 17rem;
+  }
+}
+
+/* Very ultrawide screens (21:9 and wider) - make banners 4% smaller */
+@media (min-width: 2560px) and (min-aspect-ratio: 21/9) {
+  :root {
+    --flight-controls-width: clamp(6.24rem, 9.6vw, 8.16rem); /* 4% smaller */
+    --music-controls-width: clamp(8.16rem, 10.56vw, 10.08rem); /* 4% smaller */
+    --boarding-pass-width: clamp(11.52rem, 17.28vw, 19.2rem); /* 4% smaller */
+    --boarding-pass-max-width: 19.2rem; /* 4% smaller */
+  }
+}
+
+/* Aspect ratio adjustments - for very wide or very tall screens */
+@media (min-aspect-ratio: 21/9) {
+  /* Ultra-wide monitors */
+  :root {
+    --modal-max-width: 1200px;
+    --boarding-pass-width: 22rem;
+  }
+}
+
+@media (max-aspect-ratio: 9/16) {
+  /* Very tall screens (mobile portrait) */
+  :root {
+    --modal-padding: 1.25rem;
+    --card-padding: 1rem;
+  }
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -43,7 +151,21 @@
   }
 }
 
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;

@@ -21,17 +21,20 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
     setIsClient(true)
     
     const checkMobile = () => {
-      // More comprehensive mobile detection
+      // Only show on ACTUAL mobile devices, not just small windows
       const userAgent = navigator.userAgent.toLowerCase()
       const isMobileUserAgent = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent)
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-      const isSmallScreen = window.innerWidth <= 768
       const isIOS = /iphone|ipad|ipod/.test(userAgent)
       
-      // More aggressive mobile detection
-      const shouldShow = isSmallScreen || isMobileUserAgent || isIOS || isTouchDevice
+      // Check for touch device, but be more strict:
+      // - Must have touch capability AND be a mobile user agent
+      // - OR be iOS (which is always mobile)
+      // - Don't rely on window size alone (desktop can resize)
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
       
-      // Mobile detection completed
+      // Only show if it's actually a mobile device, not just a small desktop window
+      // Require BOTH touch capability AND mobile user agent (unless iOS)
+      const shouldShow = isIOS || (isMobileUserAgent && hasTouch)
       
       setIsMobile(shouldShow)
     }
@@ -52,11 +55,8 @@ export default function MobileControls({ disabled = false }: MobileControlsProps
   // Don't render anything during SSR or until client-side hydration is complete
   if (!isClient) return null
 
-  // Force show on very small screens as backup
-  const forceShowOnSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 480
-
-  // Don't render on desktop
-  if (!isMobile && !forceShowOnSmallScreen) {
+  // Only render on actual mobile devices, not desktop windows
+  if (!isMobile) {
     return null
   }
 

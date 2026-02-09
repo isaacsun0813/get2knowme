@@ -24,13 +24,16 @@ export default function FlightControls() {
     setIsClient(true)
     
     const checkMobile = () => {
+      // Only hide on ACTUAL mobile devices, not small desktop windows
       const userAgent = navigator.userAgent.toLowerCase()
       const isMobileUserAgent = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent)
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-      const isSmallScreen = window.innerWidth <= 768
       const isIOS = /iphone|ipad|ipod/.test(userAgent)
       
-      const shouldHide = isSmallScreen || isMobileUserAgent || isIOS || isTouchDevice
+      // Check for touch device, but require mobile user agent (unless iOS)
+      // Don't rely on window size - desktop windows can be resized
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const shouldHide = isIOS || (isMobileUserAgent && hasTouch)
+      
       setIsMobile(shouldHide)
     }
 
@@ -78,13 +81,19 @@ export default function FlightControls() {
   }, [])
 
   if (!isClient) return null
-  if (isMobile || (typeof window !== 'undefined' && window.innerWidth <= 480)) {
+  // Only hide on actual mobile devices, not small desktop windows
+  if (isMobile) {
     return null
   }
 
   return (
       <motion.div
-        className="fixed bottom-6 left-6 z-30"
+        className="fixed z-30"
+        style={{
+          bottom: 'var(--flight-controls-bottom)',
+          left: 'var(--flight-controls-left)',
+          width: 'var(--flight-controls-width)'
+        }}
         initial={{ opacity: 0, x: -20, scale: 0.9 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ 
@@ -114,14 +123,20 @@ export default function FlightControls() {
           />
           
           {/* Main container */}
-          <div className="relative bg-white/75 backdrop-blur-xl rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40">
+          <div 
+            className="relative bg-white/75 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40"
+            style={{
+              padding: 'var(--flight-controls-padding)',
+              minWidth: 'fit-content'
+            }}
+          >
             {/* Inner glow */}
             <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
             
             {/* Title */}
-            <div className="relative mb-3">
+            <div className="relative mb-2.5">
               <h3 
-                className="text-[10px] font-semibold uppercase tracking-[0.2em] text-center"
+                className="text-[10px] font-semibold uppercase tracking-[0.2em] text-center whitespace-nowrap"
                 style={{
                   fontFamily: 'Inter, system-ui, sans-serif',
                   color: '#374151',
@@ -135,7 +150,14 @@ export default function FlightControls() {
             </div>
 
             {/* Control keys */}
-            <div className="space-y-2">
+            <div 
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 'var(--flight-controls-gap)',
+                alignItems: 'stretch'
+              }}
+            >
               {controls.map((control, index) => {
                 const isPressed = pressedKeys.has(control.key)
                 
@@ -155,8 +177,8 @@ export default function FlightControls() {
                     {/* 3D Soft Key Button */}
                     <motion.div
                       className={`
-                        relative flex items-center gap-2.5
-                        px-3 py-2
+                        relative flex items-center gap-2
+                        px-2.5 py-1.5
                         rounded-lg
                         cursor-default
                         transition-all duration-200
@@ -187,11 +209,12 @@ export default function FlightControls() {
                       <motion.div
                         className={`
                           relative flex items-center justify-center
-                          w-8 h-8
-                          rounded-lg
+                          w-7 h-7
+                          rounded-md
                           font-bold
-                          text-xs
+                          text-[10px]
                           tabular-nums
+                          flex-shrink-0
                           ${isPressed
                             ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg'
                             : 'bg-gradient-to-br from-gray-700 to-gray-600 text-white shadow-md'
@@ -219,11 +242,11 @@ export default function FlightControls() {
 
                       {/* Label */}
                       <span 
-                        className="text-xs font-medium"
+                        className="text-[11px] font-medium whitespace-nowrap"
                         style={{
                           fontFamily: 'Inter, system-ui, sans-serif',
                           color: isPressed ? '#1e40af' : '#4b5563',
-                          letterSpacing: '0.05em'
+                          letterSpacing: '0.03em'
                         }}
                       >
                         {control.label}

@@ -19,12 +19,15 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
 
   useEffect(() => {
     const checkMobile = () => {
+      // Only hide on ACTUAL mobile devices, not small desktop windows
       const userAgent = navigator.userAgent.toLowerCase()
       const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent)
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-      const isSmallScreen = window.innerWidth <= 768
+      const isIOS = /iphone|ipad|ipod/.test(userAgent)
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
       
-      const isTrulyMobile = isMobileDevice || (isTouchDevice && isSmallScreen && window.innerWidth <= 480)
+      // Only consider it mobile if it's actually a mobile device
+      // Require mobile user agent AND touch (unless iOS)
+      const isTrulyMobile = isIOS || (isMobileDevice && hasTouch)
       return isTrulyMobile
     }
     
@@ -124,7 +127,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
       />
       
       <motion.div
-        className="fixed bottom-6 right-6 z-30"
+        className="fixed z-30"
+        style={{
+          bottom: 'var(--music-controls-bottom)',
+          right: 'var(--music-controls-right)',
+          width: 'var(--music-controls-width)'
+        }}
         initial={{ opacity: 0, x: 20, scale: 0.9 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ 
@@ -137,7 +145,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Cassette Tape Design */}
-        <div className="relative bg-white/75 backdrop-blur-xl rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40 min-w-[200px]">
+        <div 
+          className="relative bg-white/75 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/40"
+          style={{
+            padding: 'var(--music-controls-padding)'
+          }}
+        >
           {/* Inner glow */}
           <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
           

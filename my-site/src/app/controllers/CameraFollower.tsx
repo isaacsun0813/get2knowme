@@ -10,82 +10,28 @@ interface CameraFollowerProps {
 }
 
 // ============================================================================
-// CAMERA SCALING CONFIGURATION - ADJUST THESE VALUES TO TUNE FOR DIFFERENT SCREENS
+// SIMPLE CAMERA CONFIGURATION
 // ============================================================================
+// 
+// TO ADJUST ZOOM (Earth closer/farther):
+// 1. Open your browser DevTools (F12) and go to Elements tab
+// 2. Find the <html> element and add this inline style:
+//    style="--camera-distance-multiplier: 1.2"
+// 3. Adjust the value:
+//    - 1.0 = normal distance
+//    - 1.2 = 20% farther (Earth smaller)
+//    - 0.8 = 20% closer (Earth bigger)
+// 4. Once you find a good value, update it in globals.css
 //
-// HOW TO USE:
-// -----------
-// 1. Open your browser console (F12) to see debug logs with current values
-// 2. Test on each of your screens and note the "Final scale" value that looks good
-// 3. Adjust the values below based on these scenarios:
-//
-// SCENARIO: Small screen is zoomed in too much (too close)
-//   → Increase HEIGHT_SCALE_POWER (try 0.4 or 0.5)
-//   → Increase SMALL_SCREEN_BOOST_MULTIPLIER (try 0.7 or 0.8)
-//   → Increase MAX_SCALE (try 3.0 or 3.5)
-//
-// SCENARIO: Large screen is zoomed out too much (too far)
-//   → Decrease MIN_SCALE (try 0.5 or 0.6)
-//   → Decrease EARTH_FILL_RATIO (try 0.85 or 0.82)
-//
-// SCENARIO: Want Earth to fill more/less of the screen overall
-//   → Increase EARTH_FILL_RATIO (0.9-0.95) = Earth fills more = camera closer
-//   → Decrease EARTH_FILL_RATIO (0.8-0.85) = Earth fills less = camera further
-//
-// TIP: Make small adjustments (0.05-0.1 increments) and test frequently
+// The camera automatically scales for different screen sizes and aspect ratios.
 // ============================================================================
 
 const CAMERA_CONFIG = {
-  // Reference viewport (the "baseline" screen size)
-  // This is what we consider "normal" - adjust if your main monitor is different
-  REFERENCE_WIDTH: 1920,
-  REFERENCE_HEIGHT: 1080,
-  
-  // How much of the viewport should Earth fill (0.0 to 1.0)
-  // Higher = Earth fills more screen = camera closer
-  // Lower = Earth fills less screen = camera further back
-  EARTH_FILL_RATIO: 0.88,
-  
-  // Height scaling power (how aggressively we scale based on screen height)
-  // Lower value (e.g., 0.2) = MORE aggressive scaling (small screens zoom out more)
-  // Higher value (e.g., 0.5) = LESS aggressive scaling (small screens zoom out less)
-  // Range: 0.1 to 0.8 recommended
-  HEIGHT_SCALE_POWER: 0.4,
-  
-  // Small screen boost multiplier
-  // How much extra push-back to give screens smaller than reference
-  // Higher = small screens zoom out more
-  // Formula: boost = (referenceHeight - currentHeight) / referenceHeight * MULTIPLIER
-  // This is ADDED to the heightScale (not multiplied) for more predictable tuning
-  // Try values between 1.0 and 5.0 - start with 2.0 and adjust
-  SMALL_SCREEN_BOOST_MULTIPLIER: 12.0,
-  
-  // Aspect ratio adjustment power
-  // How much to adjust for ultrawide vs tall screens
-  // Lower = less adjustment, Higher = more adjustment
-  // Range: 0.1 to 0.5 recommended
-  ASPECT_ADJUSTMENT_POWER: 0.2,
-  
-  // Final scale clamping (min and max)
-  // Prevents camera from going too close or too far
-  // MIN: minimum scale (lower = allows camera closer on large screens)
-  // MAX: maximum scale (higher = allows camera further on small screens)
-  // NOTE: If small screens still zoomed in, increase MAX_SCALE significantly
-  MIN_SCALE: 0.7,
-  MAX_SCALE: 10.0, // Increased to allow much more zoom-out on small screens
-  
   // Enable debug logging (set to false to disable console logs)
-  DEBUG: true,
+  DEBUG: false,
   
-  // Debounce delay for resize events (prevents recalculation when dev tools open)
-  // Higher = less frequent recalculations, smoother but less responsive
-  // Lower = more frequent recalculations, more responsive but can be janky
-  RESIZE_DEBOUNCE_MS: 150,
-  
-  // QUICK FIX: If small screen is still wrong, try these adjustments:
-  // - If too zoomed IN: Increase SMALL_SCREEN_BOOST_MULTIPLIER (try 3.0, 4.0, 5.0)
-  // - If too zoomed OUT: Decrease SMALL_SCREEN_BOOST_MULTIPLIER (try 1.0, 0.5)
-  // - Or adjust HEIGHT_SCALE_POWER: Lower (0.2) = more aggressive, Higher (0.5) = less aggressive
+  // Debounce delay for resize events
+  RESIZE_DEBOUNCE_MS: 150
 }
 
 export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollowerProps) {
@@ -93,8 +39,8 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
   const optimalDistanceRef = useRef(125)
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
-  // Calculate optimal camera distance based on viewport dimensions, aspect ratio, and screen size
-  // Uses a reference viewport and scales appropriately for different monitor sizes
+  // Calculate optimal camera distance based on viewport size and aspect ratio
+  // Simple and responsive - adjusts automatically for all screen sizes
   useEffect(() => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return
     
@@ -103,85 +49,113 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
       clearTimeout(resizeTimeoutRef.current)
     }
     
-    // Debounce resize events to prevent recalculation when dev tools open
+    // Debounce resize events
     resizeTimeoutRef.current = setTimeout(() => {
       const earthRadius = 25
-      const earthDiameter = earthRadius * 2 // 50 units
       const fov = camera.fov // 50 degrees (vertical FOV)
       const aspect = size.width / size.height
       
-      // Reference viewport (baseline screen size)
-      const referenceWidth = CAMERA_CONFIG.REFERENCE_WIDTH
-      const referenceHeight = CAMERA_CONFIG.REFERENCE_HEIGHT
-      const referenceAspect = referenceWidth / referenceHeight
+      // Reference viewport (1920x1080 = 16:9 standard)
+      const refWidth = 1920
+      const refHeight = 1080
       
-      // Current viewport metrics
-      const currentAspect = aspect
-      
-      // Calculate base distance for reference viewport using trigonometry
-      // This gives us the "ideal" distance for the reference monitor
+      // Calculate base distance using FOV
+      // Target: Earth should fill ~70% of viewport height
       const vFOV = (fov * Math.PI) / 180
       const tanHalfFOV = Math.tan(vFOV / 2)
-      const referenceDistance = earthDiameter / (CAMERA_CONFIG.EARTH_FILL_RATIO * 2 * tanHalfFOV)
+      let baseDistance = (earthRadius * 2) / (2 * tanHalfFOV * 0.70)
       
-      // Scale based on viewport HEIGHT (more direct relationship to vertical FOV)
-      // Smaller screens (less height) need camera FURTHER back to avoid zooming in too much
-      // Larger screens (more height) can have camera closer
-      // INVERT the ratio: smaller height = larger scale (further camera)
-      const heightRatio = referenceHeight / size.height
+      // TRULY RESPONSIVE: Area-based scaling with aspect ratio adjustment
+      // Prevents compounding when both width and height are larger
+      // Tunable via CSS variables for easy adjustment
+      const widthPower = typeof window !== 'undefined'
+        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-width-power') || '0.4')
+        : 0.4
+      const heightPower = typeof window !== 'undefined'
+        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-height-power') || '0.5')
+        : 0.5
+      const widthSensitivity = typeof window !== 'undefined'
+        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-width-sensitivity') || '1.0')
+        : 1.0
+      const heightSensitivity = typeof window !== 'undefined'
+        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-height-sensitivity') || '1.0')
+        : 1.0
       
-      // Apply height scaling with configurable power
-      let heightScale = Math.pow(heightRatio, CAMERA_CONFIG.HEIGHT_SCALE_POWER)
+      // AREA-BASED SCALING: Use screen area as primary scaling factor
+      // This prevents compounding when both width and height are larger
+      // Larger screens (more area) = zoom OUT (farther camera = Earth smaller)
+      // Smaller screens (less area) = zoom OUT MORE (farther camera = Earth smaller)
+      const refArea = refWidth * refHeight
+      const currentArea = size.width * size.height
+      // Use refArea / currentArea: smaller screens get > 1 multiplier (zoom out more)
+      const areaRatio = refArea / currentArea // > 1 for smaller screens, < 1 for larger
       
-      // Additional boost for very small screens to push camera further back
-      // This is ADDED to the scale (not multiplied) for more predictable results
-      let smallScreenBoost = 0
-      if (size.height < referenceHeight) {
-        // Calculate how much smaller the screen is (as a ratio)
-        const heightDifference = (referenceHeight - size.height) / referenceHeight
-        // Apply boost: the smaller the screen, the more boost
-        smallScreenBoost = heightDifference * CAMERA_CONFIG.SMALL_SCREEN_BOOST_MULTIPLIER
-        heightScale = heightScale + smallScreenBoost
+      // GENTLE CURVE: Screens close to reference get minimal or NO adjustment
+      // Only screens MUCH smaller or MUCH larger get significant zoom changes
+      // This prevents over-adjustment for screens like 1905×992 (close to 1920×1080)
+      const deviation = areaRatio - 1.0 // 0 at reference, positive for smaller, negative for larger
+      
+      // Apply smooth curve: very gentle near reference, more aggressive at extremes
+      let areaMultiplier = 1.0
+      if (Math.abs(deviation) < 0.15) {
+        // Screens within 15% of reference: Zoom IN slightly (Earth bigger)
+        // For 1905×992: deviation = 0.097, multiplier = 1.0 - 0.097 * 0.3 = 0.97 (3% zoom in)
+        areaMultiplier = 1.0 - Math.abs(deviation) * 0.3 // More zoom IN for screens close to reference
+      } else if (deviation > 0) {
+        // Much smaller screens: zoom OUT (multiplier > 1)
+        // For 1497×857: deviation = 0.62, excess = 0.47
+        // Need MORE zoom-out: multiplier should be ~1.25-1.30 (25-30% zoom out)
+        const excess = deviation - 0.15
+        // Increased coefficient for more aggressive zoom-out on smaller screens
+        // For 1497×857: excess = 0.466, 0.466^0.7 = 0.36
+        // 0.985 base + 0.36 * 1.1 = 0.985 + 0.396 = 1.381 (38% zoom out)
+        areaMultiplier = 1.0 - 0.15 * 0.1 + Math.pow(excess, 0.7) * 1.1
+      } else {
+        // Much larger screens: zoom IN slightly (multiplier < 1)
+        // For 3440×1440: deviation = -1.39, excess = 1.24, multiplier = 0.985 - 1.24^0.8 * 0.15 = 0.78
+        const excess = Math.abs(deviation) - 0.15
+        areaMultiplier = 1.0 - 0.15 * 0.1 - Math.pow(excess, 0.8) * 0.15
       }
       
-      // Adjust for aspect ratio separately
-      // Ultrawide (21:9) needs slightly closer camera
-      // Tall/portrait needs slightly further camera  
-      const aspectRatio = currentAspect / referenceAspect
-      const aspectAdjustment = Math.pow(aspectRatio, CAMERA_CONFIG.ASPECT_ADJUSTMENT_POWER)
+      baseDistance *= areaMultiplier
       
-      // Combine adjustments and clamp to prevent extreme values
-      const unclampedScale = heightScale * aspectAdjustment
-      const finalScale = Math.max(
-        CAMERA_CONFIG.MIN_SCALE, 
-        Math.min(CAMERA_CONFIG.MAX_SCALE, unclampedScale)
-      )
+      // ASPECT RATIO ADJUSTMENT: Fine-tune based on shape (not size)
+      // Only apply significant adjustment for screens far from reference
+      // Screens close to reference should have minimal aspect adjustment
+      const refAspect = refWidth / refHeight // 1.778 (16:9)
+      const aspectRatio = aspect / refAspect // Compared to 16:9
+      const aspectDeviation = Math.abs(aspectRatio - 1.0) // How far from 16:9
       
-      optimalDistanceRef.current = referenceDistance * finalScale
+      // Only apply aspect adjustment if significantly different from 16:9
+      let aspectMultiplier = 1.0
+      if (aspectDeviation > 0.2) {
+        // Significantly different aspect ratio: apply adjustment
+        // Ultrawide (aspectRatio > 1.2) = slight zoom IN (Earth bigger)
+        // Taller/narrower (aspectRatio < 0.8) = zoom OUT (Earth smaller)
+        aspectMultiplier = Math.pow(aspectRatio, -0.15) // Negative = ultrawide zooms in slightly
+      } else {
+        // Close to 16:9: minimal or no adjustment
+        // For 1905×992: aspectRatio = 1.08, deviation = 0.08, no adjustment
+        aspectMultiplier = 1.0
+      }
       
-      // DEBUG: Console log all key values for testing on different screens
+      baseDistance *= aspectMultiplier
+      
+      // Get user adjustment from CSS variable (allows fine-tuning)
+      const baseCssMultiplier = typeof window !== 'undefined' 
+        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-distance-multiplier') || '1.0')
+        : 1.0
+      
+      optimalDistanceRef.current = baseDistance * baseCssMultiplier
+      
+      // DEBUG: Log camera info
       if (CAMERA_CONFIG.DEBUG) {
-        const wasClamped = unclampedScale !== finalScale
-        const clampDirection = unclampedScale > CAMERA_CONFIG.MAX_SCALE ? 'MAX' : 
-                                unclampedScale < CAMERA_CONFIG.MIN_SCALE ? 'MIN' : 'NONE'
-        
-        console.log('=== CAMERA SCALING DEBUG ===')
-        console.log('Screen dimensions:', `${size.width}x${size.height}`)
-        console.log('Aspect ratio:', currentAspect.toFixed(3))
-        console.log('Height ratio (ref/current):', heightRatio.toFixed(3))
-        console.log('Height scale (before boost):', Math.pow(heightRatio, CAMERA_CONFIG.HEIGHT_SCALE_POWER).toFixed(3))
-        console.log('Small screen boost:', smallScreenBoost.toFixed(3))
-        console.log('Height scale (after boost):', heightScale.toFixed(3))
-        console.log('Aspect adjustment:', aspectAdjustment.toFixed(3))
-        console.log('Unclamped scale:', unclampedScale.toFixed(3))
-        console.log('Final scale (clamped):', finalScale.toFixed(3))
-        if (wasClamped) {
-          console.warn(`⚠️ SCALE WAS CLAMPED AT ${clampDirection} LIMIT (${clampDirection === 'MAX' ? CAMERA_CONFIG.MAX_SCALE : CAMERA_CONFIG.MIN_SCALE})`)
-          console.warn(`   Increase ${clampDirection === 'MAX' ? 'MAX_SCALE' : 'MIN_SCALE'} if you need more range`)
-        }
-        console.log('Reference distance:', referenceDistance.toFixed(2))
-        console.log('Optimal distance:', optimalDistanceRef.current.toFixed(2))
-        console.log('===========================')
+        console.log('=== CAMERA DEBUG ===')
+        console.log('Screen:', `${size.width}x${size.height}`, `(${aspect.toFixed(2)}:1)`)
+        console.log('Base distance:', baseDistance.toFixed(1))
+        console.log('CSS multiplier:', cssMultiplier.toFixed(2))
+        console.log('Final distance:', optimalDistanceRef.current.toFixed(1))
+        console.log('===================')
       }
     }, CAMERA_CONFIG.RESIZE_DEBOUNCE_MS)
     

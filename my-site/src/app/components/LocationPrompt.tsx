@@ -135,7 +135,12 @@ export default function LocationPrompt({
   const IconComponent = styling.icon
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-6 z-50 pointer-events-none">
+    <div 
+      className="fixed bottom-0 left-0 right-0 flex justify-center z-50 pointer-events-none"
+      style={{
+        paddingBottom: 'var(--boarding-pass-bottom)'
+      }}
+    >
       <AnimatePresence mode="wait">
         {isVisible && landmark && (
           <motion.div
@@ -153,18 +158,22 @@ export default function LocationPrompt({
             onTouchStart={isMobile ? handleTap : undefined}
           >
             {/* Boarding Pass Design - Compact */}
-            <div className={`
-              relative
-              bg-gradient-to-br ${styling.gradient}
-              backdrop-blur-xl
-              rounded-xl
-              shadow-[0_12px_40px_rgba(0,0,0,0.15)]
-              border border-white/50
-              min-w-[280px]
-              max-w-[340px]
-              mx-4
-              overflow-hidden
-            `}>
+            <div 
+              className={`
+                relative
+                bg-gradient-to-br ${styling.gradient}
+                backdrop-blur-xl
+                rounded-xl
+                shadow-[0_12px_40px_rgba(0,0,0,0.15)]
+                border border-white/50
+                mx-auto
+                overflow-hidden
+              `}
+              style={{
+                width: 'var(--boarding-pass-width)',
+                maxWidth: 'var(--boarding-pass-max-width)'
+              }}
+            >
               {/* Subtle inner glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
               
@@ -176,7 +185,13 @@ export default function LocationPrompt({
               </div>
 
               {/* SunFlights Header - Compact */}
-              <div className="relative px-3.5 pt-3 pb-2 border-b border-gray-300/30">
+              <div 
+                className="relative border-b border-gray-300/30"
+                style={{
+                  padding: 'var(--boarding-pass-padding)',
+                  paddingBottom: 'calc(var(--boarding-pass-padding) * 0.7)'
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     {/* Sun icon - smaller */}
@@ -247,7 +262,12 @@ export default function LocationPrompt({
               </div>
 
               {/* Main Content - Compact */}
-              <div className="relative px-3.5 py-3">
+              <div 
+                className="relative"
+                style={{
+                  padding: 'var(--boarding-pass-padding)'
+                }}
+              >
                 {/* Destination - Larger but more compact */}
                 <div className="flex flex-col items-center justify-center gap-1 mb-3">
                   <motion.h2
