@@ -121,13 +121,17 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
     }
   }, [isOpen])
 
+  const handleClose = useCallback(() => {
+    onClose()
+  }, [onClose])
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (selectedProject) {
           setSelectedProject(null)
         } else {
-        handleClose()
+          handleClose()
         }
       }
     }
@@ -136,11 +140,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
       window.addEventListener('keydown', handleEscape)
       return () => window.removeEventListener('keydown', handleEscape)
     }
-  }, [isOpen, selectedProject])
-
-  const handleClose = useCallback(() => {
-      onClose()
-  }, [onClose])
+  }, [isOpen, selectedProject, handleClose])
 
   // Memoize filtered projects to avoid recalculating on every render
   const filteredProjects = useMemo(() => {

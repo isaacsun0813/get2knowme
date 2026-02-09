@@ -83,10 +83,11 @@ export default function PlaneMotorSound({ planeRef, isInWorld }: PlaneMotorSound
 
   // Clean up when component unmounts
   useEffect(() => {
+    const audio = audioRef.current
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
+      if (audio) {
+        audio.pause()
+        audio.currentTime = 0
       }
     }
   }, [])

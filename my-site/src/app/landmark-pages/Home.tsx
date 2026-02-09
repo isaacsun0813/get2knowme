@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface HomeProps {
@@ -24,6 +24,11 @@ export default function Home({ isOpen, onClose }: HomeProps) {
     }
   }, [isOpen])
 
+  const handleClose = useCallback(() => {
+    // Call onClose immediately to trigger exit animation
+    onClose()
+  }, [onClose])
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -38,12 +43,7 @@ export default function Home({ isOpen, onClose }: HomeProps) {
     return () => {
       window.removeEventListener('keydown', handleEscape)
     }
-  }, [isOpen])
-
-  const handleClose = () => {
-    // Call onClose immediately to trigger exit animation
-    onClose()
-  }
+  }, [isOpen, handleClose])
 
   if (!shouldRender) return null
 

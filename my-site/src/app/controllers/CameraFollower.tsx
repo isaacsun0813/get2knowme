@@ -68,18 +68,8 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
       // TRULY RESPONSIVE: Area-based scaling with aspect ratio adjustment
       // Prevents compounding when both width and height are larger
       // Tunable via CSS variables for easy adjustment
-      const widthPower = typeof window !== 'undefined'
-        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-width-power') || '0.4')
-        : 0.4
-      const heightPower = typeof window !== 'undefined'
-        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-height-power') || '0.5')
-        : 0.5
-      const widthSensitivity = typeof window !== 'undefined'
-        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-width-sensitivity') || '1.0')
-        : 1.0
-      const heightSensitivity = typeof window !== 'undefined'
-        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-height-sensitivity') || '1.0')
-        : 1.0
+      // Note: CSS variables for widthPower, heightPower, widthSensitivity, heightSensitivity
+      // are available but not currently used in the calculation
       
       // AREA-BASED SCALING: Use screen area as primary scaling factor
       // This prevents compounding when both width and height are larger
@@ -153,7 +143,7 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
         console.log('=== CAMERA DEBUG ===')
         console.log('Screen:', `${size.width}x${size.height}`, `(${aspect.toFixed(2)}:1)`)
         console.log('Base distance:', baseDistance.toFixed(1))
-        console.log('CSS multiplier:', cssMultiplier.toFixed(2))
+        console.log('CSS multiplier:', baseCssMultiplier.toFixed(2))
         console.log('Final distance:', optimalDistanceRef.current.toFixed(1))
         console.log('===================')
       }

@@ -26,6 +26,11 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
     img.src = profileImage
   }, [])
 
+  const handleClose = useCallback(() => {
+    // Call onClose immediately to trigger exit animation
+    onClose()
+  }, [onClose])
+
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -43,7 +48,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
       window.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen])
+  }, [isOpen, handleClose])
 
   // Mouse parallax for profile image - throttled with RAF
   useEffect(() => {
@@ -106,11 +111,6 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
       return () => clearTimeout(timer)
     }
   }, [isOpen])
-
-  const handleClose = useCallback(() => {
-    // Call onClose immediately to trigger exit animation
-      onClose()
-  }, [onClose])
 
   if (!shouldRender) return null
 

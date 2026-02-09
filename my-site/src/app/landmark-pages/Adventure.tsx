@@ -68,6 +68,15 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
     }))
   , [adventurePhotos])
 
+  const handleClose = useCallback(() => {
+    if (selectedPhotoIndex !== null) {
+      setSelectedPhotoIndex(null)
+      setTimeout(() => onClose(), 400)
+    } else {
+      onClose()
+    }
+  }, [selectedPhotoIndex, onClose])
+
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -89,7 +98,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
       window.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen, selectedPhotoIndex])
+  }, [isOpen, selectedPhotoIndex, handleClose])
 
   // Animation handling
   useEffect(() => {
@@ -103,15 +112,6 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
       return () => clearTimeout(timer)
     }
   }, [isOpen])
-
-  const handleClose = useCallback(() => {
-    if (selectedPhotoIndex !== null) {
-      setSelectedPhotoIndex(null)
-      setTimeout(() => onClose(), 400)
-    } else {
-      onClose()
-    }
-  }, [selectedPhotoIndex, onClose])
 
   const handlePhotoClick = useCallback((index: number) => {
     setSelectedPhotoIndex(index)

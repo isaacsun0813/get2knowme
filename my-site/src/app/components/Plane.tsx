@@ -54,6 +54,7 @@ export default function Plane({
       planeRef.current.position.copy(position.current)
       planeRef.current.quaternion.copy(orientation.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   // Initialize drop-in animation when world appears
@@ -71,6 +72,7 @@ export default function Plane({
       // Initialize drop-in animation
       dropInStartTime.current = Date.now()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [worldJustAppeared])
 
   // Initialize the plane orientation to be properly aligned with the surface

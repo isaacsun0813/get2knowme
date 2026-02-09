@@ -94,7 +94,7 @@ export default function LocationPrompt({
       gate: `A${gateNum}`,
       seat: `${seatLetter}${seatNum}`
     }
-  }, [landmark?.name])
+  }, [landmark])
 
   const styling = landmark ? {
     'About Me': {

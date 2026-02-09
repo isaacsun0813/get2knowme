@@ -15,8 +15,7 @@ import MobileControls from './MobileControls'
 import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
-// import BackgroundMusic from './BackgroundMusic'
-import PlaneMotorSound from './PlaneMotorSound'
+import BackgroundMusic from './BackgroundMusic'
 import ImagePreloader from './ImagePreloader'
 import WebGLErrorBoundary from './WebGLErrorBoundary'
 
@@ -356,10 +355,7 @@ export default function Experience() {
       <MobileControls disabled={!!showPopup} />
       
       {/* Background Music - part of world entrance animation */}
-      {/* <BackgroundMusic isInWorld={!showIntro} /> */}
-      
-      {/* Plane Motor Sound - plays when plane is flying */}
-      <PlaneMotorSound planeRef={planeRef} isInWorld={!showIntro} />
+      <BackgroundMusic isInWorld={!showIntro} />
       
       {/* Spacebar prompt - always visible when near a landmark */}
       <LocationPrompt 

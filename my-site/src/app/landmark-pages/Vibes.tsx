@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star } from 'lucide-react'
 
@@ -25,6 +25,11 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
     }
   }, [isOpen])
 
+  const handleClose = useCallback(() => {
+    // Call onClose immediately to trigger exit animation
+    onClose()
+  }, [onClose])
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -39,12 +44,7 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
     return () => {
       window.removeEventListener('keydown', handleEscape)
     }
-  }, [isOpen])
-
-  const handleClose = () => {
-    // Call onClose immediately to trigger exit animation
-    onClose()
-  }
+  }, [isOpen, handleClose])
 
   if (!shouldRender) return null
 
