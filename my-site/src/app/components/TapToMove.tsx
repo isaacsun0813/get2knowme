@@ -75,9 +75,6 @@ export default function TapToMove({ disabled = false }: TapToMoveProps) {
       // Calculate distance from center
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
       
-      // Calculate angle from center (0 = right, 90 = down, 180 = left, 270 = up)
-      const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI)
-      
       // Calculate horizontal and vertical ratios
       const horizontalRatio = deltaX / (window.innerWidth / 2) // -1 to 1
       const verticalRatio = Math.abs(deltaY) / (window.innerHeight / 2) // 0 to 1
