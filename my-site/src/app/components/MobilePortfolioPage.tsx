@@ -52,21 +52,23 @@ export default function MobilePortfolioPage({ onClose }: MobilePortfolioPageProp
         </div>
 
         {/* Navigation Grid - Sharp */}
-        <div className="border-b-2 border-black bg-white">
+        <div className="border-b-2 border-black bg-white border-r-2 border-black">
           <div className="grid grid-cols-3 gap-0">
             {sections.map((section, idx) => (
               <button
                 key={section.id}
                 onClick={() => setOpenSection(openSection === section.id ? null : section.id)}
-                className={`px-3 py-4 text-xs font-bold uppercase tracking-wider border-r-2 border-black last:border-r-0 transition-colors ${
+                className={`px-3 py-4 text-xs font-bold uppercase tracking-wider border-r-2 border-black transition-colors ${
                   openSection === section.id
                     ? 'bg-black text-white'
                     : 'bg-white text-black hover:bg-gray-50'
-                } ${idx % 3 !== 2 ? 'border-r-2' : ''}`}
+                } ${idx % 3 === 2 ? 'border-r-0' : ''} ${idx >= 3 ? 'border-t-2' : ''}`}
               >
                 {section.name}
               </button>
             ))}
+            {/* Empty cell to complete the grid */}
+            <div className="border-t-2 border-black bg-white" />
           </div>
         </div>
 
