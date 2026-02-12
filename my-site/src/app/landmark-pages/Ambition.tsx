@@ -1,16 +1,14 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useTransform, useMotionValue, useSpring } from 'framer-motion'
 import Image from 'next/image'
-import { X, Rocket, Hammer, Search, Github, Sparkles } from 'lucide-react'
+import { X, Rocket, Github } from 'lucide-react'
 
 interface AmbitionProps {
   isOpen: boolean
   onClose: () => void
 }
-
-type FilterType = 'All' | 'Building' | 'Researching' | 'Discontinued'
 
 interface Project {
   id: string
@@ -21,7 +19,7 @@ interface Project {
   details?: string
   image?: string
   link?: string
-  status: 'building' | 'researching' | 'discontinued'
+  status: 'building' | 'researching' | 'discontinued' | 'active' | 'inactive'
 }
 
 const projects: Project[] = [
@@ -34,7 +32,7 @@ const projects: Project[] = [
     details: 'Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies',
     image: '/photos/projects/Verdra.png',
     link: 'https://verdratech.github.io/Verdra-Site/',
-    status: 'building'
+    status: 'inactive'
   },
   {
     id: 'prizesole',
@@ -51,7 +49,7 @@ const projects: Project[] = [
     category: 'BUILDING',
     categoryColor: '#F59E0B',
     description: 'A sneaker inventory management platform featuring agent-driven workflows, automated SKU detection, and real-time access to available wholesale inventory.',
-    status: 'building'
+    status: 'inactive'
   },
   {
     id: 'carbon-aware',
@@ -59,13 +57,12 @@ const projects: Project[] = [
     category: 'RESEARCHING',
     categoryColor: '#34D399',
     description: 'Also interested in greener CI/CD pipelines, distributed systems, and broadly security specifically attacks.',
-    status: 'researching'
+    status: 'active'
   }
 ]
 
 export default function Ambition({ isOpen, onClose }: AmbitionProps) {
   const [shouldRender, setShouldRender] = useState(false)
-  const [selectedFilter, setSelectedFilter] = useState<FilterType>('All')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const modalRef = useRef<HTMLDivElement>(null)
@@ -142,16 +139,8 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
     }
   }, [isOpen, selectedProject, handleClose])
 
-  // Memoize filtered projects to avoid recalculating on every render
-  const filteredProjects = useMemo(() => {
-    if (selectedFilter === 'All') return projects
-    return projects.filter(project => {
-      if (selectedFilter === 'Building') return project.status === 'building'
-      if (selectedFilter === 'Researching') return project.status === 'researching'
-      if (selectedFilter === 'Discontinued') return project.status === 'discontinued'
-      return false
-    })
-  }, [selectedFilter])
+  // Show all projects (no filtering)
+  const filteredProjects = projects
 
   if (!shouldRender) return null
 
@@ -208,9 +197,10 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
           >
             {/* Skyglass Modal Container */}
             <motion.div
-              className="relative w-full max-w-7xl max-h-[90vh] overflow-y-auto pointer-events-auto rounded-[2rem] ambition-scroll"
+              className="relative w-full max-w-7xl max-h-[90vh] overflow-y-auto pointer-events-auto ambition-scroll"
              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,250,245,0.92) 100%)',
+                background: '#FFFFFF',
+                borderRadius: '12px',
                 backdropFilter: 'blur(40px)',
                 boxShadow: `
                   0px 20px 60px rgba(0,0,0,0.4),
@@ -245,7 +235,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
               {/* Close Button */}
               <motion.button
             onClick={handleClose}
-                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black bg-white rounded-full"
                 style={{
                   background: 'rgba(255,255,255,0.85)',
                   backdropFilter: 'blur(12px)',
@@ -297,10 +287,7 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                         className="text-4xl sm:text-5xl md:text-6xl font-bold"
                         style={{
                           fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
-                          background: 'linear-gradient(135deg, #F59E0B 0%, #FDE68A 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text'
+                          color: '#F59E0B'
                         }}
                       >
                         {letter === ' ' ? '\u00A0' : letter}
@@ -324,36 +311,6 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                     I&apos;m a builder. Here&apos;s what I&apos;m up to:
                   </motion.p>
 
-                  {/* Filter Toggle */}
-                  <div className="flex items-center justify-center gap-3 flex-wrap">
-                    {(['All', 'Building', 'Researching', 'Discontinued'] as FilterType[]).map((filterType) => (
-                      <motion.button
-                        key={filterType}
-                        onClick={() => setSelectedFilter(filterType)}
-                        className="px-6 py-3 rounded-full text-base sm:text-lg font-semibold"
-                        style={{
-                          background: selectedFilter === filterType
-                            ? 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)'
-                            : 'rgba(255,255,255,0.9)',
-                          color: selectedFilter === filterType ? '#FFFFFF' : '#000000',
-                          border: selectedFilter === filterType
-                            ? '2px solid #F59E0B'
-                            : '2px solid rgba(0,0,0,0.15)',
-                          fontFamily: 'Inter, system-ui, sans-serif',
-                          backdropFilter: 'blur(8px)',
-                          boxShadow: selectedFilter === filterType
-                            ? '0 0 25px rgba(245,158,11,0.5), 0 4px 12px rgba(0,0,0,0.15)'
-                            : '0 2px 8px rgba(0,0,0,0.1)',
-                          fontWeight: '600'
-                        }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                      >
-                        {filterType}
-                      </motion.button>
-                    ))}
-                     </div>
                 </motion.div>
 
                 {/* Floating Capsules Gallery - Vertical Grid */}
@@ -368,46 +325,58 @@ export default function Ambition({ isOpen, onClose }: AmbitionProps) {
                   ))}
                </div>
 
-                {/* GitHub CTA */}
+                {/* GitHub CTA - Retro 90s Pokemon Style */}
                 <motion.div
                   className="text-center mt-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
                   transition={{ delay: 0.9, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <p
-                    className="text-xl sm:text-2xl font-semibold mb-6"
+                  {/* Retro Pokemon-style dialogue box */}
+                  <motion.div
+                    className="inline-block p-6 sm:p-8"
                     style={{
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                      color: '#000000',
-                      fontWeight: '600',
-                      textShadow: '0 1px 2px rgba(255,255,255,0.8)'
+                      background: '#FFFFFF',
+                      border: '3px solid #000000',
+                      boxShadow: 'inset 0 0 0 1px #000000'
                     }}
                   >
-                    Check out what else I&apos;m working on:
-                  </p>
-                  <motion.a
-                    href="https://github.com/isaacsun0813"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 px-8 py-4 rounded-full group relative overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(135deg, #F59E0B 0%, #F97316 100%)',
-                      color: 'white',
-                      fontWeight: '600',
-                      boxShadow: '0 0 40px rgba(245,158,11,0.5)',
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                      fontSize: '16px'
-                    }}
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: '0 0 40px rgba(251,191,36,0.5)'
-                    }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Github size={20} className="relative z-10" />
-                    <span className="relative z-10">View GitHub</span>
-                  </motion.a>
+                    <p
+                      className="text-xl sm:text-2xl font-bold mb-6"
+                      style={{
+                        fontFamily: 'var(--font-plus-jakarta-sans)',
+                        color: '#000000',
+                        fontWeight: '700',
+                        lineHeight: '1.4'
+                      }}
+                    >
+                      Check out what else I&apos;m working on:
+                    </p>
+                    
+                    <motion.a
+                      href="https://github.com/isaacsun0813"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 px-8 py-4"
+                      style={{
+                        background: '#FFA500',
+                        color: '#000000',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        border: '3px solid #000000',
+                        fontFamily: 'var(--font-plus-jakarta-sans)'
+                      }}
+                      whileHover={{
+                        background: '#FFB733'
+                      }}
+                      whileTap={{ 
+                        background: '#FF9500'
+                      }}
+                    >
+                      <Github size={20} className="relative z-10" fill="#000000" />
+                      <span className="relative z-10">View GitHub</span>
+                    </motion.a>
+                  </motion.div>
                 </motion.div>
               </div>
             </motion.div>
@@ -471,8 +440,6 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
     }
   }, [isOpen, x, y])
 
-  const CategoryIcon = project.category === 'BUILDING' ? Hammer : Search
-
   return (
     <motion.div
       ref={cardRef}
@@ -498,11 +465,11 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
       <motion.div
         className="relative rounded-[18px] p-5 sm:p-6 md:p-7 h-full flex flex-col"
         style={{
-          background: project.status === 'discontinued'
-            ? 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(240,240,240,0.75) 100%)'
-            : 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,247,237,0.9) 100%)',
+          background: project.status === 'discontinued' || project.status === 'inactive'
+            ? '#F5F5F5'
+            : '#FFFFFF',
           backdropFilter: 'blur(20px)',
-          boxShadow: project.status === 'discontinued'
+          boxShadow: project.status === 'discontinued' || project.status === 'inactive'
             ? `0 8px 24px rgba(0,0,0,0.12),
               0 0 0 1px rgba(148,163,184,0.35),
               inset 0 1px 0 rgba(255,255,255,0.9)`
@@ -510,7 +477,7 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
               0 0 0 1px ${project.categoryColor}55,
               inset 0 1px 0 rgba(255,255,255,0.9),
               0 0 40px ${project.categoryColor}25`,
-          border: `2px solid ${project.categoryColor}70`,
+          border: `2px solid ${project.status === 'inactive' || project.status === 'discontinued' ? 'rgba(148,163,184,0.4)' : project.categoryColor}70`,
           transformStyle: 'preserve-3d',
           x,
           y,
@@ -518,7 +485,7 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
           rotateY
         }}
         whileHover={{
-          boxShadow: project.status === 'discontinued'
+          boxShadow: project.status === 'discontinued' || project.status === 'inactive'
             ? `0 16px 40px rgba(0,0,0,0.2),
               0 0 0 1px rgba(148,163,184,0.5),
               inset 0 1px 0 rgba(255,255,255,0.95)`
@@ -529,36 +496,22 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        {/* Category Badge */}
-        <div className="flex items-center justify-between mb-2 sm:mb-3">
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-full"
+        {/* Status at top */}
+        <div className="mb-2 sm:mb-3">
+          <span
+            className="text-xs sm:text-sm font-semibold uppercase tracking-wider"
             style={{
-              background: `${project.categoryColor}20`,
-              border: `1px solid ${project.categoryColor}40`
+              color: project.status === 'active' ? '#10B981' : 
+                     project.status === 'discontinued' ? '#94A3B8' : '#6B7280',
+              fontFamily: 'var(--font-plus-jakarta-sans)',
+              fontWeight: '600'
             }}
           >
-            {project.status !== 'discontinued' && (
-              <CategoryIcon 
-                size={11} 
-                className="w-2.5 h-2.5 sm:w-3 sm:h-3"
-                style={{ color: project.categoryColor }}
-              />
-            )}
-            <span
-              className="text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-              style={{
-                color: project.categoryColor,
-                fontFamily: 'Inter, system-ui, sans-serif',
-                fontWeight: '700'
-              }}
-            >
-              {project.category}
-            </span>
-                       </div>
-          {project.status !== 'discontinued' && (
-            <Sparkles size={11} className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: project.categoryColor }} />
-          )}
-                   </div>
+            {project.status === 'active' ? 'Active' : 
+             project.status === 'discontinued' ? 'Discontinued' : 'Inactive'}
+          </span>
+        </div>
+
                    
         {/* Title */}
         <h2
@@ -610,14 +563,6 @@ function ProjectCard({ project, index, isOpen }: { project: Project; index: numb
                      </div>
         )}
 
-        {/* Action Button */}
-        {project.status === 'discontinued' && (
-          <div className="mt-auto pt-2 sm:pt-3 border-t border-gray-300">
-            <div className="text-center py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-gray-100 text-gray-600 text-xs sm:text-sm font-medium">
-              Discontinued
-                   </div>
-                 </div>
-        )}
       </motion.div>
     </motion.div>
   )

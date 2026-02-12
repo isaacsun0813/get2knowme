@@ -131,18 +131,18 @@ export default function Career({ isOpen, onClose }: CareerProps) {
               ref={scrollRef}
               className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
                 style={{
-                  borderRadius: '22px',
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.92) 100%)',
+                  background: '#FFFFFF',
+                  borderRadius: '12px',
                   backdropFilter: 'blur(40px)',
-                boxShadow: `
-                  0px 20px 60px rgba(0,0,0,0.4),
-                  0px 0px 0px 1px rgba(255,255,255,0.8),
-                  inset 0px 1px 0px rgba(255,255,255,0.95),
-                  0px 0px 100px rgba(255,255,255,0.4),
-                  0px 0px 0px 2px rgba(37,99,235,0.1)
-                `,
-                border: '2px solid rgba(255,255,255,0.9)',
-                scrollbarWidth: 'thin',
+                  border: '2px solid rgba(0,0,0,0.1)',
+                  boxShadow: `
+                    0px 20px 60px rgba(0,0,0,0.4),
+                    0px 0px 0px 1px rgba(255,255,255,0.8),
+                    inset 0px 1px 0px rgba(255,255,255,0.95),
+                    0px 0px 100px rgba(255,255,255,0.4),
+                    0px 0px 0px 2px rgba(37,99,235,0.1)
+                  `,
+                  scrollbarWidth: 'thin',
                 scrollbarColor: 'rgba(0,0,0,0.2) transparent'
               }}
             >
@@ -150,7 +150,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
               {/* Close Button */}
               <motion.button
                 onClick={handleClose}
-                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black bg-white rounded-full"
                 style={{
                   background: 'rgba(255,255,255,0.85)',
                   backdropFilter: 'blur(12px)',
@@ -202,10 +202,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                       className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight"
                       style={{
                         fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
-                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: '#2563eb',
                         letterSpacing: '-0.02em'
                       }}
                     >
@@ -217,7 +214,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                   <motion.div
                     className="h-0.5 mx-auto"
                     style={{
-                      background: 'linear-gradient(to right, transparent, #2563eb, transparent)',
+                      background: '#2563eb',
                       width: '120px',
                       scaleX: isOpen ? underlineWidth : 0,
                       transformOrigin: 'center'
@@ -247,7 +244,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     transition={{ delay: 0.3, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                     className="relative p-8 sm:p-10 rounded-2xl"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%)',
+                      background: '#FFFFFF',
                       backdropFilter: 'blur(20px)',
                       boxShadow: `
                         0px 16px 32px rgba(0,0,0,0.15),
@@ -262,10 +259,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                       className="text-center mb-6 text-lg sm:text-xl font-semibold uppercase tracking-wider"
                       style={{
                         fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
-                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: '#2563eb',
                         letterSpacing: '0.1em'
                       }}
                     >
@@ -300,7 +294,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     transition={{ delay: 0.42, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                     className="relative p-8 sm:p-10 rounded-2xl"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.93) 100%)',
+                      background: '#FFFFFF',
                       backdropFilter: 'blur(18px)',
                       boxShadow: `
                         0px 16px 32px rgba(0,0,0,0.15),
@@ -316,10 +310,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                       className="text-center mb-6 text-lg sm:text-xl font-semibold uppercase tracking-wider"
                       style={{
                         fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
-                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: '#2563eb',
                         letterSpacing: '0.1em'
                       }}
                     >
@@ -368,45 +359,32 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                       </ul>
                     </div>
                     
-                    {/* Glass Capsule Resume Button */}
+                    {/* Resume Button - Retro Pokemon Style */}
                     <div className="text-center">
                       <motion.a
                         href="https://drive.google.com/file/d/130KQWH7hviU7HDY7dztdG4wLoJAI8ryw/view?usp=sharing"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-8 py-4 rounded-full group relative overflow-hidden"
+                        className="inline-flex items-center gap-3 px-8 py-4"
                         style={{
-                          background: 'linear-gradient(135deg, rgba(59,130,246,0.9) 0%, rgba(96,165,250,0.85) 100%)',
-                          backdropFilter: 'blur(10px)',
-                          color: 'white',
-                          fontWeight: '500',
-                          boxShadow: '0 8px 20px rgba(59,130,246,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
-                          border: '1px solid rgba(255,255,255,0.3)',
-                          fontFamily: 'Satoshi, Manrope, system-ui, sans-serif'
+                          background: '#1E5F8B',
+                          color: '#FFFFFF',
+                          fontWeight: '700',
+                          fontSize: '16px',
+                          border: '3px solid #000000',
+                          fontFamily: 'var(--font-plus-jakarta-sans)',
+                          textDecoration: 'none'
                         }}
                         whileHover={{
-                          scale: 1.05,
-                          boxShadow: '0 12px 28px rgba(59,130,246,0.4), inset 0 1px 0 rgba(255,255,255,0.4)',
-                          background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
+                          background: '#0F4A7A'
                         }}
-                        whileTap={{ scale: 0.98 }}
-                        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+                        whileTap={{
+                          background: '#1E5F8B'
+                        }}
+                        transition={{ duration: 0.15 }}
                       >
-                        {/* Ripple effect on hover */}
-                        <motion.div
-                          className="absolute inset-0 rounded-full"
-                          style={{
-                            background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                            scale: 0
-                          }}
-                          whileHover={{
-                            scale: 2,
-                            opacity: [0, 0.5, 0]
-                          }}
-                          transition={{ duration: 0.6 }}
-                        />
-                        <FileText size={20} className="relative z-10 group-hover:scale-110 transition-transform duration-200" />
-                        <span className="relative z-10">View Resume</span>
+                        <FileText size={20} />
+                        <span>View Resume</span>
                       </motion.a>
                     </div>
                   </motion.div>
@@ -427,7 +405,7 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                     transition={{ delay: 0.54, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                     className="relative p-8 sm:p-10 rounded-2xl"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(248,250,252,0.91) 100%)',
+                      background: '#FFFFFF',
                       backdropFilter: 'blur(16px)',
                       boxShadow: `
                         0px 16px 32px rgba(0,0,0,0.15),
@@ -439,26 +417,12 @@ export default function Career({ isOpen, onClose }: CareerProps) {
                       marginTop: '-12px'
                     }}
                   >
-                    {/* Faint grid background */}
-                    <div
-                      className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                      style={{
-                        backgroundImage: `
-                          linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
-                        `,
-                        backgroundSize: '40px 40px'
-                      }}
-                    />
 
                     <h2 
                       className="text-center mb-8 text-lg sm:text-xl font-semibold uppercase tracking-wider relative z-10"
                       style={{
                         fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
-                        background: 'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: '#2563eb',
                         letterSpacing: '0.1em'
                       }}
                     >

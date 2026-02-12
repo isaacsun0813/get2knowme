@@ -11,13 +11,13 @@ import IntroScreen from './IntroScreen'
 import LocationPrompt, { LandmarkConfig } from './LocationPrompt'
 import LandmarkDetection, { landmarkConfig } from './LandmarkDetection'
 import FlightControls from './FlightControls'
-import MobileControls from './MobileControls'
 import EarthModel from './EarthModel'
 import SkyDome from './SkyDome'
 import MobileLandingPage from './MobileLandingPage'
 import BackgroundMusic from './BackgroundMusic'
 import ImagePreloader from './ImagePreloader'
 import WebGLErrorBoundary from './WebGLErrorBoundary'
+import TapToMove from './TapToMove'
 
 // 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
 const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
@@ -348,11 +348,13 @@ export default function Experience() {
         <CameraFollower targetRef={planeRef} zoomLevel={zoomLevel} />
       </Canvas>
       
+      
       {/* Instructions overlay */}
       <FlightControls />
       
-      {/* Mobile joystick controls */}
-      <MobileControls disabled={!!showPopup} />
+      {/* Tap to Move - Mobile controls */}
+      <TapToMove disabled={!!showPopup} />
+      
       
       {/* Background Music - part of world entrance animation */}
       <BackgroundMusic isInWorld={!showIntro} />

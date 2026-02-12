@@ -161,7 +161,7 @@ export default function LocationPrompt({
             <div 
               className={`
                 relative
-                bg-gradient-to-br ${styling.gradient}
+bg-white/90
                 backdrop-blur-xl
                 rounded-xl
                 shadow-[0_12px_40px_rgba(0,0,0,0.15)]
@@ -175,7 +175,7 @@ export default function LocationPrompt({
               }}
             >
               {/* Subtle inner glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-white/20 pointer-events-none" />
               
               {/* Perforated top edge */}
               <div className="absolute -top-1.5 left-10 right-10 h-0.5 flex gap-0.5 pointer-events-none">
@@ -198,7 +198,7 @@ export default function LocationPrompt({
                     <motion.div
                       className="w-5 h-5 rounded-full flex items-center justify-center"
                       style={{
-                        background: `linear-gradient(135deg, ${styling.accent}, ${styling.accent}dd)`,
+                        background: styling.accent,
                       }}
                       initial={{ rotate: 0 }}
                       animate={{ rotate: 360 }}
@@ -238,7 +238,7 @@ export default function LocationPrompt({
                   <motion.div
                     className="w-7 h-7 rounded-lg flex items-center justify-center"
                     style={{
-                      background: `linear-gradient(135deg, ${styling.accent}15, ${styling.accent}25)`,
+                      background: `${styling.accent}20`,
                       border: `1.5px solid ${styling.accent}30`
                     }}
                     initial={{ scale: 0, rotate: -180 }}
@@ -377,7 +377,7 @@ export default function LocationPrompt({
                         ${isPressed ? 'scale-95' : 'scale-100'}
                       `}
                       style={{
-                        background: `linear-gradient(135deg, ${styling.accent}, ${styling.accent}dd)`,
+                        background: styling.accent,
                         color: 'white',
                         fontFamily: 'Inter, system-ui, sans-serif',
                         boxShadow: `0 4px 16px ${styling.accent}40`

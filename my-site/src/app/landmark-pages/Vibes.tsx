@@ -95,15 +95,15 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
         {/* Main content container with cohesive Vibes styling */}
         <div className="relative theme-vibes theme-container backdrop-blur-md overflow-hidden break-words"
              style={{
-               borderRadius: '2.5rem',
                boxShadow: '0px 20px 60px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(255,255,255,0.8), inset 0px 1px 0px rgba(255,255,255,0.95), 0px 0px 100px rgba(255,255,255,0.4), 0px 0px 0px 2px rgba(37,99,235,0.1)',
-               border: '2px solid rgba(255, 155, 114, 0.3)'
+               border: '2px solid rgba(255, 155, 114, 0.3)',
+               borderRadius: '20px'
              }}>
           
           {/* Close button - Larger */}
           <motion.button
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black bg-white rounded-full"
             style={{
               background: 'rgba(255,255,255,0.85)',
               backdropFilter: 'blur(12px)',
@@ -138,11 +138,27 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
 
             {/* Main content */}
             <div className="max-w-4xl mx-auto break-words">
-              <div className="relative theme-vibes theme-card landmark-card text-left break-words overflow-hidden break-words"
-                   style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
-                   }}>
+              <motion.div 
+                className="relative theme-vibes theme-card landmark-card text-left break-words overflow-hidden break-words"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                style={{
+                  borderRadius: '24px',
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
+                  border: '1px solid rgba(0, 0, 0, 0.1)',
+                  padding: '2.5rem 3rem'
+                }}
+              >
+                {/* Decorative organic shape */}
+                <div 
+                  className="absolute top-0 right-0 w-32 h-32 opacity-5 pointer-events-none"
+                  style={{
+                    background: 'radial-gradient(circle, var(--color-sunset-orange) 0%, transparent 70%)',
+                    borderRadius: '50%',
+                    transform: 'translate(20%, -20%)'
+                  }}
+                />
                 
                 <h2 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">
                   I wanted to fly.
@@ -152,21 +168,33 @@ export default function Vibes({ isOpen, onClose }: VibesProps) {
                   <p>
                   That was my childhood dream. I would always think about it. I made every type of paper airplane possible, ran parkour over our elementary school roof, and jumped off way too many tall buildings chasing that dream. I still remember when my cousin let me fly his drone before school in 2nd grade, right before I crashed it into the ground.                  </p>
                   <div className="my-8 flex justify-center">
-                    <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
+                    <div 
+                      className="h-0.5 bg-stone-400"
+                      style={{
+                        width: '60px',
+                        borderRadius: '2px',
+                        opacity: 0.4
+                      }}
+                    />
                   </div>
                   <p>
                   As I grew older, I became more interested in the systems that power the world, especially the ones that impact Mother Earth. When I was thinking about how to build my personal site, it felt fitting to center it around the theme of flight (planes) and my passion for climate (Earth). I chose five locations that shaped me: Saratoga (where I grew up), SF (startup central), Chicago (where I went to college), Zurich (where I studied abroad), and Shanghai (my ancestral home).
                   </p>
                   <div className="my-8 flex justify-center">
-                    <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-stone-400 to-transparent"></div>
+                    <div 
+                      className="h-0.5 bg-stone-400"
+                      style={{
+                        width: '60px',
+                        borderRadius: '2px',
+                        opacity: 0.4
+                      }}
+                    />
                   </div>
                   
                   <p>
                   I have a lot of dreams and I&apos;m actively working to bring them to life. Thanks for visiting my site :D                </p>
                 </div>
-                
-
-              </div>
+              </motion.div>
             </div>
 
           </div>

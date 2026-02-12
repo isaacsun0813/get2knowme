@@ -152,7 +152,7 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
           }}
         >
           {/* Inner glow */}
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 rounded-xl bg-white/20 pointer-events-none" />
           
           {/* Title */}
           <div className="relative mb-3">
@@ -184,20 +184,25 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                 Music
               </span>
             </div>
-            <div className="mt-1.5 h-px bg-gradient-to-r from-transparent via-gray-300/50 to-transparent" />
+            <div className="mt-1.5 h-px bg-gray-300/50" />
           </div>
 
           {/* Cassette Tape Body */}
           <div className="relative">
             {/* Main cassette body */}
-            <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-3 shadow-inner">
+            <div className="relative bg-gray-800 rounded-lg p-3 shadow-inner">
               {/* Cassette window (tape reels visible) */}
               <div className="relative bg-black rounded-lg p-2.5 mb-2.5 overflow-hidden">
                 {/* Tape reels animation */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center" style={{ minWidth: 0 }}>
                   {/* Left reel */}
                   <motion.div
-                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative"
+                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative flex-shrink-0"
+                    style={{
+                      aspectRatio: '1 / 1',
+                      minWidth: '2.5rem',
+                      minHeight: '2.5rem'
+                    }}
                     animate={{
                       rotate: isPlaying ? 360 : 0
                     }}
@@ -208,7 +213,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     }}
                   >
                     {/* Reel center */}
-                    <div className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700" />
+                    <div 
+                      className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700"
+                      style={{
+                        aspectRatio: '1 / 1'
+                      }}
+                    />
                     {/* Reel spokes */}
                     {[...Array(4)].map((_, i) => (
                       <div
@@ -224,11 +234,16 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                   </motion.div>
 
                   {/* Tape path */}
-                  <div className="flex-1 h-0.5 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 mx-2 rounded" />
+                  <div className="flex-1 h-0.5 bg-gray-600 mx-2 rounded" />
 
                   {/* Right reel */}
                   <motion.div
-                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative"
+                    className="w-10 h-10 rounded-full border-[3px] border-gray-600 relative flex-shrink-0"
+                    style={{
+                      aspectRatio: '1 / 1',
+                      minWidth: '2.5rem',
+                      minHeight: '2.5rem'
+                    }}
                     animate={{
                       rotate: isPlaying ? -360 : 0
                     }}
@@ -239,7 +254,12 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     }}
                   >
                     {/* Reel center */}
-                    <div className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700" />
+                    <div 
+                      className="absolute inset-1.5 rounded-full bg-gray-800 border-2 border-gray-700"
+                      style={{
+                        aspectRatio: '1 / 1'
+                      }}
+                    />
                     {/* Reel spokes */}
                     {[...Array(4)].map((_, i) => (
                       <div
@@ -268,8 +288,8 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     flex items-center justify-center
                     transition-all duration-300
                     ${isPlaying 
-                      ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg' 
-                      : 'bg-gradient-to-br from-gray-600 to-gray-700 shadow-md'
+                      ? 'bg-blue-500 shadow-lg' 
+                      : 'bg-gray-600 shadow-md'
                     }
                   `}
                   whileHover={{ scale: 1.1 }}
@@ -303,8 +323,8 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
                     flex items-center justify-center
                     transition-all duration-200
                     ${isMuted 
-                      ? 'bg-gradient-to-br from-red-500 to-red-600' 
-                      : 'bg-gradient-to-br from-gray-600 to-gray-700'
+                      ? 'bg-red-500' 
+                      : 'bg-gray-600'
                     }
                   `}
                   whileHover={{ scale: 1.05 }}

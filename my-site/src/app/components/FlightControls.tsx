@@ -109,7 +109,7 @@ export default function FlightControls() {
           <motion.div
             className="absolute inset-0 rounded-xl"
             style={{
-              background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(147,197,253,0.05) 50%, rgba(59,130,246,0.1) 100%)',
+              background: 'rgba(59,130,246,0.1)',
               backgroundSize: '200% 200%'
             }}
             animate={{
@@ -131,7 +131,7 @@ export default function FlightControls() {
             }}
           >
             {/* Inner glow */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 rounded-xl bg-white/20 pointer-events-none" />
             
             {/* Title */}
             <div className="relative mb-2.5">
@@ -146,7 +146,7 @@ export default function FlightControls() {
                 Flight Controls
               </h3>
               {/* Subtle underline accent */}
-              <div className="mt-1.5 h-px bg-gradient-to-r from-transparent via-blue-300/50 to-transparent" />
+              <div className="mt-1.5 h-px bg-blue-300/50" />
             </div>
 
             {/* Control keys */}
@@ -183,8 +183,8 @@ export default function FlightControls() {
                         cursor-default
                         transition-all duration-200
                         ${isPressed 
-                          ? 'bg-gradient-to-br from-blue-100 to-blue-50 shadow-inner' 
-                          : 'bg-gradient-to-br from-gray-50/80 to-white/60 shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                          ? 'bg-blue-100 shadow-inner' 
+                          : 'bg-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
                         }
                       `}
                       animate={{
@@ -216,8 +216,8 @@ export default function FlightControls() {
                           tabular-nums
                           flex-shrink-0
                           ${isPressed
-                            ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg'
-                            : 'bg-gradient-to-br from-gray-700 to-gray-600 text-white shadow-md'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-gray-700 text-white shadow-md'
                           }
                         `}
                         style={{
@@ -236,7 +236,7 @@ export default function FlightControls() {
                         }}
                       >
                         {/* Key highlight */}
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                        <div className="absolute inset-0 rounded-lg bg-white/10 pointer-events-none" />
                         <span className="relative z-10">{control.key}</span>
                       </motion.div>
 

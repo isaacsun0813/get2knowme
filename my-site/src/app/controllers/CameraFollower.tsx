@@ -9,151 +9,113 @@ interface CameraFollowerProps {
   zoomLevel?: number
 }
 
-// ============================================================================
-// SIMPLE CAMERA CONFIGURATION
-// ============================================================================
-// 
-// TO ADJUST ZOOM (Earth closer/farther):
-// 1. Open your browser DevTools (F12) and go to Elements tab
-// 2. Find the <html> element and add this inline style:
-//    style="--camera-distance-multiplier: 1.2"
-// 3. Adjust the value:
-//    - 1.0 = normal distance
-//    - 1.2 = 20% farther (Earth smaller)
-//    - 0.8 = 20% closer (Earth bigger)
-// 4. Once you find a good value, update it in globals.css
-//
-// The camera automatically scales for different screen sizes and aspect ratios.
-// ============================================================================
-
-const CAMERA_CONFIG = {
-  // Enable debug logging (set to false to disable console logs)
-  DEBUG: false,
-  
-  // Debounce delay for resize events
-  RESIZE_DEBOUNCE_MS: 150
-}
-
+/**
+ * Camera Follower - Maintains consistent visual size across all screens
+ * 
+ * Strategy:
+ * - Calculate base distance from FOV to show desired world height
+ * - Scale distance based on viewport height to maintain visual consistency
+ * - Simpler = better: one scaling factor based on height
+ * 
+ * To adjust zoom globally: --camera-distance-multiplier in globals.css
+ */
 export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollowerProps) {
   const { camera, size } = useThree()
-  const optimalDistanceRef = useRef(125)
-  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const baseDistanceRef = useRef(125)
   
-  // Calculate optimal camera distance based on viewport size and aspect ratio
-  // Simple and responsive - adjusts automatically for all screen sizes
   useEffect(() => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return
     
-    // Clear any pending resize timeout
-    if (resizeTimeoutRef.current) {
-      clearTimeout(resizeTimeoutRef.current)
+    // Standard Three.js responsive pattern
+    camera.aspect = size.width / size.height
+    camera.updateProjectionMatrix()
+    
+    // Detect mobile device
+    const isMobile = typeof window !== 'undefined' && (
+      /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent.toLowerCase()) ||
+      ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 768
+    )
+    
+    // Calculate base distance: Earth should fill ~50% of viewport height
+    // This gives more context and works better across screen sizes
+    const earthRadius = 25
+    const earthDiameter = earthRadius * 2 // 50 units
+    const targetFillRatio = 0.50 // 50% of viewport height (more zoomed out)
+    const targetVisibleHeight = earthDiameter / targetFillRatio // 100 units
+    
+    const fovRadians = (camera.fov * Math.PI) / 180
+    const tanHalfFOV = Math.tan(fovRadians / 2)
+    
+    // Base distance calculation (works for reference screen)
+    const baseDistance = (targetVisibleHeight / 2) / tanHalfFOV
+    
+    // Scale based on viewport height to maintain visual consistency
+    // Reference: 1080px height (standard 1920x1080)
+    // Key insight: To maintain same visual size, distance scales with viewport height
+    // Smaller screens = proportionally same distance (FOV handles pixel scaling)
+    // But we want to zoom OUT more on smaller screens to see more context
+    const refHeight = 1080
+    const heightRatio = size.height / refHeight
+    
+    // Scale factor: smaller screens get farther camera (zoom out)
+    // For larger screens (like 2050x1500), we want to zoom out more
+    // Using a gentler curve that zooms out more for taller screens
+    let heightScale
+    if (heightRatio > 1.2) {
+      // For tall screens (like 1500px+), use a gentler scaling to zoom out more
+      heightScale = Math.pow(heightRatio, -0.3) // Gentler inverse scaling
+    } else {
+      // For standard screens, use inverse square root
+      heightScale = Math.pow(heightRatio, -0.5) // Inverse square root
+    }
+    let distance = baseDistance * heightScale
+    
+    // Mobile-specific zoom out: zoom out 30% more on mobile devices
+    if (isMobile) {
+      distance *= 1.3
     }
     
-    // Debounce resize events
-    resizeTimeoutRef.current = setTimeout(() => {
-      const earthRadius = 25
-      const fov = camera.fov // 50 degrees (vertical FOV)
-      const aspect = size.width / size.height
-      
-      // Reference viewport (1920x1080 = 16:9 standard)
-      const refWidth = 1920
-      const refHeight = 1080
-      
-      // Calculate base distance using FOV
-      // Target: Earth should fill ~70% of viewport height
-      const vFOV = (fov * Math.PI) / 180
-      const tanHalfFOV = Math.tan(vFOV / 2)
-      let baseDistance = (earthRadius * 2) / (2 * tanHalfFOV * 0.70)
-      
-      // TRULY RESPONSIVE: Area-based scaling with aspect ratio adjustment
-      // Prevents compounding when both width and height are larger
-      // Tunable via CSS variables for easy adjustment
-      // Note: CSS variables for widthPower, heightPower, widthSensitivity, heightSensitivity
-      // are available but not currently used in the calculation
-      
-      // AREA-BASED SCALING: Use screen area as primary scaling factor
-      // This prevents compounding when both width and height are larger
-      // Larger screens (more area) = zoom OUT (farther camera = Earth smaller)
-      // Smaller screens (less area) = zoom OUT MORE (farther camera = Earth smaller)
-      const refArea = refWidth * refHeight
-      const currentArea = size.width * size.height
-      // Use refArea / currentArea: smaller screens get > 1 multiplier (zoom out more)
-      const areaRatio = refArea / currentArea // > 1 for smaller screens, < 1 for larger
-      
-      // GENTLE CURVE: Screens close to reference get minimal or NO adjustment
-      // Only screens MUCH smaller or MUCH larger get significant zoom changes
-      // This prevents over-adjustment for screens like 1905×992 (close to 1920×1080)
-      const deviation = areaRatio - 1.0 // 0 at reference, positive for smaller, negative for larger
-      
-      // Apply smooth curve: very gentle near reference, more aggressive at extremes
-      let areaMultiplier = 1.0
-      if (Math.abs(deviation) < 0.15) {
-        // Screens within 15% of reference: Zoom IN slightly (Earth bigger)
-        // For 1905×992: deviation = 0.097, multiplier = 1.0 - 0.097 * 0.3 = 0.97 (3% zoom in)
-        areaMultiplier = 1.0 - Math.abs(deviation) * 0.3 // More zoom IN for screens close to reference
-      } else if (deviation > 0) {
-        // Much smaller screens: zoom OUT (multiplier > 1)
-        // For 1497×857: deviation = 0.62, excess = 0.47
-        // Need MORE zoom-out: multiplier should be ~1.25-1.30 (25-30% zoom out)
-        const excess = deviation - 0.15
-        // Increased coefficient for more aggressive zoom-out on smaller screens
-        // For 1497×857: excess = 0.466, 0.466^0.7 = 0.36
-        // 0.985 base + 0.36 * 1.1 = 0.985 + 0.396 = 1.381 (38% zoom out)
-        areaMultiplier = 1.0 - 0.15 * 0.1 + Math.pow(excess, 0.7) * 1.1
-      } else {
-        // Much larger screens: zoom IN slightly (multiplier < 1)
-        // For 3440×1440: deviation = -1.39, excess = 1.24, multiplier = 0.985 - 1.24^0.8 * 0.15 = 0.78
-        const excess = Math.abs(deviation) - 0.15
-        areaMultiplier = 1.0 - 0.15 * 0.1 - Math.pow(excess, 0.8) * 0.15
-      }
-      
-      baseDistance *= areaMultiplier
-      
-      // ASPECT RATIO ADJUSTMENT: Fine-tune based on shape (not size)
-      // Only apply significant adjustment for screens far from reference
-      // Screens close to reference should have minimal aspect adjustment
-      const refAspect = refWidth / refHeight // 1.778 (16:9)
-      const aspectRatio = aspect / refAspect // Compared to 16:9
-      const aspectDeviation = Math.abs(aspectRatio - 1.0) // How far from 16:9
-      
-      // Only apply aspect adjustment if significantly different from 16:9
-      let aspectMultiplier = 1.0
-      if (aspectDeviation > 0.2) {
-        // Significantly different aspect ratio: apply adjustment
-        // Ultrawide (aspectRatio > 1.2) = slight zoom IN (Earth bigger)
-        // Taller/narrower (aspectRatio < 0.8) = zoom OUT (Earth smaller)
-        aspectMultiplier = Math.pow(aspectRatio, -0.15) // Negative = ultrawide zooms in slightly
-      } else {
-        // Close to 16:9: minimal or no adjustment
-        // For 1905×992: aspectRatio = 1.08, deviation = 0.08, no adjustment
-        aspectMultiplier = 1.0
-      }
-      
-      baseDistance *= aspectMultiplier
-      
-      // Get user adjustment from CSS variable (allows fine-tuning)
-      const baseCssMultiplier = typeof window !== 'undefined' 
-        ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-distance-multiplier') || '1.0')
-        : 1.0
-      
-      optimalDistanceRef.current = baseDistance * baseCssMultiplier
-      
-      // DEBUG: Log camera info
-      if (CAMERA_CONFIG.DEBUG) {
-        console.log('=== CAMERA DEBUG ===')
-        console.log('Screen:', `${size.width}x${size.height}`, `(${aspect.toFixed(2)}:1)`)
-        console.log('Base distance:', baseDistance.toFixed(1))
-        console.log('CSS multiplier:', baseCssMultiplier.toFixed(2))
-        console.log('Final distance:', optimalDistanceRef.current.toFixed(1))
-        console.log('===================')
-      }
-    }, CAMERA_CONFIG.RESIZE_DEBOUNCE_MS)
+    // Aspect ratio adjustment: wider screens see more horizontally
+    // More aggressive zoom out for ultrawide screens
+    const refAspect = 1920 / 1080 // 1.778 (16:9)
+    const currentAspect = size.width / size.height
+    const aspectDeviation = (currentAspect / refAspect) - 1.0
     
-    // Cleanup timeout on unmount
-    return () => {
-      if (resizeTimeoutRef.current) {
-        clearTimeout(resizeTimeoutRef.current)
+    // Adjust for aspect ratio differences
+    if (Math.abs(aspectDeviation) > 0.1) {
+      // Ultrawide (positive deviation, like 2560x1080 = 2.37:1) = zoom out more
+      // Tall/narrow (negative deviation) = zoom in slightly
+      if (aspectDeviation > 0) {
+        // Ultrawide: more aggressive zoom out
+        const aspectScale = 1.0 - (aspectDeviation * 0.25) // Increased from 0.15 to 0.25
+        distance *= aspectScale
+      } else {
+        // Tall screens: slight zoom in
+        const aspectScale = 1.0 - (aspectDeviation * 0.15)
+        distance *= aspectScale
       }
+    }
+    
+    // Apply CSS multiplier for global fine-tuning
+    const cssMultiplier = typeof window !== 'undefined'
+      ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--camera-distance-multiplier') || '1.0')
+      : 1.0
+    
+    baseDistanceRef.current = distance * cssMultiplier
+    
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Camera Debug:', {
+        screen: `${size.width}x${size.height}`,
+        aspect: (size.width / size.height).toFixed(2),
+        heightRatio: heightRatio.toFixed(3),
+        heightScale: heightScale.toFixed(3),
+        aspectDeviation: aspectDeviation.toFixed(3),
+        baseDistance: baseDistance.toFixed(1),
+        scaledDistance: distance.toFixed(1),
+        cssMultiplier: cssMultiplier.toFixed(2),
+        finalDistance: baseDistanceRef.current.toFixed(1)
+      })
     }
   }, [camera, size.width, size.height])
   
@@ -162,51 +124,42 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     if (!target) return
 
     const planePosition = target.position
-    
-    // ORBITAL VIEW: Position camera to see Earth and plane nicely
     const earthCenter = new THREE.Vector3(0, 0, 0)
     
-    // Check if plane is dropping in - start zoomed in, then zoom out
+    // Drop-in animation
     const dropInProgress = (target.userData.dropInProgress as number) ?? 1
     const isDroppingIn = dropInProgress < 1
     
-    // Use the calculated optimal distance that adapts to viewport size and aspect ratio
-    // This ensures Earth fills the screen on all monitor types
-    let baseViewDistance = optimalDistanceRef.current
+    let viewDistance = baseDistanceRef.current
     
-    // During drop-in: start slightly closer, zoom out as plane drops
     if (isDroppingIn) {
-      // Start at 1.3x closer (less aggressive), zoom out to normal distance
-      const startZoom = 1.3 // Start 1.3x closer (reduced from 1.5)
-      const zoomOutProgress = dropInProgress // 0 = start, 1 = end
+      const startZoom = 1.3
+      const zoomOutProgress = dropInProgress
       const currentZoom = startZoom + (1 - startZoom) * zoomOutProgress
-      baseViewDistance = baseViewDistance / currentZoom
+      viewDistance = viewDistance / currentZoom
     }
     
-    // Apply browser zoom scaling (less aggressive)
-    // When zoomed in (zoomLevel > 1): camera gets closer
-    // When zoomed out (zoomLevel < 1): camera goes further
-    const zoomMultiplier = Math.pow(zoomLevel, 1.5) // Less aggressive than squared
-    const viewDistance = baseViewDistance / zoomMultiplier
+    // Browser zoom level
+    const zoomMultiplier = Math.pow(zoomLevel, 1.5)
+    viewDistance = viewDistance / zoomMultiplier
     
-    // Also adjust height offset based on zoom
-    const baseHeightOffset = 10
-    const heightOffset = baseHeightOffset / zoomMultiplier
-    
-    // Position camera behind the plane's orbital position
+    // Camera position: OVER the plane (overhead view)
+    // Position camera from Earth center outward along plane's position direction
     const planeDirection = planePosition.clone().normalize()
     const cameraPosition = earthCenter.clone()
     cameraPosition.add(planeDirection.clone().multiplyScalar(viewDistance))
+    
+    // Height offset to position camera above the plane (not at same distance from center)
+    // This ensures we're looking DOWN at the plane
+    const heightOffset = 10 / zoomMultiplier
     cameraPosition.add(planeDirection.clone().multiplyScalar(heightOffset))
     
-    // Smoothly move camera (faster during drop-in for more responsive feel)
-    const lerpSpeed = isDroppingIn ? 0.15 : 0.08
+    // Smooth camera movement - faster lerp for more responsive following
+    const lerpSpeed = isDroppingIn ? 0.2 : 0.15 // Increased from 0.08 to 0.15 for better responsiveness
     camera.position.lerp(cameraPosition, lerpSpeed)
     
-    // Always look at the plane (Earth will be beautifully framed)
+    // Look at plane position (keeps plane centered)
     camera.lookAt(planePosition)
-    
-    // Keep camera oriented correctly
     camera.up.set(0, 1, 0)
   })
 

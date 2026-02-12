@@ -94,15 +94,15 @@ export default function Home({ isOpen, onClose }: HomeProps) {
         {/* Main content container with cohesive Home styling */}
         <div className="relative theme-home theme-container backdrop-blur-md overflow-hidden break-words"
              style={{
-               borderRadius: '2.5rem',
-               boxShadow: '0px 20px 60px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(255,255,255,0.8), inset 0px 1px 0px rgba(255,255,255,0.95), 0px 0px 100px rgba(255,255,255,0.4), 0px 0px 0px 2px rgba(37,99,235,0.1)',
-               border: '2px solid rgba(135, 206, 235, 0.3)'
+               border: '2px solid rgba(135, 206, 235, 0.3)',
+               borderRadius: '12px',
+               boxShadow: '0px 20px 60px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(255,255,255,0.8), inset 0px 1px 0px rgba(255,255,255,0.95), 0px 0px 100px rgba(255,255,255,0.4), 0px 0px 0px 2px rgba(37,99,235,0.1)'
              }}>
           
           {/* Close button - Larger */}
           <motion.button
             onClick={handleClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black rounded-full"
             style={{
               background: 'rgba(255,255,255,0.85)',
               backdropFilter: 'blur(12px)',
@@ -139,8 +139,8 @@ export default function Home({ isOpen, onClose }: HomeProps) {
             <div className="max-w-4xl mx-auto break-words">
               <div className="relative theme-home theme-card landmark-card text-center break-words overflow-hidden break-words"
                    style={{
-                     borderRadius: '2rem',
-                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)'
+                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 35px rgba(0, 0, 0, 0.1)',
+                     border: '1px solid rgba(0, 0, 0, 0.1)'
                    }}>
                 
                 <h2 className="break-words font-extrabold text-stone-800 mb-8 tracking-tight">

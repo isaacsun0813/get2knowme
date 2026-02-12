@@ -212,9 +212,10 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
             <motion.div
               className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto pointer-events-auto"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.92) 50%, rgba(240,248,255,0.9) 100%)',
+                background: '#FFFFFF',
                 backdropFilter: 'blur(40px)',
-                borderRadius: '2rem',
+                borderRadius: '12px',
+                border: '2px solid rgba(255,255,255,0.9)',
                 boxShadow: `
                   0px 20px 60px rgba(0,0,0,0.4),
                   0px 0px 0px 1px rgba(255,255,255,0.8),
@@ -222,7 +223,6 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                   0px 0px 120px rgba(16,185,129,0.08),
                   0px 0px 0px 2px rgba(16,185,129,0.1)
                 `,
-                border: '2px solid rgba(255,255,255,0.9)',
                 transform: 'translateZ(0)',
                 scrollbarWidth: 'thin',
                 scrollbarColor: 'rgba(16,185,129,0.3) transparent'
@@ -231,7 +231,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
               {/* Close Button */}
               <motion.button
                 onClick={handleClose}
-                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black bg-white rounded-full"
                 style={{
                   background: 'rgba(255,255,255,0.85)',
                   backdropFilter: 'blur(12px)',
@@ -250,8 +250,30 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                 <X size={24} className="text-gray-600 group-hover:text-gray-800" strokeWidth={2.5} />
               </motion.button>
 
-              {/* Content Area */}
-              <div className="relative p-8 sm:p-10 md:p-12 pb-16">
+              {/* Content Area - Wall Background */}
+              <div 
+                className="relative p-8 sm:p-10 md:p-12 pb-16"
+                style={{
+                  background: `
+                    repeating-linear-gradient(
+                      0deg,
+                      rgba(0,0,0,0.01) 0px,
+                      rgba(0,0,0,0.01) 1px,
+                      transparent 1px,
+                      transparent 20px
+                    ),
+                    repeating-linear-gradient(
+                      90deg,
+                      rgba(0,0,0,0.01) 0px,
+                      rgba(0,0,0,0.01) 1px,
+                      transparent 1px,
+                      transparent 20px
+                    ),
+                    linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)
+                  `,
+                  backgroundSize: '20px 20px, 20px 20px, 100% 100%'
+                }}
+              >
                 
                 {/* Header */}
                 <motion.div
@@ -274,7 +296,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                     <div
                       className="absolute inset-0 rounded-full"
                       style={{
-                        background: 'radial-gradient(circle, rgba(16,185,129,0.3) 0%, transparent 70%)',
+                        background: 'rgba(16,185,129,0.2)',
                         filter: 'blur(8px)',
                         transform: 'scale(1.5)'
                       }}
@@ -292,10 +314,7 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                     className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight mb-4"
                     style={{
                       fontFamily: 'Satoshi, Manrope, General Sans, system-ui, sans-serif',
-                      background: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
+                      color: '#10b981',
                       textShadow: '0 2px 20px rgba(16,185,129,0.2)',
                       letterSpacing: '-0.02em'
                     }}
@@ -348,50 +367,89 @@ export default function Adventure({ isOpen, onClose }: AdventureProps) {
                           transition: { duration: 0.3 }
                         } : {}}
                       >
-                        {/* Colored Pin */}
+                        {/* 3D Pin Head */}
                         <div
-                          className="absolute -top-2 left-1/2 -translate-x-1/2 z-10"
+                          className="absolute -top-3 left-1/2 -translate-x-1/2 z-10"
                           style={{
-                            width: '12px',
-                            height: '12px',
-                            background: position.pinColor.color,
+                            width: '16px',
+                            height: '16px',
+                            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, ${position.pinColor.color} 40%, ${position.pinColor.color}dd 100%)`,
                             borderRadius: '50%',
                             boxShadow: `
+                              0 4px 8px rgba(0,0,0,0.3),
                               0 2px 4px rgba(0,0,0,0.2),
-                              inset 0 1px 0 rgba(255,255,255,0.3)
+                              inset -2px -2px 4px rgba(0,0,0,0.2),
+                              inset 2px 2px 4px rgba(255,255,255,0.4),
+                              0 0 0 1px rgba(0,0,0,0.1)
                             `,
-                            border: '1px solid rgba(0,0,0,0.1)'
+                            border: '1px solid rgba(0,0,0,0.15)',
+                            transform: 'perspective(100px) rotateX(15deg)',
+                            transformStyle: 'preserve-3d'
                           }}
-                        />
+                        >
+                          {/* Pin Head Highlight */}
+                          <div
+                            className="absolute top-1 left-1"
+                            style={{
+                              width: '5px',
+                              height: '5px',
+                              background: 'rgba(255,255,255,0.7)',
+                              borderRadius: '50%',
+                              filter: 'blur(1px)'
+                            }}
+                          />
+                        </div>
                         
-                        {/* Pin Shadow */}
+                        {/* Pin Shaft (the metal part) */}
                         <div
                           className="absolute -top-1 left-1/2 -translate-x-1/2 z-9"
                           style={{
-                            width: '8px',
-                            height: '4px',
-                            background: 'rgba(0,0,0,0.15)',
+                            width: '2px',
+                            height: '8px',
+                            background: 'linear-gradient(to bottom, #c0c0c0 0%, #808080 50%, #606060 100%)',
+                            boxShadow: `
+                              inset 0 1px 0 rgba(255,255,255,0.3),
+                              inset 0 -1px 0 rgba(0,0,0,0.3),
+                              0 1px 2px rgba(0,0,0,0.2)
+                            `,
+                            borderRadius: '1px'
+                          }}
+                        />
+                        
+                        {/* Pin Shadow on Wall */}
+                        <div
+                          className="absolute -top-1 left-1/2 -translate-x-1/2 z-8"
+                          style={{
+                            width: '12px',
+                            height: '6px',
+                            background: 'radial-gradient(ellipse, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)',
                             borderRadius: '50%',
-                            filter: 'blur(2px)'
+                            filter: 'blur(3px)',
+                            transform: 'translateY(2px)'
                           }}
                         />
 
-                        {/* Polaroid Frame */}
+                        {/* Polaroid Frame - Enhanced 3D effect */}
                         <div
-                          className="relative bg-white rounded-lg p-2 shadow-lg"
+                          className="relative bg-white rounded-lg p-2"
                           style={{
                             boxShadow: `
-                              0 8px 24px rgba(0,0,0,0.15),
-                              0 0 0 1px rgba(0,0,0,0.05),
-                              inset 0 1px 0 rgba(255,255,255,0.9)
+                              0 12px 32px rgba(0,0,0,0.25),
+                              0 6px 16px rgba(0,0,0,0.15),
+                              0 2px 4px rgba(0,0,0,0.1),
+                              inset 0 1px 0 rgba(255,255,255,0.95),
+                              inset 0 -1px 0 rgba(0,0,0,0.05)
                             `,
-                            transform: 'translateZ(0)'
+                            transform: 'translateZ(0)',
+                            transformStyle: 'preserve-3d',
+                            border: '1px solid rgba(0,0,0,0.08)',
+                            background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)'
                           }}
                         >
                           {/* Photo Area */}
                           <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-gray-100">
                             {imageLoaded[index] ? null : (
-                              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100">
+                              <div className="absolute inset-0 flex items-center justify-center bg-green-100">
                                 <motion.div
                                   animate={{ opacity: [0.5, 1, 0.5] }}
                                   transition={{ duration: 1.5, repeat: Infinity }}

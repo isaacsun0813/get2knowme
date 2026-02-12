@@ -195,7 +195,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                         key={i}
                         className="absolute w-full h-px"
                         style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+                          background: 'rgba(255,255,255,0.15)',
                           top: `${20 + i * 30}%`,
                           filter: 'blur(1px)'
                         }}
@@ -214,10 +214,11 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
 
                   {/* Main Glass Container - More opaque for readability */}
                   <div 
-              className="relative w-full rounded-3xl overflow-hidden"
+              className="relative w-full overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(240,248,255,0.90) 50%, rgba(255,255,255,0.92) 100%)',
+                background: '#FFFFFF',
                 backdropFilter: 'blur(30px)',
+                borderRadius: '12px',
                 boxShadow: `
                   0px 30px 60px rgba(0,0,0,0.2),
                   0px 0px 0px 1px rgba(255,255,255,0.8),
@@ -232,7 +233,6 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
               <div 
                 className="absolute inset-0 pointer-events-none"
              style={{
-                  borderRadius: '1.5rem',
                   boxShadow: 'inset 0px 0px 40px rgba(255,255,255,0.15)',
                   border: '1px solid rgba(255,255,255,0.2)'
                 }}
@@ -241,7 +241,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
               {/* Close Button - Larger Glass Orb */}
               <motion.button
             onClick={handleClose}
-                className="absolute top-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center group"
+                className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center group border-2 border-black bg-white rounded-full"
                 style={{
                   background: 'rgba(255,255,255,0.85)',
                   backdropFilter: 'blur(12px)',
@@ -278,10 +278,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     className="text-5xl sm:text-6xl md:text-7xl font-bold mb-4"
                     style={{
                       fontFamily: 'Satoshi, Manrope, system-ui, sans-serif',
-                      background: 'linear-gradient(135deg, #1a1a1a 0%, #4a6eff 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
+                      color: '#4a6eff',
                       letterSpacing: '-0.04em',
                       lineHeight: '1.1'
                     }}
@@ -292,7 +289,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     className="h-px mt-6"
                     style={{
                       width: '120px',
-                      background: 'linear-gradient(to right, rgba(74,110,255,0.4), transparent)'
+                      background: '#4a6eff'
                     }}
                   />
                 </motion.div>
@@ -307,46 +304,80 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                   <motion.div
                     ref={profileRef}
                     className="relative inline-block mb-6"
-                    animate={{
-                      y: [0, -8, 0]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: 'easeInOut'
-                    }}
                     style={{
-                      transform: `translateX(${mousePosition.x}px) translateY(${mousePosition.y}px)`
+                      transform: `translateX(${mousePosition.x * 0.3}px) translateY(${mousePosition.y * 0.3}px)`
                     }}
                   >
                     <div 
                       className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden"
                       style={{
-                        boxShadow: `
-                          0 20px 40px rgba(0,0,0,0.12),
-                          0 0 0 3px rgba(194,240,255,0.6),
-                          0 0 0 6px rgba(183,186,255,0.3),
-                          inset 0 2px 8px rgba(0,0,0,0.1)
-                        `,
-                        border: '2px solid rgba(255,255,255,0.8)'
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                        border: 'none'
                       }}
                     >
-                    <Image 
-                      src="/photos/profilePic.jpeg" 
-                      alt="Isaac Sun" 
-                      fill
-                      className="object-cover"
-                      style={{ objectPosition: '50% 25%' }}
+                      {/* Base image */}
+                      <Image 
+                        src="/photos/profilePic.jpeg" 
+                        alt="Isaac Sun" 
+                        fill
+                        className="object-cover"
+                        style={{ 
+                          objectPosition: '50% 25%',
+                          filter: 'contrast(1.1) saturate(1.15)'
+                        }}
                         sizes="224px"
                         priority
                       />
-                      {/* Glow ring */}
+                      
+                      {/* Subtle geometric pattern - Hexagonal tiles */}
                       <div 
-                        className="absolute inset-0 rounded-full"
+                        className="absolute inset-0 z-10 pointer-events-none"
                         style={{
-                          boxShadow: 'inset 0 0 40px rgba(194,240,255,0.2)'
+                          backgroundImage: `
+                            repeating-linear-gradient(
+                              60deg,
+                              transparent 0px,
+                              transparent 19px,
+                              rgba(255,255,255,0.08) 19px,
+                              rgba(255,255,255,0.08) 20px,
+                              transparent 20px,
+                              transparent 39px
+                            ),
+                            repeating-linear-gradient(
+                              -60deg,
+                              transparent 0px,
+                              transparent 19px,
+                              rgba(255,255,255,0.08) 19px,
+                              rgba(255,255,255,0.08) 20px,
+                              transparent 20px,
+                              transparent 39px
+                            ),
+                            repeating-linear-gradient(
+                              0deg,
+                              transparent 0px,
+                              transparent 19px,
+                              rgba(255,255,255,0.08) 19px,
+                              rgba(255,255,255,0.08) 20px,
+                              transparent 20px,
+                              transparent 39px
+                            )
+                          `,
+                          backgroundSize: '40px 40px',
+                          borderRadius: '50%',
+                          opacity: 0.4,
+                          mixBlendMode: 'overlay'
                         }}
-                    />
+                      />
+                      
+                      {/* Subtle radial highlight */}
+                      <div 
+                        className="absolute inset-0 z-10 pointer-events-none"
+                        style={{
+                          background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 50%)',
+                          borderRadius: '50%',
+                          opacity: 0.5
+                        }}
+                      />
                   </div>
                   </motion.div>
 
@@ -415,7 +446,7 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                     transition={{ delay: 0.35, duration: 0.4 }}
                     className="h-px"
                     style={{
-                      background: 'linear-gradient(to right, transparent, rgba(74,110,255,0.2), transparent)',
+                      background: 'rgba(74,110,255,0.2)',
                       transformOrigin: 'left'
                     }}
                   />
@@ -526,9 +557,11 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                             boxShadow: '0 8px 20px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.6)'
                           }}
                           whileTap={{ scale: 0.98 }}
-                          className="flex items-center gap-3 px-5 py-3 rounded-full"
+                          className="flex items-center justify-center"
                           style={{
-                            height: '36px',
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '50%',
                             background: 'rgba(255,255,255,0.9)',
                             backdropFilter: 'blur(10px)',
                             boxShadow: `
@@ -551,20 +584,12 @@ export default function AboutMe({ isOpen, onClose }: AboutMeProps) {
                               ease: 'easeInOut',
                               delay: driftDelay
                             }}
-                            className="flex items-center gap-3"
+                            className="flex items-center justify-center"
                           >
                             <social.icon 
-                              size={18} 
+                              size={20} 
                               style={{ color: social.color }}
                             />
-                            <span 
-                              className="text-sm font-medium"
-                              style={{
-                                fontFamily: 'Inter, system-ui, sans-serif'
-                              }}
-                            >
-                              {social.label}
-                            </span>
                           </motion.div>
                         </motion.a>
                       )
