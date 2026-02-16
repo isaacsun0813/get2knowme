@@ -80,6 +80,19 @@
   --boarding-pass-padding: clamp(0.5rem, 0.75vw, 0.875rem);
   --boarding-pass-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
   
+  /* Mobile-specific sizing - smaller widgets */
+  @media (max-width: 768px) {
+    --music-controls-width: clamp(5.5rem, 18vw, 6.5rem);
+    --music-controls-padding: clamp(0.35rem, 1vw, 0.45rem);
+    --music-controls-bottom: clamp(0.5rem, 1vh, 0.75rem);
+    --music-controls-right: clamp(0.5rem, 2vw, 0.75rem);
+    
+    --boarding-pass-width: clamp(6rem, 55vw, 10rem);
+    --boarding-pass-max-width: 10rem;
+    --boarding-pass-padding: clamp(0.3rem, 0.9vw, 0.45rem);
+    --boarding-pass-bottom: clamp(0.5rem, 1vh, 0.75rem);
+  }
+  
   /* Camera zoom - base multiplier for reference screen (1920×1080) */
   /* The system automatically scales this for different screen sizes */
   /* Lower value = camera closer (Earth bigger) */

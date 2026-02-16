@@ -1,19 +1,19 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import * as THREE from 'three'
 
 interface TapToMoveProps {
   disabled?: boolean
 }
 
 /**
- * Tap to Move - Mobile touch controls
- * Tap and hold anywhere on screen to move the plane in that direction
+ * Tap to Move - Mobile touch controls (DOM event handler)
+ * Plane flies directly to where user taps (straight line flight)
  */
 export default function TapToMove({ disabled = false }: TapToMoveProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [isClient, setIsClient] = useState(false)
-  const activeKeysRef = useRef<Set<string>>(new Set())
   const isHoldingRef = useRef(false)
 
   useEffect(() => {
@@ -33,118 +33,46 @@ export default function TapToMove({ disabled = false }: TapToMoveProps) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Simulate keyboard events
-  const simulateKeyEvent = (keyCode: string, type: 'keydown' | 'keyup') => {
-    const keyMap: Record<string, string> = {
-      'KeyW': 'w',
-      'KeyA': 'a',
-      'KeyD': 'd'
-    }
-
-    const event = new KeyboardEvent(type, {
-      code: keyCode,
-      key: keyMap[keyCode] || '',
-      bubbles: true,
-      cancelable: true
-    })
-    window.dispatchEvent(event)
-  }
-
   // Setup touch event listeners
   useEffect(() => {
     if (!isMobile || !isClient || disabled) return
 
-    // Release all keys
-    const releaseAllKeys = () => {
-      activeKeysRef.current.forEach(key => {
-        simulateKeyEvent(key, 'keyup')
-      })
-      activeKeysRef.current.clear()
-    }
-
-    // Handle tap/hold - convert position to movement direction
-    const updateMovement = (clientX: number, clientY: number) => {
-      // Get screen center (where plane appears to be)
-      const centerX = window.innerWidth / 2
-      const centerY = window.innerHeight / 2
-
-      // Calculate direction from center to tap point
-      const deltaX = clientX - centerX
-      const deltaY = clientY - centerY
-      
-      // Calculate distance from center
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-      
-      // Calculate horizontal and vertical ratios
-      const horizontalRatio = deltaX / (window.innerWidth / 2) // -1 to 1
-      const verticalRatio = Math.abs(deltaY) / (window.innerHeight / 2) // 0 to 1
-      
-      // Determine if tap is mostly "forward" (small horizontal relative to vertical)
-      // If the tap is mostly forward, don't turn - just go straight
-      const horizontalThreshold = 0.15 // Increased threshold - only turn if significant horizontal offset
-      const forwardThreshold = 0.3 // If vertical movement is significant, allow more horizontal before turning
-      
-      // If tap is mostly forward (small horizontal relative to vertical), don't turn
-      const isMostlyForward = Math.abs(horizontalRatio) < horizontalThreshold || 
-                              (verticalRatio > forwardThreshold && Math.abs(horizontalRatio) < horizontalThreshold * 1.5)
-
-      // Determine movement direction
-      const newActiveKeys = new Set<string>()
-
-      // Always speed up when holding
-      newActiveKeys.add('KeyW')
-
-      // Only turn if there's significant horizontal offset AND it's not mostly forward
-      // This prevents over-turning when the plane is already facing the right direction
-      if (!isMostlyForward && distance > 20) {
-        if (horizontalRatio < -horizontalThreshold) {
-          // Left side - turn left
-          newActiveKeys.add('KeyA')
-        } else if (horizontalRatio > horizontalThreshold) {
-          // Right side - turn right
-          newActiveKeys.add('KeyD')
-        }
+    // Handle tap - call handler from TapToMoveHandler
+    const handleTap = (clientX: number, clientY: number) => {
+      const handler = (window as Window & { __tapToMoveHandler?: (x: number, y: number) => void }).__tapToMoveHandler
+      if (handler) {
+        handler(clientX, clientY)
       }
-
-      // Release keys that are no longer active
-      const currentKeys = activeKeysRef.current
-      currentKeys.forEach(key => {
-        if (!newActiveKeys.has(key)) {
-          simulateKeyEvent(key, 'keyup')
-          currentKeys.delete(key)
-        }
-      })
-
-      // Press new keys
-      newActiveKeys.forEach(key => {
-        if (!currentKeys.has(key)) {
-          simulateKeyEvent(key, 'keydown')
-          currentKeys.add(key)
-        }
-      })
     }
 
-    // Handle touch start - begin hold
+    // Handle touch start
     const handleTouchStart = (e: TouchEvent) => {
       e.preventDefault()
       isHoldingRef.current = true
       const touch = e.touches[0]
-      updateMovement(touch.clientX, touch.clientY)
+      handleTap(touch.clientX, touch.clientY)
     }
 
-    // Handle touch move - update direction while holding
+    // Handle touch move - update target while dragging
     const handleTouchMove = (e: TouchEvent) => {
       if (!isHoldingRef.current) return
       e.preventDefault()
       const touch = e.touches[0]
-      updateMovement(touch.clientX, touch.clientY)
+      handleTap(touch.clientX, touch.clientY)
     }
 
-    // Handle touch end - release keys
+    // Handle touch end - clear target
     const handleTouchEnd = (e: TouchEvent) => {
       e.preventDefault()
       isHoldingRef.current = false
-      releaseAllKeys()
+      // Clear target by calling handler with null
+      const windowWithRefs = window as Window & { 
+        __planeRef?: React.RefObject<THREE.Object3D | null>
+      }
+      const planeRef = windowWithRefs.__planeRef
+      if (planeRef?.current) {
+        planeRef.current.userData.mobileTarget = null
+      }
     }
 
     const canvas = document.querySelector('canvas')
@@ -161,10 +89,8 @@ export default function TapToMove({ disabled = false }: TapToMoveProps) {
       targetElement.removeEventListener('touchend', handleTouchEnd)
       targetElement.removeEventListener('touchcancel', handleTouchEnd)
       isHoldingRef.current = false
-      releaseAllKeys()
     }
   }, [isMobile, isClient, disabled])
-
 
   return null
 }

@@ -35,6 +35,7 @@ export default function Plane({
   const position = useRef(targetPosition.clone())
   const speed = useRef(0)
   const orientation = useRef(new THREE.Quaternion()) // Store orientation directly as quaternion
+  const wasMobileModeLastFrame = useRef(false) // Track if we were in mobile mode last frame
   
   // Drop-in animation state
   const dropInStartTime = useRef<number | null>(null)
@@ -529,47 +530,56 @@ export default function Plane({
       }
     }
 
-    // 1. HANDLE SPEED CONTROL
+    // Check for mobile target (direct flight mode) - check early for speed control
+    const mobileTarget = planeRef.current?.userData?.mobileTarget as THREE.Vector3 | null | undefined
+    const isMobileMode = mobileTarget !== null && mobileTarget !== undefined && planeRef.current !== null
+    
+    // If we just entered mobile mode (wasn't mobile last frame, but is now), initialize speed immediately
+    if (isMobileMode && !wasMobileModeLastFrame.current) {
+      // Set speed immediately - don't wait
+      speed.current = 15
+    }
+    // Always ensure speed in mobile mode - check every frame
+    if (isMobileMode) {
+      if (speed.current < 10) {
+        speed.current = 10 // Higher minimum speed
+      }
+      // Force speed to be active immediately
+      if (speed.current === 0) {
+        speed.current = 10
+      }
+    }
+    wasMobileModeLastFrame.current = isMobileMode
+
+    // 1. HANDLE SPEED CONTROL - Optimized for performance
     let isThrottling = false
     
-    // Skip controls if disabled (e.g., when popup is open)
     if (controlsDisabled) {
-      // Apply stronger drag to gradually slow down the plane
+      // Apply stronger drag when controls disabled
       speed.current -= dragFactor * speed.current * delta * 2
+    } else if (isMobileMode) {
+      // Mobile: constant high speed (no calculations needed)
+      speed.current = 18
+      isThrottling = true
     } else {
-      // Enhanced key detection with fallbacks for compatibility
-      // Check all possible key formats to ensure we catch the key
-      const wPressed = keysPressed.current['KeyW'] || 
-                       keysPressed.current['w'] || 
-                       keysPressed.current['W'] ||
-                       keysPressed.current['keyw'] ||
-                       keysPressed.current['KEYW']
-      const sPressed = keysPressed.current['KeyS'] || 
-                       keysPressed.current['s'] || 
-                       keysPressed.current['S'] ||
-                       keysPressed.current['keys'] ||
-                       keysPressed.current['KEYS']
+      // Desktop keyboard controls
+      const wPressed = keysPressed.current['KeyW'] || keysPressed.current['w'] || keysPressed.current['W']
+      const sPressed = keysPressed.current['KeyS'] || keysPressed.current['s'] || keysPressed.current['S']
       
       if (wPressed) {
         isThrottling = true
         speed.current += acceleration * delta
-        // Ensure speed increases even if drag is strong
-        if (speed.current < 0.5) {
-          speed.current = Math.max(speed.current, 0.5) // Minimum speed when throttling
-        }
+        if (speed.current < 0.5) speed.current = 0.5
       }
       if (sPressed) {
         speed.current -= acceleration * delta
       }
 
-      // Apply normal drag
       const currentDrag = isThrottling ? dragFactor * 0.4 : dragFactor * 1.2
       speed.current -= currentDrag * speed.current * delta
+      speed.current = THREE.MathUtils.clamp(speed.current, 0, maxSpeed)
+      if (speed.current < 0.3) speed.current = 0
     }
-    
-    speed.current = THREE.MathUtils.clamp(speed.current, 0, maxSpeed)
-    
-    if (speed.current < 0.3) speed.current = 0
 
     // ANIMATION CONTROL - Play when flying, pause when stopped
     if (actions && Object.keys(actions).length > 0) {
@@ -607,41 +617,93 @@ export default function Plane({
 
     // Only apply rotations if controls are not disabled
     if (!controlsDisabled) {
-      // Enhanced key detection with fallbacks for compatibility
-      const aPressed = keysPressed.current['KeyA'] || keysPressed.current['a'] || keysPressed.current['A'] || keysPressed.current['ArrowLeft']
-      const dPressed = keysPressed.current['KeyD'] || keysPressed.current['d'] || keysPressed.current['D'] || keysPressed.current['ArrowRight']
-      const upPressed = keysPressed.current['ArrowUp']
-      const downPressed = keysPressed.current['ArrowDown']
-      
-      // Apply yaw (heading) rotations around surface normal WITH BANKING
-      if (aPressed) {
-        const yawRotation = new THREE.Quaternion()
-        yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
-        orientation.current.premultiply(yawRotation)
-        turnInput = 1 // Left turn
-      }
-      if (dPressed) {
-        const yawRotation = new THREE.Quaternion()
-        yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
-        orientation.current.premultiply(yawRotation)
-        turnInput = -1 // Right turn
-      }
+      if (isMobileMode && mobileTarget) {
+        // MOBILE MODE: Build clean orientation from target and surface normal
+        // This prevents gimbal lock by avoiding incremental rotation accumulation
+        
+        const toTarget = mobileTarget.clone().sub(position.current)
+        const distanceToTarget = toTarget.length()
+        
+        // If close enough, clear target
+        if (distanceToTarget < 2) {
+          if (planeRef.current) {
+            planeRef.current.userData.mobileTarget = null
+          }
+          speed.current -= dragFactor * speed.current * delta * 1.5
+        } else {
+          // Build desired orientation from scratch using target direction + surface normal
+          const desiredForward = toTarget.normalize()
+          const desiredUp = surfaceNormal.clone()
+          
+          // Create orthonormal basis efficiently
+          // Plane's local +X = forward direction (flies along X axis)
+          // Plane's local +Y = up direction (perpendicular to surface)
+          // Plane's local +Z = right wing direction (cross product)
+          
+          const desiredRight = new THREE.Vector3().crossVectors(desiredForward, desiredUp)
+          
+          // Handle edge case: forward parallel to up (rare, at poles)
+          if (desiredRight.lengthSq() < 0.001) {
+            // Use perpendicular fallback
+            const fallback = Math.abs(desiredForward.y) > 0.9 
+              ? new THREE.Vector3(0, 0, 1) 
+              : new THREE.Vector3(0, 1, 0)
+            desiredRight.crossVectors(desiredForward, fallback).normalize()
+          } else {
+            desiredRight.normalize()
+          }
+          
+          // Recalculate up for perfect orthogonality
+          desiredUp.crossVectors(desiredRight, desiredForward).normalize()
+          
+          // Build rotation matrix: X=forward, Y=up, Z=right
+          const matrix = new THREE.Matrix4()
+          matrix.makeBasis(desiredForward, desiredUp, desiredRight)
+          
+          const desiredOrientation = new THREE.Quaternion()
+          desiredOrientation.setFromRotationMatrix(matrix)
+          
+          // Faster interpolation for more responsive controls
+          orientation.current.slerp(desiredOrientation, 0.25)
+        }
+      } else {
+        // Regular keyboard controls
+        // Enhanced key detection with fallbacks for compatibility
+        const aPressed = keysPressed.current['KeyA'] || keysPressed.current['a'] || keysPressed.current['A'] || keysPressed.current['ArrowLeft']
+        const dPressed = keysPressed.current['KeyD'] || keysPressed.current['d'] || keysPressed.current['D'] || keysPressed.current['ArrowRight']
+        const upPressed = keysPressed.current['ArrowUp']
+        const downPressed = keysPressed.current['ArrowDown']
+        
+        // Apply yaw (heading) rotations around surface normal WITH BANKING
+        if (aPressed) {
+          const yawRotation = new THREE.Quaternion()
+          yawRotation.setFromAxisAngle(surfaceNormal, rotationSpeed * delta)
+          orientation.current.premultiply(yawRotation)
+          turnInput = 1 // Left turn
+        }
+        if (dPressed) {
+          const yawRotation = new THREE.Quaternion()
+          yawRotation.setFromAxisAngle(surfaceNormal, -rotationSpeed * delta)
+          orientation.current.premultiply(yawRotation)
+          turnInput = -1 // Right turn
+        }
 
-      // Apply pitch rotations around current right vector
-      if (upPressed) {
-        const pitchRotation = new THREE.Quaternion()
-        pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
-        orientation.current.multiply(pitchRotation)
-      }
-      if (downPressed) {
-        const pitchRotation = new THREE.Quaternion()
-        pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
-        orientation.current.multiply(pitchRotation)
+        // Apply pitch rotations around current right vector
+        if (upPressed) {
+          const pitchRotation = new THREE.Quaternion()
+          pitchRotation.setFromAxisAngle(currentRight, -rotationSpeed * delta)
+          orientation.current.multiply(pitchRotation)
+        }
+        if (downPressed) {
+          const pitchRotation = new THREE.Quaternion()
+          pitchRotation.setFromAxisAngle(currentRight, rotationSpeed * delta)
+          orientation.current.multiply(pitchRotation)
+        }
       }
     }
 
-    // REALISTIC BANKING DURING TURNS
-    if (speed.current > 5) { // Only bank when actually moving
+    // REALISTIC BANKING DURING TURNS (desktop WASD only)
+    if (!isMobileMode && speed.current > 5) { // Only bank when actually moving
       const bankingForce = turnInput * maxBankAngle * 0.3 // 30% of max bank
       const currentForwardVector = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
       
@@ -655,47 +717,51 @@ export default function Plane({
       }
     }
 
-    // DYNAMIC PITCH BASED ON SPEED CHANGES
-    const speedChangeThreshold = 2
-    if (isThrottling && speed.current > speedChangeThreshold) {
-      // Climbing - slight nose up attitude
-      const climbPitch = 0.1 // Gentle climb angle
-      const climbRotation = new THREE.Quaternion()
-      climbRotation.setFromAxisAngle(currentRight, climbPitch * delta * 0.5)
-      orientation.current.multiply(climbRotation)
-    } else if (!isThrottling && speed.current > speedChangeThreshold) {
-      // Descending - slight nose down attitude  
-      const divePitch = -0.05 // Gentle dive angle
-      const diveRotation = new THREE.Quaternion()
-      diveRotation.setFromAxisAngle(currentRight, divePitch * delta * 0.5)
-      orientation.current.multiply(diveRotation)
+    // DYNAMIC PITCH BASED ON SPEED CHANGES (desktop WASD only)
+    if (!isMobileMode) {
+      const speedChangeThreshold = 2
+      if (isThrottling && speed.current > speedChangeThreshold) {
+        // Climbing - slight nose up attitude
+        const climbPitch = 0.1 // Gentle climb angle
+        const climbRotation = new THREE.Quaternion()
+        climbRotation.setFromAxisAngle(currentRight, climbPitch * delta * 0.5)
+        orientation.current.multiply(climbRotation)
+      } else if (!isThrottling && speed.current > speedChangeThreshold) {
+        // Descending - slight nose down attitude  
+        const divePitch = -0.05 // Gentle dive angle
+        const diveRotation = new THREE.Quaternion()
+        diveRotation.setFromAxisAngle(currentRight, divePitch * delta * 0.5)
+        orientation.current.multiply(diveRotation)
+      }
     }
 
     // 3. CONSTRAIN ORIENTATION to prevent excessive pitch and maintain surface alignment
-    // Recalculate vectors after rotation
-    const newUp = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
-    
-    // Limit pitch by ensuring up vector doesn't deviate too much from surface normal
-    const pitchAngle = Math.acos(THREE.MathUtils.clamp(newUp.dot(surfaceNormal), -1, 1))
-    if (pitchAngle > maxPitchAngle) {
-      // Correct orientation to limit pitch
-      const correctionAxis = new THREE.Vector3().crossVectors(newUp, surfaceNormal).normalize()
-      const correctionAngle = pitchAngle - maxPitchAngle
-      const correctionQuat = new THREE.Quaternion()
-      correctionQuat.setFromAxisAngle(correctionAxis, -correctionAngle)
-      orientation.current.multiply(correctionQuat)
+    // Skip in mobile mode - orientation is already perfectly calculated
+    if (!isMobileMode) {
+      // Recalculate vectors after rotation
+      const newUp = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
+      
+      // Limit pitch by ensuring up vector doesn't deviate too much from surface normal
+      const pitchAngle = Math.acos(THREE.MathUtils.clamp(newUp.dot(surfaceNormal), -1, 1))
+      if (pitchAngle > maxPitchAngle) {
+        // Correct orientation to limit pitch
+        const correctionAxis = new THREE.Vector3().crossVectors(newUp, surfaceNormal).normalize()
+        const correctionAngle = pitchAngle - maxPitchAngle
+        const correctionQuat = new THREE.Quaternion()
+        correctionQuat.setFromAxisAngle(correctionAxis, -correctionAngle)
+        orientation.current.multiply(correctionQuat)
+      }
     }
 
     // 4. MOVEMENT - Only if we have speed
     if (speed.current > 0.1) {
-      // Get the current forward direction (nose of the model points +X in local space)
+      // Always use the plane's forward direction (where the nose points)
+      // This ensures the plane flies in the direction it's facing
       const forwardDirection = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
       
-      // Calculate movement
+      // Calculate movement in the direction the nose is pointing
       const movement = forwardDirection.clone().multiplyScalar(speed.current * delta)
       position.current.add(movement)
-      
-
     }
 
     // 5. MAINTAIN ALTITUDE - Keep plane at proper distance from Earth center
@@ -703,17 +769,20 @@ export default function Plane({
     position.current.normalize().multiplyScalar(targetDistance)
 
     // 6. SURFACE ALIGNMENT - Gradually align plane orientation with new surface position
-    const newSurfaceNormal = position.current.clone().normalize()
-    const currentUpDirection = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
-    
-    // Calculate how much the surface normal has changed
-    const alignmentAmount = 0.1 // How quickly to align with surface (0.1 = gentle)
-    const surfaceAlignment = new THREE.Quaternion()
-    surfaceAlignment.setFromUnitVectors(currentUpDirection, newSurfaceNormal)
-    
-    // Apply a small portion of the alignment each frame
-    surfaceAlignment.slerp(new THREE.Quaternion(), 1 - alignmentAmount)
-    orientation.current.premultiply(surfaceAlignment)
+    // Skip in mobile mode - orientation is built fresh each frame from target + surface normal
+    if (!isMobileMode) {
+      const newSurfaceNormal = position.current.clone().normalize()
+      const currentUpDirection = new THREE.Vector3(0, 1, 0).applyQuaternion(orientation.current)
+      
+      // Calculate how much the surface normal has changed
+      const alignmentAmount = 0.1 // How quickly to align with surface
+      const surfaceAlignment = new THREE.Quaternion()
+      surfaceAlignment.setFromUnitVectors(currentUpDirection, newSurfaceNormal)
+      
+      // Apply a small portion of the alignment each frame
+      surfaceAlignment.slerp(new THREE.Quaternion(), 1 - alignmentAmount)
+      orientation.current.premultiply(surfaceAlignment)
+    }
 
     // 7. APPLY TO VISUAL ELEMENTS
     group.current.position.copy(position.current)
@@ -725,8 +794,9 @@ export default function Plane({
       planeRef.current.quaternion.copy(orientation.current)
       
       const cameraForward = new THREE.Vector3(1, 0, 0).applyQuaternion(orientation.current)
+      const surfaceNormal = position.current.clone().normalize()
       planeRef.current.userData.forward = cameraForward
-      planeRef.current.userData.up = newSurfaceNormal
+      planeRef.current.userData.up = surfaceNormal
       planeRef.current.userData.speed = speed.current
       planeRef.current.userData.dropInProgress = dropInProgress.current
     } else {

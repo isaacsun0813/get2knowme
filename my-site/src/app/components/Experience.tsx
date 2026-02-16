@@ -18,6 +18,8 @@ import BackgroundMusic from './BackgroundMusic'
 import ImagePreloader from './ImagePreloader'
 import WebGLErrorBoundary from './WebGLErrorBoundary'
 import TapToMove from './TapToMove'
+import TapToMoveHandler from './TapToMoveHandler'
+import PortraitOrientationWarning from './PortraitOrientationWarning'
 
 // 🚀 MOBILE LANDING PAGE TOGGLE - Change this to enable/disable mobile landing page
 const SHOW_MOBILE_LANDING = true // Set to false to disable mobile landing page
@@ -346,14 +348,20 @@ export default function Experience() {
         
         {/* Camera controller with zoom level */}
         <CameraFollower targetRef={planeRef} zoomLevel={zoomLevel} />
+        
+        {/* Tap to Move Handler - Inside Canvas for raycasting */}
+        <TapToMoveHandler planeRef={planeRef} earthScene={earthScene} />
       </Canvas>
       
       
       {/* Instructions overlay */}
       <FlightControls />
       
-      {/* Tap to Move - Mobile controls */}
+      {/* Tap to Move - Mobile controls (DOM event handler) */}
       <TapToMove disabled={!!showPopup} />
+      
+      {/* Portrait orientation warning */}
+      <PortraitOrientationWarning />
       
       
       {/* Background Music - part of world entrance animation */}

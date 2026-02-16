@@ -287,10 +287,10 @@ bg-white/90
                 </div>
 
                 {/* Flight Details Row - 3 columns with category in middle */}
-                <div className="grid grid-cols-3 gap-2.5 mb-3 pb-2.5 border-b border-gray-300/30">
-                  <div className="text-center">
+                <div className="grid grid-cols-3 gap-1.5 md:gap-2.5 mb-3 pb-2.5 border-b border-gray-300/30">
+                  <div className="text-center min-w-0">
                     <p 
-                      className="text-[9px] uppercase tracking-wider mb-0.5"
+                      className="text-[8px] md:text-[9px] uppercase tracking-wider mb-0.5 truncate"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -300,7 +300,7 @@ bg-white/90
                       Gate
                     </p>
                     <p 
-                      className="text-xs font-bold tabular-nums"
+                      className="text-[10px] md:text-xs font-bold tabular-nums"
                       style={{
                         fontFamily: 'JetBrains Mono, monospace',
                         color: '#374151'
@@ -309,9 +309,9 @@ bg-white/90
                       {flightDetails.gate}
                     </p>
                   </div>
-                  <div className="text-center">
+                  <div className="text-center min-w-0">
                     <p 
-                      className="text-[9px] uppercase tracking-wider mb-0.5"
+                      className="text-[8px] md:text-[9px] uppercase tracking-wider mb-0.5 truncate"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -321,7 +321,7 @@ bg-white/90
                       Type
                     </p>
                     <p 
-                      className="text-xs font-bold"
+                      className="text-[10px] md:text-xs font-bold truncate"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: styling.accent,
@@ -332,9 +332,9 @@ bg-white/90
                       {landmark.subtitle}
                     </p>
                   </div>
-                  <div className="text-center">
+                  <div className="text-center min-w-0">
                     <p 
-                      className="text-[9px] uppercase tracking-wider mb-0.5"
+                      className="text-[8px] md:text-[9px] uppercase tracking-wider mb-0.5 truncate"
                       style={{
                         fontFamily: 'Inter, system-ui, sans-serif',
                         color: '#9ca3af',
@@ -344,7 +344,7 @@ bg-white/90
                       Seat
                     </p>
                     <p 
-                      className="text-xs font-bold tabular-nums"
+                      className="text-[10px] md:text-xs font-bold tabular-nums"
                       style={{
                         fontFamily: 'JetBrains Mono, monospace',
                         color: '#374151'

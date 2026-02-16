@@ -36,12 +36,18 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
       ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 768
     )
     
-    // Calculate base distance: Earth should fill ~50% of viewport height
-    // This gives more context and works better across screen sizes
+    // Detect small iPhone devices (iPhone SE, iPhone 12 mini, etc.)
+    // Small iPhones will have width < 400px or height < 900px
+    const isSmalliPhone = typeof window !== 'undefined' && isMobile && (
+      window.innerWidth < 400 || window.innerHeight < 900
+    )
+    
+    // Calculate base distance: Earth should fill ~65% of viewport height
+    // Bigger earth for better visibility
     const earthRadius = 25
     const earthDiameter = earthRadius * 2 // 50 units
-    const targetFillRatio = 0.50 // 50% of viewport height (more zoomed out)
-    const targetVisibleHeight = earthDiameter / targetFillRatio // 100 units
+    const targetFillRatio = 0.65 // 65% of viewport height (bigger earth)
+    const targetVisibleHeight = earthDiameter / targetFillRatio // ~77 units
     
     const fovRadians = (camera.fov * Math.PI) / 180
     const tanHalfFOV = Math.tan(fovRadians / 2)
@@ -70,9 +76,14 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     }
     let distance = baseDistance * heightScale
     
-    // Mobile-specific zoom out: zoom out 30% more on mobile devices
+    // Mobile-specific zoom out: zoom out more on mobile devices
     if (isMobile) {
-      distance *= 1.3
+      distance *= 1.3 // 30% zoom out for all mobile
+    }
+    
+    // Extra zoom out for small iPhones: additional 40% zoom out
+    if (isSmalliPhone) {
+      distance *= 1.4 // Total: 1.3 * 1.4 = 1.82x zoom out (82% more zoomed out)
     }
     
     // Aspect ratio adjustment: wider screens see more horizontally

@@ -109,9 +109,10 @@ export default function BackgroundMusic({ isInWorld }: BackgroundMusicProps) {
     }
   }
 
-  if (isMobile) {
-    return null
-  }
+  // Show music player on mobile too (but smaller)
+  // if (isMobile) {
+  //   return null
+  // }
 
   if (!isInWorld) {
     return null

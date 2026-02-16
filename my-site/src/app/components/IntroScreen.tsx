@@ -445,11 +445,16 @@ export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
 
       {/* Organic layout with hero text + right-side accent */}
       <motion.div 
-        className="absolute inset-0 flex flex-col md:flex-row items-center justify-center px-6 sm:px-12 lg:px-20 gap-12 md:gap-24"
+        className="absolute inset-0 flex flex-col md:flex-row items-center px-4 sm:px-12 lg:px-20 gap-12 md:gap-24 max-w-full overflow-x-hidden"
+        style={{
+          justifyContent: 'center',
+          paddingTop: '20vh', // Push content down from top - more space
+          paddingBottom: '15vh' // Add bottom padding
+        }}
         animate={isTransitioning ? { opacity: 0 } : { opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
-        <div className="relative flex-1 max-w-xl">
+        <div className="relative flex-1 max-w-xl w-full">
           <AnimatePresence>
             {isTransitioning && (
               <motion.div
@@ -467,9 +472,9 @@ export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
             )}
           </AnimatePresence>
           {/* Hello - large, organic, slightly rotated */}
-          <motion.div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <motion.div className="flex flex-col items-center md:items-start text-center md:text-left w-full max-w-full px-4 md:px-0">
             <motion.h1
-              className="text-[clamp(4rem,10vw,8rem)] font-black leading-none flex items-center gap-4"
+              className="text-[clamp(3rem,8vw,7rem)] font-black leading-none flex items-center gap-2 md:gap-4 flex-wrap justify-center md:justify-start"
               style={{
                 color: '#1a1a1a',
                 textShadow: '2px 2px 0px rgba(255,255,255,0.3), -1px -1px 0px rgba(0,0,0,0.08)',
@@ -487,7 +492,7 @@ export default function IntroScreen({ onLaunch, onEnter }: IntroScreenProps) {
             >
               Hello
               <motion.span
-                className="text-6xl md:text-7xl inline-block"
+                className="text-5xl md:text-6xl inline-block"
                 animate={{
                   rotate: [0, 14, -14, 14, -14, 0],
                   y: [0, -5, 0],
