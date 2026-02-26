@@ -42,12 +42,12 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
       window.innerWidth < 400 || window.innerHeight < 900
     )
     
-    // Calculate base distance: Earth should fill ~65% of viewport height
-    // Bigger earth for better visibility
+    // Calculate base distance: Earth should fill ~45% of viewport height
+    // More zoomed out for better context
     const earthRadius = 25
     const earthDiameter = earthRadius * 2 // 50 units
-    const targetFillRatio = 0.65 // 65% of viewport height (bigger earth)
-    const targetVisibleHeight = earthDiameter / targetFillRatio // ~77 units
+    const targetFillRatio = 0.45 // 45% of viewport height (more zoomed out)
+    const targetVisibleHeight = earthDiameter / targetFillRatio // ~111 units
     
     const fovRadians = (camera.fov * Math.PI) / 180
     const tanHalfFOV = Math.tan(fovRadians / 2)
@@ -55,24 +55,24 @@ export default function CameraFollower({ targetRef, zoomLevel = 1 }: CameraFollo
     // Base distance calculation (works for reference screen)
     const baseDistance = (targetVisibleHeight / 2) / tanHalfFOV
     
-    // Scale based on viewport height to maintain visual consistency
+    // Scale based on viewport height
     // Reference: 1080px height (standard 1920x1080)
-    // Key insight: To maintain same visual size, distance scales with viewport height
-    // Smaller screens = proportionally same distance (FOV handles pixel scaling)
-    // But we want to zoom OUT more on smaller screens to see more context
+    // Larger screens should zoom OUT more to see more of the scene
     const refHeight = 1080
     const heightRatio = size.height / refHeight
     
-    // Scale factor: smaller screens get farther camera (zoom out)
-    // For larger screens (like 2050x1500), we want to zoom out more
-    // Using a gentler curve that zooms out more for taller screens
+    // Scale factor: larger screens = farther camera (zoom out more)
+    // For 4K (2160px): heightRatio = 2.0 → should zoom out significantly
     let heightScale
-    if (heightRatio > 1.2) {
-      // For tall screens (like 1500px+), use a gentler scaling to zoom out more
-      heightScale = Math.pow(heightRatio, -0.3) // Gentler inverse scaling
+    if (heightRatio > 1.5) {
+      // Very tall screens (4K, etc): zoom out much more
+      heightScale = Math.pow(heightRatio, 0.7) // Aggressive zoom out
+    } else if (heightRatio > 1.0) {
+      // Moderately tall screens: moderate zoom out
+      heightScale = 1.0 + (heightRatio - 1.0) * 0.6
     } else {
-      // For standard screens, use inverse square root
-      heightScale = Math.pow(heightRatio, -0.5) // Inverse square root
+      // Smaller screens: still zoom out slightly
+      heightScale = 1.0 + (1.0 - heightRatio) * 0.2
     }
     let distance = baseDistance * heightScale
     
