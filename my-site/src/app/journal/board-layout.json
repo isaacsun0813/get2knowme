@@ -1,0 +1,169 @@
+{
+  "views": {
+    "desktop": {
+      "width": 11.5,
+      "height": 8.6
+    },
+    "phone": {
+      "width": 6.8,
+      "height": 18.6
+    }
+  },
+  "frames": {
+    "desktop": { "width": 10.3, "height": 7.25 },
+    "phone": { "width": 5.8, "height": 17.3 }
+  },
+  "plant": {
+    "desktopX": 4.6,
+    "phoneX": 2.55,
+    "topMount": 0.48
+  },
+  "objects": [
+    {
+      "name": "Photo_7",
+      "label": "View Oktoberfest photograph",
+      "photo": 0,
+      "desktop": [1.5, 3.05],
+      "phone": [1.15, 5.7],
+      "width": 1.85,
+      "height": 2.362,
+      "anchor": 1,
+      "number": 7,
+      "caption": "Oktoberfest",
+      "angle": 7
+    },
+    {
+      "name": "Photo_4",
+      "label": "View Milan photograph",
+      "photo": 1,
+      "desktop": [3.8, 2.7],
+      "phone": [1.5, 2.85],
+      "width": 2.05,
+      "height": 2.617,
+      "anchor": 1,
+      "number": 4,
+      "caption": "Milan",
+      "angle": -6
+    },
+    {
+      "name": "Photo_11",
+      "label": "View Zurich photograph",
+      "photo": 2,
+      "desktop": [-3.5, -1.5],
+      "phone": [-1.6, -3.1],
+      "width": 1.9,
+      "height": 2.426,
+      "anchor": 1,
+      "number": 11,
+      "caption": "Zurich",
+      "angle": 6
+    },
+    {
+      "name": "Photo_17",
+      "label": "View Stoos photograph",
+      "photo": 3,
+      "desktop": [-0.9, 3.35],
+      "phone": [-1.5, 6.4],
+      "width": 2.25,
+      "height": 2.873,
+      "anchor": 1,
+      "number": 17,
+      "caption": "Stoos",
+      "angle": -8
+    },
+    {
+      "name": "Photo_3",
+      "label": "View El Yunque photograph",
+      "photo": 4,
+      "desktop": [4.0, -0.25],
+      "phone": [1.5, -0.5],
+      "width": 1.9,
+      "height": 2.426,
+      "anchor": 1,
+      "number": 3,
+      "caption": "El Yunque",
+      "angle": 9
+    },
+    {
+      "name": "Photo_12",
+      "label": "View Zurich photograph",
+      "photo": 5,
+      "desktop": [0.85, -0.85],
+      "phone": [1.25, -3.5],
+      "width": 1.95,
+      "height": 2.49,
+      "anchor": 1,
+      "number": 12,
+      "caption": "Zurich",
+      "angle": -5
+    },
+    {
+      "name": "Photo_1",
+      "label": "View Ticino photograph",
+      "photo": 6,
+      "desktop": [-1.3, 0.35],
+      "phone": [-1.25, 0.2],
+      "width": 2.05,
+      "height": 2.617,
+      "anchor": 1,
+      "number": 1,
+      "caption": "Ticino",
+      "angle": -9
+    },
+    {
+      "name": "Photo_14",
+      "label": "View Zermatt photograph",
+      "photo": 7,
+      "desktop": [2.6, -1.9],
+      "phone": [-1.1, -6.0],
+      "width": 1.65,
+      "height": 2.107,
+      "anchor": 1,
+      "number": 14,
+      "caption": "Zermatt",
+      "angle": 7
+    },
+    {
+      "name": "Photo_15",
+      "label": "View Wicker Park photograph",
+      "photo": 8,
+      "desktop": [-3.9, 1.0],
+      "phone": [-1.6, 3.3],
+      "width": 1.95,
+      "height": 2.49,
+      "anchor": 1,
+      "number": 15,
+      "caption": "Wicker Park",
+      "angle": 5
+    },
+    {
+      "name": "Basketball",
+      "label": "Slide the Spalding basketball",
+      "desktop": [-3.05, 0],
+      "phone": [-1.65, 0],
+      "topMount": 0.68,
+      "width": 1.36,
+      "height": 1.36,
+      "anchor": 0
+    },
+    {
+      "name": "SnackBag",
+      "label": "Slide the snack bag",
+      "desktop": [4.8, -3.45],
+      "phone": [1.6, -7.1],
+      "width": 1.02,
+      "height": 1.5,
+      "anchor": 0
+    },
+    {
+      "name": "Charm",
+      "label": "Slide Jean from Attack on Titan",
+      "desktop": [-4.65, 0],
+      "phone": [1.15, 0],
+      "topMount": 0.89,
+      "width": 0.8,
+      "height": 1.5,
+      "anchor": 0.3
+    }
+  ]
+}

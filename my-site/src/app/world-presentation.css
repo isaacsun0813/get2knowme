@@ -1,0 +1,380 @@
+.world-app {
+  --world-ground: #000000;
+  color: #e9eef1;
+  background: var(--world-ground);
+}
+.site-header {
+  height: 88px;
+  border-bottom: 0;
+}
+.header-tools {
+  margin-left: auto;
+}
+.notes-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+.notes-toggle > svg {
+  width: 22px;
+  height: 22px;
+}
+.world-main {
+  position: relative;
+  height: calc(100svh - 88px);
+  min-height: 0;
+  overflow: hidden;
+}
+.world-stage {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  opacity: 1;
+  transition: opacity 1.5s ease;
+}
+.world-stage canvas {
+  display: block;
+}
+.world-opening .world-stage {
+  opacity: 0;
+  pointer-events: none;
+}
+.atlas-opening {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8vh;
+  color: #e9eef1;
+  opacity: 1;
+  transition:
+    opacity 0.9s ease,
+    translate 1.2s ease,
+    visibility 0s;
+  pointer-events: none;
+}
+.atlas-opening-earth {
+  width: 110px;
+  height: 110px;
+  rotate: -8deg;
+  overflow: visible;
+}
+.atlas-opening p {
+  font-size: clamp(28px, 4vw, 45px);
+  line-height: 1.4;
+  text-align: center;
+  margin: 24px 0 8px;
+  rotate: -3deg;
+}
+.atlas-opening p span {
+  font-size: 0.63em;
+}
+.atlas-opening-glider {
+  width: 110px;
+  height: 65px;
+  margin-left: 210px;
+  rotate: -14deg;
+}
+.world-entered .atlas-opening {
+  opacity: 0;
+  translate: 0 -18px;
+  visibility: hidden;
+  transition-delay: 0s, 0s, 1.2s;
+}
+.world-actions {
+  position: absolute;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  left: 59%;
+  text-align: left;
+  white-space: nowrap;
+  transition: opacity 1s ease;
+}
+.world-actions button {
+  font-size: 22px;
+  padding: 0 5px;
+  gap: 3px;
+}
+.flight-arrow {
+  width: 68px;
+  height: 49px;
+  margin-top: -17px;
+}
+.world-opening .world-actions {
+  opacity: 0;
+  pointer-events: none;
+}
+.field-notes {
+  position: fixed;
+  z-index: 40;
+  top: 76px;
+  right: 4.5vw;
+  width: min(340px, calc(100vw - 32px));
+  max-height: calc(100dvh - 100px);
+  overflow-y: auto;
+  padding: 12px 23px 20px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.field-notes[hidden] {
+  display: none;
+}
+.notes-menu-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  padding-bottom: 8px;
+}
+.notes-menu-place {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-menu-place:nth-child(odd) .note-open {
+  padding-left: 18px;
+}
+.notes-menu-place:nth-child(3) {
+  margin-top: 5px;
+}
+.globe-visits {
+  margin-top: 16px;
+  font-size: 14px;
+}
+.globe-visits summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.globe-visits > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+}
+.globe-visits .text-button {
+  min-height: 44px;
+}
+.notes-menu-place[aria-current] .note-open {
+  color: #476b50;
+}
+.note-open {
+  text-align: left;
+  padding: 14px 4px;
+  flex: 1;
+}
+.note-open > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 23px;
+}
+.note-open > small {
+  display: block;
+  font-size: 13px;
+  margin-top: 2px;
+}
+.notes-menu-place .icon-button {
+  margin-left: 12px;
+}
+.journal-view {
+  inset: 88px 0 0;
+}
+.journal-view .journal-content > * {
+  min-height: calc(100svh - 154px);
+}
+.has-journal .site-header {
+  opacity: 1;
+}
+.has-journal {
+  color: var(--ink);
+  background: var(--paper);
+}
+.place-actions {
+  position: absolute;
+  left: 5vw;
+  top: 90px;
+  bottom: auto;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  max-width: calc(100% - 10vw);
+}
+.place-actions h2 {
+  margin: 0;
+  font:
+    400 24px/1.2 var(--font-display),
+    cursive;
+}
+.place-actions .text-button {
+  font-size: 17px;
+}
+.place-actions .inspect-button {
+  width: auto;
+  border: 0;
+  padding: 10px 0;
+  margin: 0;
+  font-size: 14px;
+  color: inherit;
+}
+.place-actions .landing-button {
+  padding: 9px 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  font-size: 16px;
+}
+.flight-topline .text-button {
+  font-size: 16px;
+}
+.flight-topline,
+.place-actions,
+.desktop-controls {
+  filter: drop-shadow(0 1px 1px #000) drop-shadow(0 0 1px #000);
+}
+.world-main kbd {
+  color: #e9eef1;
+  background: #15212a;
+  border-color: #61717d;
+  box-shadow: 0 2px 0 #61717d55;
+}
+.world-main .touch-controls button {
+  color: #e9eef1;
+  background: #15212a;
+  border-color: #61717d;
+}
+.world-app:not(.has-journal) .site-header button:hover {
+  background-color: #ffffff14;
+}
+.world-app:not(.has-journal)
+  :is(.site-header, .world-main)
+  button:focus-visible {
+  outline-color: #a5cbff;
+}
+.page-shortcut {
+  padding: 0 5px;
+}
+.flight-tools > .icon-button {
+  background: var(--world-ground);
+}
+@media (min-width: 701px) and (hover: hover) {
+  .flight-tools {
+    top: 145px;
+    bottom: auto;
+    right: auto;
+  }
+}
+@media (max-width: 700px) {
+  .site-header {
+    height: 74px;
+    padding: 0 4vw;
+    gap: 6px;
+  }
+  .wordmark > span {
+    font-size: 23px;
+  }
+  .wordmark > svg {
+    width: 26px;
+    height: 26px;
+  }
+  .wordmark {
+    gap: 5px;
+  }
+  .header-tools {
+    gap: 0;
+    margin-left: auto;
+  }
+  .notes-toggle {
+    font-size: 14px;
+    gap: 6px;
+    padding: 10px 5px;
+  }
+  .notes-toggle > svg {
+    display: none;
+  }
+  .header-tools .icon-button {
+    min-width: 33px;
+  }
+  .world-main {
+    height: calc(100svh - 74px);
+  }
+  .atlas-opening-earth {
+    width: 90px;
+    height: 90px;
+  }
+  .atlas-opening-glider {
+    margin-left: 140px;
+  }
+  .place-actions {
+    top: 58px;
+  }
+  .world-actions {
+    bottom: max(32px, env(safe-area-inset-bottom));
+    left: 43%;
+  }
+  .field-notes {
+    top: 68px;
+    right: 16px;
+    max-height: calc(100dvh - 88px);
+  }
+  .journal-view {
+    inset: 74px 0 0;
+  }
+  .journal-view .journal-content > * {
+    min-height: calc(100svh - 129px);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .page-shortcut,
+  .inspect-button kbd {
+    display: none;
+  }
+  .desktop-controls {
+    display: none;
+  }
+  .touch-controls {
+    display: flex;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .site-header {
+    height: 58px;
+  }
+  .world-main {
+    height: calc(100svh - 58px);
+  }
+  .world-actions {
+    left: 63%;
+    bottom: 10px;
+  }
+  .place-actions {
+    top: 48px;
+  }
+  .flight-tools {
+    bottom: 5px;
+    right: 5vw;
+  }
+  .flight-topline {
+    top: 0;
+  }
+  .journal-view {
+    inset: 58px 0 0;
+  }
+  .field-notes {
+    top: 53px;
+    max-height: calc(100dvh - 65px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-stage,
+  .atlas-opening,
+  .site-header,
+  .world-actions {
+    transition: none;
+  }
+}

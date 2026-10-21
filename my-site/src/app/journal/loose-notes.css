@@ -1,0 +1,425 @@
+.about-page,
+.vibes-page {
+  position: relative;
+  margin: 0 auto;
+  max-width: 1180px;
+  color: #292e32;
+  font-family: var(--font-hand), cursive;
+  background: #faf9ef;
+  background-image: repeating-linear-gradient(
+    transparent 0 35px,
+    #8a9aa51c 35px 36px
+  );
+}
+.about-page {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: start;
+  padding: 45px 35px 90px;
+}
+.about-copy {
+  grid-column: 2 / 8;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+}
+.about-name {
+  margin: 0 0 6px;
+  font:
+    400 38px/1.2 var(--font-display),
+    cursive;
+}
+.about-rule {
+  width: 190px;
+  height: 18px;
+  margin-left: -12px;
+  fill: none;
+  stroke: #155eaf;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.about-lead {
+  max-width: 30ch;
+  margin: 45px 0 30px 8%;
+  font-size: 25px;
+  line-height: 1.55;
+}
+.about-highlight {
+  background: linear-gradient(
+    transparent 55%,
+    #f5ee8099 55%,
+    #f5ee80b0 90%,
+    transparent 90%
+  );
+}
+.about-bio {
+  max-width: 34ch;
+  margin: 40px 0 0 2%;
+  font-size: 23px;
+  line-height: 1.6;
+}
+.about-bio p {
+  margin: 0 0 24px;
+}
+.about-bio p + p {
+  margin: 25px 0 0 12%;
+  color: #155eaf;
+}
+.about-writing {
+  display: inline-block;
+  margin: 50px 0 0 22%;
+  padding: 8px 0;
+  font-size: 23px;
+  color: #155eaf;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.about-substack {
+  white-space: nowrap;
+}
+.about-link-context {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.about-photos {
+  grid-column: 9 / 13;
+  grid-row: 1;
+  position: relative;
+  margin: 100px 0 0 -5%;
+}
+.about-sunset {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.681;
+  margin: 0;
+  overflow: hidden;
+  transform: rotate(4deg);
+  box-shadow: 2px 5px 7px #26354516;
+}
+.about-sunset-source {
+  position: absolute;
+  width: 235%;
+  max-width: none;
+  height: auto;
+  left: -123.5%;
+  top: -29.3%;
+}
+.about-portrait {
+  position: absolute;
+  width: 46%;
+  aspect-ratio: 0.74;
+  left: -32%;
+  bottom: -11%;
+  margin: 0;
+  border: 6px solid #fffefa;
+  transform: rotate(-7deg);
+  box-shadow: 3px 5px 8px #26354520;
+}
+.about-portrait img {
+  object-fit: cover;
+  object-position: 35% 42%;
+}
+.about-cloud {
+  position: absolute;
+  width: 41%;
+  top: -70px;
+  left: 55%;
+  fill: none;
+  stroke: #155eaf;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.about-arrow {
+  position: absolute;
+  width: 40px;
+  height: 75px;
+  left: -60px;
+  top: 36%;
+  fill: none;
+  stroke: #8650a0;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.about-sun-drawing {
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  top: 24px;
+  right: 20%;
+  color: #292e32;
+}
+.vibes-page {
+  padding: 40px 55px 75px;
+}
+.vibes-header {
+  margin-left: 7%;
+}
+.vibes-title {
+  margin: 0;
+  font:
+    400 36px/1.2 var(--font-display),
+    cursive;
+}
+.vibes-letter-scene {
+  position: relative;
+  margin: 45px auto 0;
+  max-width: 1000px;
+}
+.vibes-letter {
+  position: relative;
+  padding: 15px 0 50px;
+}
+.vibes-paragraph {
+  font-size: 24px;
+  line-height: 1.65;
+}
+.vibes-memory {
+  width: 70%;
+  margin: 0 0 60px 22%;
+}
+.vibes-earth-story {
+  width: 66%;
+  margin: 0 0 70px 7%;
+  color: #155eaf;
+}
+.vibes-future {
+  width: 48%;
+  margin: 0 0 35px 32%;
+}
+.vibes-earth-words {
+  color: #292e32;
+  background: #b5dfa488;
+  box-shadow:
+    3px 0 #b5dfa488,
+    -3px 0 #b5dfa488;
+}
+.vibes-signature {
+  margin: 35px 0 0 70%;
+  font:
+    400 28px/1.3 var(--font-display),
+    cursive;
+  color: #155eaf;
+}
+.vibes-plane {
+  position: absolute;
+  width: 155px;
+  left: 0;
+  top: 100px;
+  color: #155eaf;
+}
+.vibes-world-drawing {
+  position: absolute;
+  width: 165px;
+  right: 0;
+  top: 390px;
+  rotate: 7deg;
+}
+.vibes-places {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.vibes-place {
+  position: absolute;
+  width: 140px;
+  padding: 4px;
+}
+.vibes-place-name {
+  display: block;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #8650a0;
+}
+.vibes-place-note {
+  display: block;
+  margin-top: 5px;
+  font-size: 17px;
+  line-height: 1.3;
+}
+.vibes-place-0 {
+  left: -1%;
+  top: -10px;
+}
+.vibes-place-1 {
+  right: -1%;
+  top: 42%;
+}
+.vibes-place-2 {
+  left: 0;
+  top: 72%;
+}
+.vibes-place-3 {
+  right: -2%;
+  top: 82%;
+}
+.vibes-place-4 {
+  left: 6%;
+  bottom: 3%;
+}
+@media (max-width: 950px) {
+  .about-page {
+    padding: 35px 25px 80px;
+  }
+  .about-copy {
+    grid-column: 1 / 8;
+  }
+  .about-photos {
+    grid-column: 9 / 13;
+    margin-top: 150px;
+  }
+  .about-lead {
+    font-size: 24px;
+  }
+  .about-bio {
+    font-size: 22px;
+  }
+  .vibes-page {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+  .vibes-paragraph {
+    font-size: 22px;
+  }
+  .vibes-places {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 8%;
+    margin-top: 40px;
+  }
+  .vibes-place {
+    position: static;
+    width: 25%;
+  }
+  .vibes-place:nth-child(even) {
+    margin-top: 25px;
+  }
+  .vibes-place-name {
+    font-size: 22px;
+  }
+  .vibes-plane {
+    width: 120px;
+  }
+  .vibes-world-drawing {
+    width: 130px;
+    top: 410px;
+  }
+}
+@media (max-width: 650px) {
+  .about-page {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 85px;
+  }
+  .about-name {
+    font-size: 33px;
+  }
+  .about-lead {
+    margin: 48px 0 30px 7%;
+    font-size: 24px;
+  }
+  .about-bio {
+    margin: 35px 0 0;
+    font-size: 22px;
+  }
+  .about-bio p + p {
+    margin-left: 10%;
+  }
+  .about-writing {
+    margin: 24px 0 0 14%;
+    font-size: 22px;
+  }
+  .about-photos {
+    width: 66%;
+    margin: 90px 2% 0 auto;
+  }
+  .about-sun-drawing {
+    width: 60px;
+    height: 60px;
+    right: 15%;
+    top: 34px;
+  }
+  .about-portrait {
+    width: 56%;
+    left: -36%;
+  }
+  .about-cloud {
+    width: 40%;
+    top: -45px;
+  }
+  .about-arrow {
+    display: none;
+  }
+  .vibes-page {
+    padding: 28px 24px 55px;
+  }
+  .vibes-header {
+    margin-left: 0;
+  }
+  .vibes-title {
+    font-size: 32px;
+  }
+  .vibes-letter-scene {
+    margin-top: 36px;
+  }
+  .vibes-letter {
+    padding: 0;
+  }
+  .vibes-paragraph {
+    font-size: 22px;
+    line-height: 1.65;
+  }
+  .vibes-memory {
+    width: 92%;
+    margin: 0 0 20px 8%;
+  }
+  .vibes-earth-story {
+    width: 94%;
+    margin: 0 0 20px;
+  }
+  .vibes-future {
+    width: 86%;
+    margin: 0 0 30px 14%;
+  }
+  .vibes-signature {
+    margin-left: 60%;
+    font-size: 27px;
+  }
+  .vibes-plane {
+    position: static;
+    display: block;
+    width: 120px;
+    margin: 0 0 35px 10%;
+  }
+  .vibes-world-drawing {
+    position: static;
+    display: block;
+    width: 120px;
+    margin: 5px 5% 35px auto;
+  }
+  .vibes-places {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 8%;
+    margin-top: 65px;
+    padding-bottom: 20px;
+  }
+  .vibes-place {
+    position: static;
+    width: 42%;
+    padding: 0;
+  }
+  .vibes-place:nth-child(even) {
+    margin-top: 25px;
+  }
+  .vibes-place:nth-child(3) {
+    margin-left: 9%;
+  }
+  .vibes-place:nth-child(4) {
+    width: 35%;
+  }
+}

@@ -1,0 +1,398 @@
+.projects-page {
+  padding: 32px 5vw 45px;
+  color: #292e32;
+  background: #faf9ef;
+  background-image: repeating-linear-gradient(
+    transparent 0 35px,
+    #8a9aa51c 35px 36px
+  );
+  font-family: var(--font-hand), cursive;
+}
+.projects-heading {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 8%;
+}
+.projects-heading h1 {
+  margin: 0 0 12px;
+  font-family: var(--font-display), cursive;
+  font-size: clamp(29px, 3vw, 38px);
+  font-weight: 400;
+  line-height: 1.25;
+}
+.projects-heading p {
+  margin: 0 0 0 8%;
+  font-size: 21px;
+  color: #155eaf;
+}
+.project-sketchbook {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(12, 44px);
+  max-width: 1000px;
+  margin: 15px auto 0;
+}
+.project-sketch-entry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-align: left;
+  min-width: 0;
+  align-self: start;
+  padding: 5px;
+}
+.project-sketch-carbon {
+  grid-column: 1 / 7;
+  grid-row: 1 / 6;
+}
+.project-sketch-grey {
+  grid-column: 8 / 13;
+  grid-row: 3 / 8;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.project-sketch-prizesole {
+  grid-column: 2 / 7;
+  grid-row: 8 / 12;
+}
+.project-sketch-verdra {
+  grid-column: 6 / 12;
+  grid-row: 9 / 13;
+}
+.project-sketch-object {
+  position: relative;
+  display: block;
+  width: 180px;
+  flex-shrink: 0;
+  color: #292e32;
+}
+.project-sketch-object::before {
+  content: "";
+  position: absolute;
+  inset: 27% 18% 20% 23%;
+  background: #b5dfa4;
+  opacity: 0.65;
+  clip-path: polygon(
+    10% 8%,
+    42% 1%,
+    94% 15%,
+    100% 68%,
+    79% 98%,
+    18% 92%,
+    0 68%
+  );
+  rotate: -8deg;
+}
+.project-sketch-object svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.project-sketch-carbon .project-sketch-object {
+  width: 205px;
+  rotate: -7deg;
+}
+.project-sketch-grey .project-sketch-object {
+  width: 190px;
+  margin: -28px 0 -34px 22px;
+  rotate: 7deg;
+}
+.project-sketch-grey .project-sketch-object::before {
+  background: #b4cee9;
+}
+.project-sketch-grey .project-sketch-notes {
+  margin-left: 22px;
+}
+.project-sketch-prizesole .project-sketch-object {
+  width: 125px;
+  rotate: -4deg;
+}
+.project-sketch-prizesole .project-sketch-object::before {
+  background: #f5ee80;
+}
+.project-sketch-verdra .project-sketch-object {
+  width: 185px;
+  rotate: 5deg;
+}
+.project-sketch-verdra .project-sketch-object::before {
+  background: #d4b9e5;
+}
+.project-sketch-notes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.project-sketch-name {
+  font-family: var(--font-display), cursive;
+  font-size: 27px;
+  line-height: 1.2;
+}
+.project-sketch-subtitle {
+  max-width: 20ch;
+  font-size: 20px;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+.project-sketch-status {
+  font-size: 19px;
+  color: #155eaf;
+  margin: 15px 0 0 12px;
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: #8ba5cc;
+  text-underline-offset: 6px;
+}
+.project-sketch-prizesole .project-sketch-status {
+  color: #745f70;
+  text-decoration-color: #bfadc4;
+}
+.project-sketch-entry:hover .project-sketch-name,
+.project-sketch-entry:focus-visible .project-sketch-name {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.projects-plane {
+  position: absolute;
+  width: 140px;
+  top: 6px;
+  right: 4%;
+  color: #155eaf;
+  pointer-events: none;
+}
+.projects-footnote {
+  max-width: 900px;
+  margin: 12px auto 0;
+  font-size: 19px;
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  align-items: baseline;
+}
+.projects-footnote p {
+  margin: 0;
+  color: #555b5c;
+}
+.projects-footnote a {
+  color: #155eaf;
+  padding: 8px;
+  text-decoration: underline;
+}
+@media (max-width: 800px) {
+  .project-sketch-object {
+    width: 140px;
+  }
+  .project-sketch-carbon .project-sketch-object {
+    width: 165px;
+  }
+  .project-sketch-verdra .project-sketch-object {
+    width: 145px;
+  }
+  .project-sketch-prizesole .project-sketch-object {
+    width: 105px;
+  }
+  .project-sketch-name {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .projects-page {
+    padding: 28px 20px 40px;
+  }
+  .projects-heading {
+    padding-left: 0;
+  }
+  .projects-heading h1 {
+    max-width: 15ch;
+    font-size: 29px;
+  }
+  .projects-heading p {
+    max-width: 25ch;
+    margin-left: 9%;
+    font-size: 20px;
+  }
+  .project-sketchbook {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 54px;
+  }
+  .project-sketch-entry {
+    width: 96%;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .project-sketch-carbon {
+    margin-left: -12px;
+  }
+  .project-sketch-grey {
+    margin-left: 18%;
+    width: 79%;
+    gap: 8px;
+  }
+  .project-sketch-grey .project-sketch-notes {
+    margin-left: 0;
+  }
+  .project-sketch-grey .project-sketch-object {
+    width: 170px;
+    margin: -20px 0 -15px 0;
+  }
+  .project-sketch-prizesole {
+    margin: 20px 0 25px;
+  }
+  .project-sketch-verdra {
+    flex-direction: column;
+    align-items: flex-end;
+    width: 94%;
+    margin-top: -10px;
+  }
+  .project-sketch-verdra .project-sketch-notes {
+    margin: -15px 8% 0 0;
+  }
+  .project-sketch-verdra .project-sketch-object {
+    width: 190px;
+  }
+  .project-sketch-subtitle {
+    font-size: 20px;
+  }
+  .project-sketch-status {
+    margin-top: 12px;
+  }
+  .projects-plane {
+    width: 105px;
+    top: -60px;
+    right: -5px;
+  }
+  .projects-footnote {
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 42px;
+  }
+  .projects-footnote a {
+    align-self: flex-end;
+  }
+}
+.projects-detail-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  max-width: min(850px, 92vw);
+  width: fit-content;
+  max-height: 90dvh;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #45463d;
+  overscroll-behavior: contain;
+  overflow: auto;
+}
+.projects-detail-dialog::backdrop {
+  background: #302d24a8;
+  backdrop-filter: blur(7px);
+}
+.projects-status {
+  display: inline-block;
+  padding: 7px 8px 6px;
+  color: #3e453a;
+  background: #aec3a2;
+  font-size: clamp(11px, 1.2vw, 15px);
+  box-shadow: 2px 4px 4px #3333;
+  font-family: var(--font-hand), cursive;
+  line-height: 1.3;
+}
+.projects-status-building {
+  background: #e4b17b;
+  color: #493d2b;
+}
+.projects-status-discontinued {
+  background: #b8b7a8;
+  color: #3b3c33;
+  font-size: clamp(9px, 1vw, 13px);
+}
+.projects-detail-dialog {
+  width: min(720px, 92vw);
+}
+.projects-open-book {
+  padding: 35px clamp(24px, 5vw, 60px) 45px;
+  background: linear-gradient(90deg, #e5dfce, #fbf8ed 5%, #faf7ec);
+  border-left: 8px solid #929a7e;
+  min-height: 400px;
+  box-shadow: 0 20px 70px #0005;
+  font-family: var(--font-hand), cursive;
+}
+.projects-open-grey {
+  border-color: #6c777d;
+}
+.projects-open-prizesole {
+  border-color: #a09f90;
+}
+.projects-open-verdra {
+  border-color: #d6c6a9;
+}
+.projects-back {
+  display: block;
+  margin: 0 0 32px;
+  background: none;
+  border: 0;
+  padding: 8px 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  font-size: 14px;
+}
+.projects-open-book h2 {
+  font-family: var(--font-display), cursive;
+  font-size: clamp(30px, 4vw, 43px);
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 25px 0 20px;
+}
+.projects-open-book p {
+  font-size: 17px;
+  line-height: 1.85;
+  max-width: 52ch;
+  margin: 0 0 26px;
+}
+.projects-open-book a {
+  display: inline-block;
+  color: #38564a;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  padding: 8px 0;
+}
+.projects-detail-image {
+  margin: 25px 0;
+  box-shadow: 2px 3px 8px #0002;
+}
+.projects-detail-image img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  background: white;
+}
+.projects-detail-dialog button:focus-visible,
+.projects-detail-dialog a:focus-visible {
+  outline: 2px solid #376159;
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .projects-status {
+    padding: 5px 3px;
+    font-size: 10px;
+  }
+  .projects-status-discontinued {
+    font-size: 8px;
+  }
+  .projects-open-book {
+    padding-top: 23px;
+  }
+  .projects-open-book p {
+    font-size: 15px;
+  }
+  .projects-back {
+    margin-bottom: 25px;
+  }
+}
