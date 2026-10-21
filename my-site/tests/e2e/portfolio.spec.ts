@@ -37,10 +37,19 @@ test("Enter opens the nearby page in flight without hijacking focused buttons", 
   await expect(page.locator(".flight-bird")).toHaveCount(0);
   await page.getByRole("button", { name: "Take flight", exact: true }).click();
   const status = page.getByTestId("flight-status");
+  await page.keyboard.down("w");
+  await expect
+    .poll(async () => Number(await status.getAttribute("data-speed")))
+    .toBeGreaterThan(1);
+  await page.keyboard.up("w");
   const nearest = (await status.textContent())!.split(",")[0];
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(new RegExp(`#${nearest}$`));
+  const stoppedAtPage = await status.getAttribute("data-position");
   await page.keyboard.press("Escape");
+  await expect
+    .poll(() => status.getAttribute("data-position"))
+    .not.toBe(stoppedAtPage);
   const explore = page.getByRole("button", { name: "Explore", exact: true });
   await explore.focus();
   await page.keyboard.press("Enter");
@@ -353,9 +362,17 @@ test("photo board and project sketches open usable details without closing the j
     const detail = page.getByRole("dialog", { name: "Project details" });
     await expect(detail).toBeVisible();
     await expect(detail.getByRole("heading")).toBeVisible();
+    if (i === 0)
+      await expect(
+        detail.getByRole("link", { name: "View CarbonSight" }),
+      ).toHaveAttribute("href", "https://github.com/isaacsun0813/CarbonSight");
+    if (i === 1 || i === 3)
+      await expect(
+        detail.getByText("Discontinued", { exact: true }),
+      ).toBeVisible();
     if (i === 3)
       await expect(
-        detail.getByRole("link", { name: "Visit Verdra" }),
+        detail.getByRole("link", { name: "View Verdra" }),
       ).toHaveAttribute("href", "https://verdratech.github.io/Verdra-Site/");
     await page.keyboard.press("Escape");
     await expect(detail).not.toBeVisible();

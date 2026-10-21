@@ -1,6 +1,6 @@
 .world-app {
-  --world-ground: #000000;
-  color: #e9eef1;
+  --world-ground: #edf3f5;
+  color: var(--ink);
   background: var(--world-ground);
 }
 .site-header {
@@ -50,7 +50,7 @@
   align-items: center;
   justify-content: center;
   padding-bottom: 8vh;
-  color: #e9eef1;
+  color: var(--ink);
   opacity: 1;
   transition:
     opacity 0.9s ease,
@@ -235,26 +235,26 @@
 .flight-topline,
 .place-actions,
 .desktop-controls {
-  filter: drop-shadow(0 1px 1px #000) drop-shadow(0 0 1px #000);
+  filter: drop-shadow(0 1px 1px #f7fafbdd) drop-shadow(0 0 1px #f7fafbdd);
 }
 .world-main kbd {
-  color: #e9eef1;
-  background: #15212a;
-  border-color: #61717d;
-  box-shadow: 0 2px 0 #61717d55;
+  color: var(--ink);
+  background: #f7faf7;
+  border-color: var(--line);
+  box-shadow: 0 2px 0 #b3c1bd55;
 }
 .world-main .touch-controls button {
-  color: #e9eef1;
-  background: #15212a;
-  border-color: #61717d;
+  color: var(--ink);
+  background: #f7faf7;
+  border-color: var(--line);
 }
 .world-app:not(.has-journal) .site-header button:hover {
-  background-color: #ffffff14;
+  background-color: #526d7712;
 }
 .world-app:not(.has-journal)
   :is(.site-header, .world-main)
   button:focus-visible {
-  outline-color: #a5cbff;
+  outline-color: var(--blue);
 }
 .page-shortcut {
   padding: 0 5px;

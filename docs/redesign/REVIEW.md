@@ -632,3 +632,24 @@ desktop composition, iPhone top/bottom, and open photographs. Neither capture
 session reported a browser error. Phone verification uses emulation, not a
 physical iPhone. The preview remains local at `http://127.0.0.1:3107/#adventure`;
 work remains uncommitted.
+
+### Light backdrop restored
+
+The latest review replaces black space with a pale blue-gray backdrop
+(`#edf3f5`). Header lettering, atlas drawings, flight actions, keycaps, touch
+controls, hover states, and focus rings use dark ink and light surfaces again.
+Subtle light text shadows keep flight labels readable over the globe. Earth
+materials, live sunlight, and night lights retain their existing colors.
+Production build and formatting pass. Six desktop/iPhone checks pass for the
+opening, UTC day/night lighting, and all-page accessibility. Viewed desktop
+daytime and iPhone nighttime screenshots; phone checks use browser emulation.
+
+### Flight resumes after pages and overlays
+
+Leaving Projects or another page now wakes the paused React Three Fiber frame
+loop, so an in-progress paraglider flight continues from the same position and
+speed. The same shared path covers Explore, Help, tab visibility, and all journal
+pages. A desktop/iPhone regression starts moving, opens the nearby page, exits,
+and confirms that the paraglider moves again. The production build and formatting
+pass. The Vibes note now describes the site's theme as paragliding rather than
+planes; the separate childhood paper-airplane memory remains unchanged.

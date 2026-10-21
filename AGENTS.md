@@ -40,7 +40,7 @@ and water should remain gently alive outside flight, pausing behind notes/menus.
 
 The soundtrack is removed. Flight uses quiet speed-responsive Web Audio wind,
 started by a flight gesture and muted by the header speaker. Fade it out when
-paused, landed, viewing notes/menus, or in a hidden tab. Keep the black space
+paused, landed, viewing notes/menus, or in a hidden tab. Keep the light sky
 backdrop separate from the original Earth materials and the centered glider.
 
 Adventure uses a real Blender/Three.js board. Its editable sources, standalone
@@ -96,8 +96,8 @@ Zurich semester alongside the degree; do not restore diffusion-model research.
 The next knot is only: Find where robotics and climate solutions align.
 Do not restore the former career/personal goals disclosure.
 
-The latest globe direction uses plain black space with light world controls and
-cream journal pages. Keep the first overview camera on the paraglider's surface
+The latest globe review restores a light blue-gray sky (#edf3f5), dark ink world
+controls, and cream journal pages. Keep the first overview camera on the paraglider's surface
 normal, rather than rotating it with the sun. Floating decorative cloud meshes
 do not cast ground/ocean shadows; their oversized shadows were mistaken for
 night shading. Live sunlight, atmospheric rim and city lights share one sun vector.

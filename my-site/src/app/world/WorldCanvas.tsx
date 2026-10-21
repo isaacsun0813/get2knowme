@@ -319,6 +319,9 @@ function WorldScene(props: Props & { economy: boolean }) {
     };
   }, [actions]);
   useEffect(() => {
+    if (!paused) invalidate();
+  }, [paused, invalidate]);
+  useEffect(() => {
     gl.domElement.dataset.scene = "isaacs-world";
     gl.domElement.setAttribute(
       "aria-label",

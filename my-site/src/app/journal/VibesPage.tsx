@@ -31,11 +31,10 @@ export default function VibesPage() {
             the world, especially the ones that impact{" "}
             <span className="vibes-earth-words">Mother Earth</span>. When I was
             thinking about how to build my personal site, it felt fitting to
-            center it around the theme of flight (planes) and my passion for
-            climate (Earth). I chose five locations that shaped me: Saratoga
-            (where I grew up), SF (startup central), Chicago (where I went to
-            college), Zurich (where I studied abroad), and Shanghai (my
-            ancestral home).
+            center it around paragliding and my passion for climate (Earth). I
+            chose five locations that shaped me: Saratoga (where I grew up), SF
+            (startup central), Chicago (where I went to college), Zurich (where
+            I studied abroad), and Shanghai (my ancestral home).
           </p>
           <EarthSketch className="vibes-world-drawing" />
           <p className="vibes-paragraph vibes-future">

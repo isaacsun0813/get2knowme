@@ -9,21 +9,21 @@ import { ProjectDrawing, PaperPlaneDrawing } from "../InkDrawings";
 const projects = [
   {
     id: "carbon",
-    cover: "Carbon-aware",
-    subtitle: "ML scheduling",
-    title: "Carbon Aware Scheduling for ML Training/Inference",
+    cover: "CarbonSight",
+    subtitle: "Carbon-aware computing",
+    title: "CarbonSight",
     status: "Researching",
     description:
       "Also interested in greener CI/CD pipelines, distributed systems, and broadly security specifically attacks.",
     image: undefined,
-    link: undefined,
+    link: "https://github.com/isaacsun0813/CarbonSight",
   },
   {
     id: "grey",
     cover: "Grey market",
     subtitle: "Sneaker marketplace",
     title: "Grey Market Sneaker Marketplace",
-    status: "Building",
+    status: "Discontinued",
     description:
       "A sneaker inventory management platform featuring agent-driven workflows, automated SKU detection, and real-time access to available wholesale inventory.",
     image: undefined,
@@ -44,7 +44,7 @@ const projects = [
     cover: "Verdra",
     subtitle: "Cloud compute optimization",
     title: "Verdra",
-    status: "Building",
+    status: "Discontinued",
     description:
       "Reduces infrastructure costs and improves carbon footprint by detecting common cloud compute inefficiencies",
     image: "/photos/projects/Verdra.png",
@@ -139,7 +139,7 @@ export default function ProjectsPage() {
             )}
             {project.link && (
               <a href={project.link} target="_blank" rel="noopener noreferrer">
-                Visit Verdra
+                View {project.title}
               </a>
             )}
           </article>
