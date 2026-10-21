@@ -422,11 +422,6 @@ function WorldScene(props: Props & { economy: boolean }) {
     } else if (command.action === "takeoff") {
       landing.current = null;
       landed.current = false;
-    } else {
-      flight.current = createFlight();
-      landed.current = false;
-      landing.current = null;
-      height.current = FLIGHT_RADIUS;
     }
   }, [command]);
   useFrame((_, delta) => {

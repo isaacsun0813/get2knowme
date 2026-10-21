@@ -349,51 +349,6 @@ kbd {
 .has-journal {
   background: var(--paper);
 }
-.help-dialog {
-  border: 1px solid #c6cbb9;
-  border-radius: 4px 7px 3px 8px;
-  background: var(--paper);
-  color: var(--ink);
-  max-width: 530px;
-  width: calc(100% - 35px);
-  max-height: 85svh;
-  padding: 38px;
-  box-shadow: 10px 15px 60px #243e4933;
-  overflow: auto;
-}
-.help-dialog::backdrop {
-  background: #233b4b55;
-  backdrop-filter: blur(5px);
-}
-.help-dialog > svg {
-  width: 58px;
-  height: 58px;
-  overflow: visible;
-}
-.help-dialog h2 {
-  font-family: var(--font-display);
-  font-size: 34px;
-  font-weight: 400;
-  line-height: 1.1;
-}
-.help-dialog p {
-  font-size: 14px;
-  line-height: 1.9;
-}
-.help-close {
-  position: absolute;
-  top: 13px;
-  right: 13px;
-}
-.help-keys {
-  display: grid;
-  gap: 11px;
-  margin: 25px 0;
-  font-size: 13px;
-}
-.help-keys kbd {
-  margin-right: 3px;
-}
 .audio-message {
   color: var(--ink);
   position: fixed;
@@ -488,12 +443,6 @@ kbd {
     left: 5vw;
     right: 5vw;
   }
-  .flight-tools > .icon-button:first-of-type {
-    margin-left: auto;
-  }
-  .flight-tools .icon-button {
-    min-width: 34px;
-  }
   .world-fallback {
     inset: 0 0 0;
     justify-content: center;
@@ -507,12 +456,6 @@ kbd {
   }
   .world-fallback p {
     font-size: 11px;
-  }
-  .help-dialog {
-    padding: 27px;
-  }
-  .help-dialog h2 {
-    font-size: 30px;
   }
 }
 @media (max-width: 380px) {

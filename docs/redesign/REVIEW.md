@@ -653,3 +653,13 @@ pages. A desktop/iPhone regression starts moving, opens the nearby page, exits,
 and confirms that the paraglider moves again. The production build and formatting
 pass. The Vibes note now describes the site's theme as paragliding rather than
 planes; the separate childhood paper-airplane memory remains unchanged.
+
+### Flight controls simplified
+
+The header help button and its exploration dialog are removed. Flight no longer
+shows manual pause or reset controls, and the unused `P` shortcut and reset
+command are gone with them. Opening Explore or a journal page and hiding the tab
+still pause rendering and wind automatically; returning wakes the flight from its
+current position. This removes 189 lines and reduces the initial route from 114
+kB to 113 kB. The production build and formatting pass, along with four
+desktop/iPhone flight checks, two wind checks, and four iPhone viewport checks.

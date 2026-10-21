@@ -35,7 +35,16 @@ test("Enter opens the nearby page in flight without hijacking focused buttons", 
   const main = (await page.locator(".world-main").boundingBox())!;
   expect(Math.abs(stage.height - main.height)).toBeLessThan(1);
   await expect(page.locator(".flight-bird")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "How to explore", exact: true }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Take flight", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Pause flight", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Reset flight", exact: true }),
+  ).toHaveCount(0);
   const status = page.getByTestId("flight-status");
   await page.keyboard.down("w");
   await expect
@@ -202,7 +211,7 @@ test("all field notes navigate, reflow, and return to the world", async ({
   expect(errors).toEqual([]);
 });
 
-test("free flight moves on the sphere, pauses, inspects, and lands in Zurich", async ({
+test("free flight moves on the sphere, inspects, and lands in Zurich", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -230,14 +239,6 @@ test("free flight moves on the sphere, pauses, inspects, and lands in Zurich", a
   await page.keyboard.up("d");
   await page.keyboard.up("w");
   expect(radius(await status.getAttribute("data-position"))).toBeCloseTo(31, 2);
-  await page.getByRole("button", { name: "Pause flight", exact: true }).click();
-  await page.waitForTimeout(250);
-  const stopped = await status.getAttribute("data-position");
-  await page.waitForTimeout(350);
-  expect(await status.getAttribute("data-position")).toBe(stopped);
-  await page
-    .getByRole("button", { name: "Resume flight", exact: true })
-    .click();
   await page.getByRole("button", { name: "Explore", exact: true }).click();
   await page.getByText("Visit a place on the globe", { exact: true }).click();
   await page
@@ -259,7 +260,6 @@ test("free flight moves on the sphere, pauses, inspects, and lands in Zurich", a
     .poll(async () => radius(await status.getAttribute("data-position")))
     .toBeGreaterThan(30.8);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.getByRole("button", { name: "Pause flight", exact: true }).click();
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Take flight", exact: true }),

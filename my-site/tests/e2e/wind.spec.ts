@@ -75,7 +75,7 @@ test("keyboard flight starts audible wind from a fresh load", async ({
   await page.keyboard.up("w");
 });
 
-test("flight wind is audible, follows speed, mutes and fades on pause without requesting music", async ({
+test("flight wind is audible, follows speed, mutes and fades behind Explore without requesting music", async ({
   page,
 }) => {
   const tracks: string[] = [];
@@ -114,7 +114,7 @@ test("flight wind is audible, follows speed, mutes and fades on pause without re
   await expect.poll(volume).toBeLessThan(0.001);
   await page.getByRole("button", { name: "Enable wind", exact: true }).click();
   await expect.poll(volume).toBeGreaterThan(0.03);
-  await page.getByRole("button", { name: "Pause flight", exact: true }).click();
+  await page.getByRole("button", { name: "Explore", exact: true }).click();
   await page.keyboard.up("w");
   await expect.poll(volume).toBeLessThan(0.001);
   const audioState = () =>

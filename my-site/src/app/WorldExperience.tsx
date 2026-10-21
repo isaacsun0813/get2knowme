@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import SceneErrorBoundary from "./SceneErrorBoundary";
-import ExplorationGuide from "./ExplorationGuide";
 import { supportsWebGL } from "./supportsWebGL";
 import { useRouter } from "next/navigation";
 import {
@@ -19,10 +18,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Compass,
-  HelpCircle,
   Maximize2,
-  Pause,
-  Play,
   RotateCcw,
   Volume2,
   VolumeX,
@@ -61,10 +57,8 @@ export default function WorldExperience() {
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [sceneKey, setSceneKey] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [help, setHelp] = useState(false);
   const [command, setCommand] = useState<FlightCommand>({
-    action: "reset",
+    action: "takeoff",
     sequence: 0,
   });
   const [status, setStatus] = useState<FlightStatus>({
@@ -87,15 +81,12 @@ export default function WorldExperience() {
     (place) => place.id === (mode === "inspect" ? inspected : status.nearest),
   )!;
   const Page = page ? pages[page] : null;
-  const flightPaused = mode === "flying" && paused;
   const wind = useFlightWind(
     mode === "flying" &&
       ready &&
       entered &&
-      !paused &&
       !status.landed &&
       !page &&
-      !help &&
       !notesOpen,
     status.speed,
   );
@@ -238,11 +229,10 @@ export default function WorldExperience() {
       if (page || notesOpen || !entered) return;
       if (keys[event.code] && !failed) {
         event.preventDefault();
-        if (!event.repeat && (mode !== "flying" || !paused)) activateWind();
+        if (!event.repeat) activateWind();
         input.current[keys[event.code]] = true;
         if (mode !== "flying") {
           setMode("flying");
-          setPaused(false);
         }
       }
       if (
@@ -261,15 +251,12 @@ export default function WorldExperience() {
       }
       if (event.code === "KeyE" && !event.repeat && !failed)
         inspect(status.nearest);
-      if (event.code === "KeyP" && mode === "flying" && !event.repeat)
-        setPaused((current) => !current);
     };
     const up = (event: KeyboardEvent) => {
       if (keys[event.code]) input.current[keys[event.code]] = false;
     };
     const reset = () => {
       input.current = emptyInput();
-      if (document.hidden) setPaused(true);
     };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
@@ -284,7 +271,6 @@ export default function WorldExperience() {
   }, [
     page,
     mode,
-    paused,
     failed,
     inspect,
     navigate,
@@ -296,21 +282,18 @@ export default function WorldExperience() {
   const fly = () => {
     wind.activate();
     setMode("flying");
-    setPaused(false);
     input.current = emptyInput();
   };
   const sendCommand = (action: FlightCommand["action"]) => {
     wind.activate();
     setCommand((current) => ({ action, sequence: current.sequence + 1 }));
-    setPaused(false);
-    if (action !== "reset") setMode("flying");
+    setMode("flying");
   };
   const flightControlHandlers = (key: keyof ReturnType<typeof emptyInput>) => ({
     onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => {
       wind.activate();
       event.currentTarget.setPointerCapture(event.pointerId);
       input.current[key] = true;
-      setPaused(false);
     },
     onPointerUp: () => {
       input.current[key] = false;
@@ -353,13 +336,6 @@ export default function WorldExperience() {
           </button>
           <button
             className="icon-button"
-            onClick={() => setHelp(true)}
-            aria-label="How to explore"
-          >
-            <HelpCircle size={19} />
-          </button>
-          <button
-            className="icon-button"
             onClick={wind.toggle}
             aria-label={wind.enabled ? "Mute wind" : "Enable wind"}
             aria-pressed={wind.enabled}
@@ -388,7 +364,7 @@ export default function WorldExperience() {
               <WorldCanvas
                 mode={mode}
                 inspected={inspected}
-                paused={flightPaused || !!page || help || notesOpen || !visible}
+                paused={!!page || notesOpen || !visible}
                 reducedMotion={!!reducedMotion}
                 input={input}
                 command={command}
@@ -534,20 +510,6 @@ export default function WorldExperience() {
                     ↓
                   </button>
                 </div>
-                <button
-                  className="icon-button"
-                  aria-label={paused ? "Resume flight" : "Pause flight"}
-                  onClick={() => setPaused((current) => !current)}
-                >
-                  {paused ? <Play size={17} /> : <Pause size={17} />}
-                </button>
-                <button
-                  className="icon-button"
-                  aria-label="Reset flight"
-                  onClick={() => sendCommand("reset")}
-                >
-                  <RotateCcw size={17} />
-                </button>
               </div>
             )}
           </>
@@ -562,9 +524,7 @@ export default function WorldExperience() {
           data-speed={status.speed.toFixed(3)}
           data-landed={status.landed}
         >
-          {status.landed
-            ? "Landed in Zurich"
-            : `${status.nearest}, ${flightPaused ? "paused" : mode}`}
+          {status.landed ? "Landed in Zurich" : `${status.nearest}, ${mode}`}
         </output>
       </main>
 
@@ -655,7 +615,6 @@ export default function WorldExperience() {
         </div>
       )}
 
-      <ExplorationGuide open={help} onClose={() => setHelp(false)} />
       {wind.unavailable && (
         <span className="audio-message" role="status">
           Wind audio couldn&apos;t start. You can keep exploring.

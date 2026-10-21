@@ -259,9 +259,6 @@
 .page-shortcut {
   padding: 0 5px;
 }
-.flight-tools > .icon-button {
-  background: var(--world-ground);
-}
 @media (min-width: 701px) and (hover: hover) {
   .flight-tools {
     top: 145px;

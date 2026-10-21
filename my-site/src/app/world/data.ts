@@ -48,7 +48,7 @@ export type FlightInput = {
   brake: boolean;
 };
 export type FlightCommand = {
-  action: "land" | "takeoff" | "reset";
+  action: "land" | "takeoff";
   sequence: number;
 };
 export type FlightStatus = {

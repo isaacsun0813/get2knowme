@@ -42,7 +42,6 @@ for (const [name, viewport] of Object.entries({
     await expect(
       page.locator('canvas[data-scene="isaacs-world"]'),
     ).toHaveAttribute("data-camera-travel", "idle");
-    await page.getByRole("button", { name: "Pause flight", exact: true }).tap();
     await page.screenshot({ path: info.outputPath(`${name}-flight.png`) });
     await page.getByRole("button", { name: "Explore", exact: true }).tap();
     await expect(
